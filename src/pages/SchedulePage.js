@@ -1,71 +1,89 @@
-import React, { useState } from 'react';
-import { Container, Row, Col, Button, Card } from 'react-bootstrap';
+// ScheduleCalendarWithForm.js
+import React, { useState, useRef } from 'react';
+import { Container, Row, Col, Card, Button, Form, Modal } from 'react-bootstrap';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import interactionPlugin from '@fullcalendar/interaction';
 
-// 날짜를 단순히 1~30으로 생성 (예제용)
-const daysInMonth = Array.from({ length: 30 }, (_, i) => i + 1);
+function ScheduleCalendarWithForm() {
+    const [events, setEvents] = useState([
+        { id: 1, title: '회의', start: new Date().toISOString().split('T')[0] }
+    ]);
 
-function SchedulePage() {
-    const [selectedDate, setSelectedDate] = useState(null);
+    const [showModal, setShowModal] = useState(false);
+    const [newTitle, setNewTitle] = useState('');
+    const [selectedDate, setSelectedDate] = useState('');
+    const calendarRef = useRef(null);
 
-    const handleDateClick = (day) => {
-        setSelectedDate(day);
+    const handleDateClick = (arg) => {
+        setSelectedDate(arg.dateStr);
+        setNewTitle('');
+        setShowModal(true);
+    };
+
+    const handleSaveEvent = () => {
+        setEvents([
+            ...events,
+            { id: events.length + 1, title: newTitle, start: selectedDate }
+        ]);
+        setShowModal(false);
     };
 
     return (
         <Container className="my-5">
-            {/* 상단 헤더 */}
-            <Row className="mb-4 align-items-center">
-                <Col><h3>📅 2025년 10월</h3></Col>
-                <Col className="text-end">
-                    <Button variant="outline-secondary" className="me-2">이전</Button>
-                    <Button variant="outline-secondary">다음</Button>
-                </Col>
+            <Row className="mb-3">
+                <Col><h3>📅 스케줄 달력</h3></Col>
             </Row>
-
             <Row>
-                {/* 왼쪽 달력 */}
-                <Col md={8}>
-                    <Card className="p-3">
-                        <Row xs={7} className="text-center fw-bold mb-2">
-                            {['일', '월', '화', '수', '목', '금', '토'].map((d) => (
-                                <Col key={d}>{d}</Col>
-                            ))}
-                        </Row>
-
-                        <Row xs={7} className="text-center g-2">
-                            {daysInMonth.map((day) => (
-                                <Col key={day}>
-                                    <Button
-                                        variant={selectedDate === day ? 'primary' : 'light'}
-                                        className="w-100"
-                                        onClick={() => handleDateClick(day)}
-                                    >
-                                        {day}
-                                    </Button>
-                                </Col>
-                            ))}
-                        </Row>
-                    </Card>
+                <Col md={9}>
+                    <FullCalendar
+                        ref={calendarRef}
+                        plugins={[dayGridPlugin, interactionPlugin]}
+                        initialView="dayGridMonth"
+                        events={events}
+                        dateClick={handleDateClick}
+                    />
                 </Col>
-
-                {/* 오른쪽 스케줄 표시 */}
-                <Col md={4}>
-                    <Card className="p-3 h-100">
-                        <h5>🗓️ 선택한 날짜: {selectedDate ? `10월 ${selectedDate}일` : '없음'}</h5>
+                <Col md={3}>
+                    <Card className="p-3">
+                        <h5>등록된 스케줄</h5>
                         <hr />
-                        {selectedDate ? (
-                            <ul>
-                                <li>회의 - 오전 10시</li>
-                                <li>점심 약속 - 오후 12시</li>
-                            </ul>
-                        ) : (
-                            <p>날짜를 선택하세요.</p>
-                        )}
+                        {events.map(ev => (
+                            <p key={ev.id}>{ev.start}: {ev.title}</p>
+                        ))}
                     </Card>
                 </Col>
             </Row>
+
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>새 스케줄 등록</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group className="mb-3" controlId="formDate">
+                            <Form.Label>날짜</Form.Label>
+                            <Form.Control type="text" value={selectedDate} readOnly />
+                        </Form.Group>
+                        <Form.Group className="mb-3" controlId="formTitle">
+                            <Form.Label>제목</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="스케줄 제목 입력"
+                                value={newTitle}
+                                onChange={e => setNewTitle(e.target.value)}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>취소</Button>
+                    <Button variant="primary" onClick={handleSaveEvent}>저장</Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     );
+
 }
 
-export default SchedulePage;
+export default ScheduleCalendarWithForm;
