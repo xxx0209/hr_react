@@ -42,6 +42,12 @@ function App() {
                     로그인 테스트
                 </Nav.Link>
                 <Nav.Link
+                    onClick={() => navigate('/schedule')}
+                    active={location.pathname === '/schedule'}
+                >
+                    스케쥴 테스트
+                </Nav.Link>
+                <Nav.Link
                     onClick={() => navigate('/help')}
                     active={location.pathname === '/help'}
                 >

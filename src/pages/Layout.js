@@ -13,10 +13,10 @@ function Layout({ children }) {
             <Navbar bg="light" className="border-bottom">
                 <Container className="d-flex justify-content-between">
                     <Navbar.Brand style={{ cursor: 'pointer' }} onClick={() => navigate('/home')}>
-                        🔵 MyCompany
+                        🔵 여기다가 나중에 로고 넣기
                     </Navbar.Brand>
                     <div>
-                        <strong>홍길동</strong><br />
+                        <strong>여기는 사용자 이름</strong><br />
                         <small>user@example.com</small>
                     </div>
                 </Container>
