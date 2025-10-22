@@ -2,6 +2,7 @@
 import React from "react";
 import { Container, Row, Col, Navbar, Nav } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
+import MenuItems from "../ui/MenuItems";
 
 function Layout({ children }) {
     const navigate = useNavigate();
@@ -28,55 +29,7 @@ function Layout({ children }) {
                     {/* 왼쪽 사이드 메뉴 */}
                     <Col md={3} className="border-end p-3" style={{ height: '100%' }}>
                         <div className="d-flex h-100">
-                            {/* 첫 번째 메뉴 그룹 */}
-                            <Nav className="flex-column me-3">
-                                <Nav.Link
-                                    onClick={() => navigate('/home')}
-                                    active={location.pathname === '/home'}
-                                >
-                                    홈
-                                </Nav.Link>
-                                <Nav.Link
-                                    onClick={() => navigate('/profile')}
-                                    active={location.pathname === '/profile'}
-                                >
-                                    전자결제
-                                </Nav.Link>
-                                <Nav.Link
-                                    onClick={() => navigate('/settings')}
-                                    active={location.pathname === '/settings'}
-                                >
-                                    캘린더
-                                </Nav.Link>
-                            </Nav>
-
-                            {/* 두 번째 메뉴 그룹 */}
-                            <Nav className="flex-column border-start ps-3">
-                                <Nav.Link
-                                    onClick={() => navigate('/help')}
-                                    active={location.pathname === '/help'}
-                                >
-                                    여기메뉴1
-                                </Nav.Link>
-                                <Nav.Link
-                                    onClick={() => navigate('/faq')}
-                                    active={location.pathname === '/faq'}
-                                >
-                                    여기메뉴2
-                                </Nav.Link>
-                                <Nav.Link
-                                    onClick={() => navigate('/terms')}
-                                    active={location.pathname === '/terms'}
-                                >
-                                    여기메뉴3
-                                </Nav.Link>
-                                <Nav.Link
-                                    onClick={() => navigate('/terms')}
-                                    active={location.pathname === '/terms'}
-                                >
-                                    여기메뉴4
-                                </Nav.Link>
-                            </Nav>
+                            <MenuItems />
                         </div>
                     </Col>
 
