@@ -1,11 +1,12 @@
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 
 // useNavigate 훅은 특정한 페이지로 이동하고자 할 때 사용되는 훅입니다.
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-function App({ appName, user, handleLogout }) {
+function App() {
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     return (
         <>
@@ -53,8 +54,8 @@ function App({ appName, user, handleLogout }) {
                     여기다가 각자 메뉴 링크 만들기3
                 </Nav.Link>
                 <Nav.Link
-                    onClick={() => navigate('/terms')}
-                    active={location.pathname === '/terms'}
+                    onClick={() => navigate('/terms2')}
+                    active={location.pathname === '/terms2'}
                 >
                     여기다가 각자 메뉴 링크 만들기4
                 </Nav.Link>

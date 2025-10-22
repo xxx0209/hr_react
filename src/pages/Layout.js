@@ -6,7 +6,6 @@ import MenuItems from "../ui/MenuItems";
 
 function Layout({ children }) {
     const navigate = useNavigate();
-    const location = useLocation();
 
     return (
         <div className="d-flex flex-column vh-100">
