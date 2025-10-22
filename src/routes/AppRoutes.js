@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import HomePage from "../pages/HomePage";
+import LoginPage from "../pages/LoginPage";
 
 
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
@@ -11,6 +12,7 @@ function App() {
         <Routes>
             {/* path 프롭스는 요청 정보 url, element 프롭스는 컴포넌트 이름 */}
             <Route path="/" element={<Navigate to="/home" />} />
+            <Route path="/login" element={<LoginPage />} />
             <Route path="/home" element={<HomePage />} />
         </Routes>
     );

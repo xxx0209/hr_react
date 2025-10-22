@@ -36,6 +36,12 @@ function App() {
             {/* 두 번째 메뉴 그룹 */}
             <Nav className="flex-column border-start ps-3">
                 <Nav.Link
+                    onClick={() => navigate('/login')}
+                    active={location.pathname === '/login'}
+                >
+                    로그인 테스트
+                </Nav.Link>
+                <Nav.Link
                     onClick={() => navigate('/help')}
                     active={location.pathname === '/help'}
                 >
