@@ -49,6 +49,7 @@ function App() {
                 </Nav.Link>
             </Nav>
 
+            {/* 두 번째 메뉴 그룹 */}
             {isApprovalMode ? (
                 // ✅ 전자결재 눌렀을 때만 표시되는 중분류 메뉴
                 <Nav className="flex-column border-start ps-3">
@@ -85,6 +86,12 @@ function App() {
                         active={location.pathname === '/schedule'}
                     >
                         스케쥴 테스트
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/signup')}
+                        active={location.pathname === '/signup'}
+                    >
+                        회원가입 테스트
                     </Nav.Link>
                     <Nav.Link
                         onClick={() => navigate('/help')}
