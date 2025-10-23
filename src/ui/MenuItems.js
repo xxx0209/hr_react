@@ -50,7 +50,6 @@ function App() {
             </Nav>
 
             {/* 두 번째 메뉴 그룹 */}
-<<<<<<< HEAD
             <Nav className="flex-column border-start ps-3">
                 <Nav.Link
                     onClick={() => navigate('/login')}
@@ -95,7 +94,6 @@ function App() {
                     여기다가 각자 메뉴 링크 만들기4
                 </Nav.Link>
             </Nav>
-=======
             {isApprovalMode ? (
                 // ✅ 전자결재 눌렀을 때만 표시되는 중분류 메뉴
                 <Nav className="flex-column border-start ps-3">
@@ -159,7 +157,6 @@ function App() {
                     </Nav.Link>
                 </Nav>
             )}
->>>>>>> 4d54683bff43ac3e23d843c94575960894caeb80
         </>
     );
 }
