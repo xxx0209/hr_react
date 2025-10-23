@@ -49,51 +49,6 @@ function App() {
                 </Nav.Link>
             </Nav>
 
-            {/* 두 번째 메뉴 그룹 */}
-            <Nav className="flex-column border-start ps-3">
-                <Nav.Link
-                    onClick={() => navigate('/login')}
-                    active={location.pathname === '/login'}
-                >
-                    로그인 테스트
-                </Nav.Link>
-                <Nav.Link
-                    onClick={() => navigate('/schedule')}
-                    active={location.pathname === '/schedule'}
-                >
-                    스케쥴 테스트
-                </Nav.Link>
-                <Nav.Link
-                    onClick={() => navigate('/signup')}
-                    active={location.pathname === '/signup'}
-                >
-                    회원가입 테스트
-                </Nav.Link>
-                <Nav.Link
-                    onClick={() => navigate('/help')}
-                    active={location.pathname === '/help'}
-                >
-                    여기다가 각자 메뉴 링크 만들기1
-                </Nav.Link>
-                <Nav.Link
-                    onClick={() => navigate('/faq')}
-                    active={location.pathname === '/faq'}
-                >
-                    여기다가 각자 메뉴 링크 만들기2
-                </Nav.Link>
-                <Nav.Link
-                    onClick={() => navigate('/terms')}
-                    active={location.pathname === '/terms'}
-                >
-                    여기다가 각자 메뉴 링크 만들기3
-                </Nav.Link>
-                <Nav.Link
-                    onClick={() => navigate('/terms2')}
-                    active={location.pathname === '/terms2'}
-                >
-                    여기다가 각자 메뉴 링크 만들기4
-                </Nav.Link>
-            </Nav>
             {isApprovalMode ? (
                 // ✅ 전자결재 눌렀을 때만 표시되는 중분류 메뉴
                 <Nav className="flex-column border-start ps-3">
