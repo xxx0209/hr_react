@@ -51,7 +51,7 @@ function App() {
 
             {/* 두 번째 메뉴 그룹 */}
             {isApprovalMode ? (
-                // ✅ 전자결재 눌렀을 때만 표시되는 중분류 메뉴
+                // 전자결재 눌렀을 때만 표시되는 중분류 메뉴
                 <Nav className="flex-column border-start ps-3">
                     <Nav.Link
                         onClick={() => navigate('/approval/request')}
@@ -73,7 +73,7 @@ function App() {
                     </Nav.Link>
                 </Nav>
             ) : (
-                // ✅ 기본 중분류 메뉴
+                // 기본 중분류 메뉴
                 <Nav className="flex-column border-start ps-3">
                     <Nav.Link
                         onClick={() => navigate('/login')}
