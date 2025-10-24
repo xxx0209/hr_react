@@ -54,16 +54,16 @@ function App() {
                 // 전자결재 눌렀을 때만 표시되는 중분류 메뉴
                 <Nav className="flex-column border-start ps-3">
                     <Nav.Link
-                        onClick={() => navigate('/approval/request')}
-                        active={location.pathname === '/approval/request'}
-                    >
-                        📝 기안 작성
-                    </Nav.Link>
-                    <Nav.Link
                         onClick={() => navigate('/approval/status')}
                         active={location.pathname === '/approval/status'}
                     >
                         📄 결재 현황
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/approval/request')}
+                        active={location.pathname === '/approval/request'}
+                    >
+                        📝 기안 작성
                     </Nav.Link>
                     <Nav.Link
                         onClick={() => navigate('/approval/temp')}
