@@ -88,6 +88,12 @@ function App() {
                         스케쥴 테스트
                     </Nav.Link>
                     <Nav.Link
+                        onClick={() => navigate('/signup')}
+                        active={location.pathname === '/signup'}
+                    >
+                        회원가입 테스트
+                    </Nav.Link>
+                    <Nav.Link
                         onClick={() => navigate('/help')}
                         active={location.pathname === '/help'}
                     >
