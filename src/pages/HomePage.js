@@ -120,6 +120,49 @@ export default function Board() {
     setPage(np);
   }
 
+  function AttendanceTracker() {
+    //출근/퇴근 시간
+    const [clockInTime, setClockInTime] = useState(null); //예: "08:43"
+    const [clockOutTime, setClockOutTime] = useState(null); //예: "18:02"
+
+    //근무 상태 (재택, 외근, 정상 등)
+    const [workStatus, setWorkStatus] = useState("정상");
+
+    //주간 근무 통계
+    const [weeklyStats, setWeeklyStats] = useState({
+      totalHours: "0h 0m",
+      lateCount: 0,
+      earlyLeaveCount: 0,
+      absentCount: 0,
+    });
+
+    //출근 버튼 클릭 핸들러
+    const handleClockIn = () => {
+      const now = new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+      setClockInTime(now);
+      //TODO: API 호출로 출근 시간 저장
+    };
+
+    //퇴근 버튼 클릭 핸들러
+    const handleClockOUt = () => {
+      const now = new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+      setClockOutTime(now);
+      //TODO: API 호출로 퇴근 시간 저장
+    };
+
+    //근무 상태 변경 핸들러
+    const handleStatusChange = (newStatus) => {
+      setWorkStatus(newStatus);
+      //TODO: API 호출로 상태 변경 저장
+    };
+
+    return (
+      <div className="attendance-card">
+        {/* UI는 추후 회의에서 결정 */}
+      </div>
+    );
+  }
+
   return (
     <Container className="py-4">
       <Row className="align-items-center mb-3">
