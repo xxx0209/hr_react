@@ -1,48 +1,61 @@
 import { useState } from "react";
-import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { Container, Row, Col, Nav, Button } from "react-bootstrap";
 
 // useNavigate 훅은 특정한 페이지로 이동하고자 할 때 사용되는 훅입니다.
 import { useLocation, useNavigate } from "react-router-dom";
 
 function App() {
-
     const navigate = useNavigate();
     const location = useLocation();
 
-    // 전자결재 메뉴 활성화 여부 체크
+    // 전자결제 메뉴 활성화 여부 체크
     const [isApprovalMode, setIsApprovalMode] = useState(false);
 
+    // 게시판 메뉴 하위 메뉴 활성화 여부 체크
+    const [isPostMenuOpen, setIsPostMenuOpen] = useState(false);
+    const [activeMenu, setActiveMenu] = useState(null); // 활성화된 메뉴를 트래킹
+
     // 메뉴 클릭 시 동작
-    const handleNavigate = (path) => {
+    const handleNavigate = (path, menu) => {
         navigate(path);
+
+        // 메뉴가 클릭될 때마다 활성화 상태를 설정
+        setActiveMenu(menu);
 
         // 전자결재 메뉴 눌렀을 때만 하위 메뉴로 전환
         if (path === "/approval") {
             setIsApprovalMode(true);
+            setIsPostMenuOpen(false); // 게시판 하위 메뉴 닫기
         } else {
             setIsApprovalMode(false);
+        }
+
+        // 게시판 메뉴 눌렀을 때 하위 메뉴 토글
+        if (path === "/post") {
+            setIsPostMenuOpen(!isPostMenuOpen);  // 게시판 메뉴 상태 변경 (열고 닫기)
+        } else {
+            setIsPostMenuOpen(false);  // 다른 메뉴를 클릭하면 게시판 하위 메뉴 닫기
         }
     };
 
     return (
         <>
-            {/* 첫 번째 메뉴 그룹 */}
-            {/* 여기는 사용하지 마세요. 아래 두번째에다가 해주세요. */}
+            {/* 기본 중분류 메뉴 */}
             <Nav className="flex-column me-3">
                 <Nav.Link
-                    onClick={() => handleNavigate('/home')}
+                    onClick={() => handleNavigate('/home', 'home')}
                     active={location.pathname === '/home'}
                 >
                     홈
                 </Nav.Link>
                 <Nav.Link
-                    onClick={() => handleNavigate('/approval')}
+                    onClick={() => handleNavigate('/approval', 'approval')}
                     active={location.pathname.startsWith('/approval')}
                 >
                     전자결제
                 </Nav.Link>
                 <Nav.Link
-                    onClick={() => handleNavigate('/settings')}
+                    onClick={() => handleNavigate('/settings', 'settings')}
                     active={location.pathname === '/settings'}
                 >
                     캘린더
@@ -76,6 +89,41 @@ function App() {
                         active={location.pathname === '/approval/temp'}
                     >
                         📂 임시 보관함
+                    </Nav.Link>
+                </Nav>
+            ) : activeMenu === 'post' && isPostMenuOpen ? (
+                // ✅ 게시판 하위 메뉴
+                <Nav className="flex-column border-start ps-3">
+                    <h3 className="m-0" >게시판</h3>
+                    <Row className="mb-3">
+                    <Col xs={12} className="text-center">
+                    <Button
+                        variant="primary"
+                        size="lg"
+                        className="w-100"
+                        onClick={() => navigate('/post/create')} // 글쓰기 페이지로 이동
+                    >
+                        글쓰기
+                    </Button>
+                    </Col>
+                    </Row>
+                    <Nav.Link
+                        onClick={() => navigate('/post/create')}
+                        active={location.pathname === '/post/create'}
+                    >
+                        📝 게시글 작성
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/post/list')}
+                        active={location.pathname === '/post/list'}
+                    >
+                        📄 게시글 목록
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/post/manage')}
+                        active={location.pathname === '/post/manage'}
+                    >
+                        📂 게시글 관리
                     </Nav.Link>
                 </Nav>
             ) : (

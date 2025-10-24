@@ -10,6 +10,8 @@ import LeaveStatus from "../pages/LeaveStatus";
 import ApprovalRequestPage from "../pages/ApprovalRequestPage";
 import ApprovalTempPage from "../pages/ApprovalTempPage";
 import SalaryPage from "../pages/SalaryPage";
+import PostPage from "../pages/PostPage";
+import CreatePost from "../pages/CreatePost";
 
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
 // 이러한 파일을 네트워크에서는 routing table이라고 합니다.
@@ -38,6 +40,9 @@ function App() {
             <Route path="/salary" element={<SalaryPage />} />
 
 
+            {/* 게시판 */}
+            <Route path="/post" element={<PostPage />} />
+            <Route path="/post/create" element={<CreatePost />} />
         </Routes>
     );
 }
