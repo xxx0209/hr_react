@@ -47,6 +47,12 @@ function App() {
                 >
                     캘린더
                 </Nav.Link>
+                <Nav.Link
+                    onClick={() => handleNavigate('/salary')}
+                    active={location.pathname === '/salary'}
+                >
+                    급여관련
+                </Nav.Link>
             </Nav>
 
             {/* 두 번째 메뉴 그룹 */}
