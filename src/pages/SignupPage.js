@@ -1,5 +1,5 @@
 import axios from "../util/axios";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Container, Row, Col, Form, Button, InputGroup, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
@@ -97,8 +97,12 @@ const SignupPage = () => {
                 navigate('/login');
             }
         } catch (error) {
-            console.error('회원가입 오류:', error);
-            alert('회원가입 중 오류가 발생했습니다. 다시 시도해주세요.');
+            if (error.response && error.response.data) {
+                // 서버에서 받은 오류 정보를 객체로 저장합니다.
+                setErrors(error.response.data);
+            } else { // 입력 값 이외에 발생하는 다른 오류와 관련됨.
+                setErrors((previous) => ({ ...previous, general: '회원 가입 중에 오류가 발생하였습니다.' }));
+            }
         }
     };
 
