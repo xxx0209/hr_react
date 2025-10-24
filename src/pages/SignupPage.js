@@ -1,10 +1,7 @@
-import axios from "axios";
+import axios from "../util/axios";
 import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, InputGroup, Alert } from "react-bootstrap";
-import { API_BASE_URL } from "../config/config";
 import { useNavigate } from "react-router-dom";
-
-const existingUsers = ["testuser", "shawn", "admin"]; // 기존 가입된 아이디 예시
 
 const SignupPage = () => {
 
@@ -12,7 +9,7 @@ const SignupPage = () => {
 
     //폼 데이터 state 정의
     const [formData, setFormData] = useState({
-        memberId: "",
+        id: "",
         name: "",
         password: "",
         confirmPassword: "",
@@ -25,33 +22,33 @@ const SignupPage = () => {
 
     //폼 유효성 검사(Form Validation Check) 관련 state 정의 : 입력 양식에 문제 발생시 값을 저장할 곳
     const [errors, setErrors] = useState({
-        memberId: '', name: '', password: '', confirmPassword: '', email: '', gender: '', address: '', general: ''
+        id: '', name: '', password: '', confirmPassword: '', email: '', gender: '', address: '', general: ''
     });
 
     const handleCheckDuplicate = async () => {
-        console.log("중복 확인 클릭됨:", formData.memberId);
-        if (formData.memberId.trim() === "") {
+        console.log("중복 확인 클릭됨:", formData.id);
+        if (formData.id.trim() === "") {
             setErrors(prevErrors => ({
                 ...prevErrors,
-                memberId: "아이디가 비어있습니다"
+                id: "아이디가 비어있습니다"
             }));
             return;
         }
 
         try {
-            const response = await axios.post(`${API_BASE_URL}/member/checkId`, { memberId: formData.memberId });
+            const response = await axios.post('/member/checkId', { id: formData.id });
 
             if (response.data.available) {
                 setIsAvailable(true);
-                setErrors(prev => ({ ...prev, memberId: '' })); // 오류 초기화
+                setErrors(prev => ({ ...prev, id: '' })); // 오류 초기화
             } else {
                 setIsAvailable(false);
-                setErrors(prev => ({ ...prev, memberId: '이미 사용 중인 아이디입니다.' }));
+                setErrors(prev => ({ ...prev, id: '이미 사용 중인 아이디입니다.' }));
             }
         } catch (error) {
             console.error('중복 확인 실패:', error);
             setIsAvailable(null);
-            setErrors(prev => ({ ...prev, memberId: '중복 확인 중 오류가 발생했습니다.' }));
+            setErrors(prev => ({ ...prev, id: '중복 확인 중 오류가 발생했습니다.' }));
         }
 
     };
@@ -64,7 +61,7 @@ const SignupPage = () => {
         if (!isAvailable) {
             setErrors(prevErrors => ({
                 ...prevErrors,
-                memberId: "아이디 중복 확인을 해주세요."
+                id: "아이디 중복 확인을 해주세요."
             }));
         }
 
@@ -88,7 +85,7 @@ const SignupPage = () => {
             return;
         }
 
-        const url = `${API_BASE_URL}/member/signup`;
+        const url = '/member/signup';
         const parameters = formData;
 
         try {
@@ -133,25 +130,25 @@ const SignupPage = () => {
                     {/* 회원가입 폼 */}
                     <Form onSubmit={handleSubmit}>
                         {/* 아이디 입력 + 중복 확인 버튼 */}
-                        <Form.Group controlId="formMemberId" className="mb-3">
+                        <Form.Group controlId="formid" className="mb-3">
                             <Form.Label>ID</Form.Label>
                             <InputGroup>
                                 <Form.Control
                                     type="text"
                                     placeholder="회원아이디"
-                                    value={formData.memberId}
+                                    value={formData.id}
                                     onChange={(e) => {
-                                        setFormData({ ...formData, memberId: e.target.value });
+                                        setFormData({ ...formData, id: e.target.value });
                                         setIsAvailable(null); // 입력 바뀌면 중복 확인 초기화
-                                        setErrors(prevErrors => ({ ...prevErrors, memberId: "" }));  // 오류 초기화
+                                        setErrors(prevErrors => ({ ...prevErrors, id: "" }));  // 오류 초기화
                                     }}
-                                    isInvalid={!!errors.memberId}
+                                    isInvalid={!!errors.id}
                                 />
                                 <Button variant="secondary" onClick={handleCheckDuplicate}>
                                     중복 확인
                                 </Button>
                                 <Form.Control.Feedback type="invalid">
-                                    {errors.memberId}
+                                    {errors.id}
                                 </Form.Control.Feedback>
                             </InputGroup>
                             {isAvailable === true && (
