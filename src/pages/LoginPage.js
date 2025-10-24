@@ -3,6 +3,9 @@ import { Container, Row, Col, Form, Button } from "react-bootstrap";
 import bannerImg from "./../assets/logo192.png";
 
 const LoginPage = () => {
+
+    //로그인 구현하기 
+
     return (
         <Container
             className="d-flex justify-content-center align-items-center"
