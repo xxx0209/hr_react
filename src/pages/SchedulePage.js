@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {
-    Container,
-    Row,
-    Col,
-    Card,
-    Form,
-    Button,
-    Modal,
-    Badge,
-} from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Button, Modal, Badge } from "react-bootstrap";
+import { API_BASE_URL } from "../config/config";
 import DatePicker from "react-datepicker";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import ko from "date-fns/locale/ko";
 import axios from "axios";
+
 
 import "react-datepicker/dist/react-datepicker.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -28,8 +21,9 @@ const localizer = dateFnsLocalizer({
     locales,
 });
 
-const API_BASE = "http://localhost:8080/api";
-export default function App() {
+const API_BASE = API_BASE_URL;
+
+export default function SchedulePage() {
     const [events, setEvents] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
