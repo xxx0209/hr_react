@@ -7,6 +7,8 @@ import ApprovalPage from "../pages/ApprovalPage";
 import AttendanceTracker from "../pages/AttendanceTracker";
 import LeaveStatus from "../pages/LeaveStatus";
 
+import ApprovalRequestPage from "../pages/ApprovalRequestPage";
+import ApprovalTempPage from "../pages/ApprovalTempPage";
 
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
 // 이러한 파일을 네트워크에서는 routing table이라고 합니다.
@@ -23,7 +25,12 @@ function App() {
             <Route path="/home" element={<HomePage />} />
             <Route path="/attendance" element={<AttendanceTracker />} />
             <Route path="/leave" element={<LeaveStatus />} />
-            <Route path="/approval" element={<ApprovalPage />} />
+            
+            {/* 전자결재 페이지 */}
+             <Route path="/approval" element={<Navigate to="/approval/status" />} />
+             <Route path="/approval/request" element={<ApprovalRequestPage />} />
+             <Route path="/approval/status" element={<ApprovalPage />} />
+             <Route path="/approval/temp" element={<ApprovalTempPage />} />
         </Routes>
     );
 }
