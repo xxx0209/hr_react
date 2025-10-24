@@ -3,6 +3,8 @@ import { Container, Form, Button, Card, Row, Col } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
+// 상태 변수 설정
+    // 테스트ㅡ트트트
     return (
         // <Container className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
         <Container className="d-flex justify-content-center align-items-center">
