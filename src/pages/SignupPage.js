@@ -7,7 +7,7 @@ import RadioGroup from "../sample/RadioGroup";
 
 const SignupPage = () => {
 
-    const enums = useContext(EnumContext);    
+    const enums = useContext(EnumContext);
 
     const navigate = useNavigate();
 
@@ -18,7 +18,7 @@ const SignupPage = () => {
         password: "",
         confirmPassword: "",
         email: "",
-        gender: enums?.Gender[0]?.value,
+        gender: enums?.Gender?.[0]?.value || [],
         address: ""
     });
 
