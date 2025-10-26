@@ -130,6 +130,12 @@ function App() {
                 // 기본 중분류 메뉴
                 <Nav className="flex-column border-start ps-3">
                     <Nav.Link
+                        onClick={() => navigate('/samplePage')}
+                        active={location.pathname === '/samplePage'}
+                    >
+                        샘플테스트 페이지
+                    </Nav.Link>
+                    <Nav.Link
                         onClick={() => navigate('/login')}
                         active={location.pathname === '/login'}
                     >

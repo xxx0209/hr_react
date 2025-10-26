@@ -1,14 +1,18 @@
-import AppRoutes from './routes/AppRoutes';
-import Layout from "./pages/Layout";
-// import './index.css';
+import { BrowserRouter } from 'react-router-dom';
 import './App.css';
-import React, { useState } from "react";
+import { AuthProvider } from "./context/AuthContext";
+import { EnumProvider } from "./context/EnumContext"
+import AppRoutes from './routes/AppRoutes';
 
 function App() {
   return (
-    <Layout>
-      <AppRoutes />
-    </Layout>
+    <BrowserRouter>
+      <AuthProvider>        
+        <EnumProvider>          
+            <AppRoutes />          
+        </EnumProvider>        
+      </AuthProvider>
+    </BrowserRouter>   
   );
 }
 

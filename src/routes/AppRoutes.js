@@ -12,39 +12,51 @@ import ApprovalTempPage from "../pages/ApprovalTempPage";
 import SalaryPage from "../pages/SalaryPage";
 import PostPage from "../pages/PostPage";
 import CreatePost from "../pages/CreatePost";
+import SamplePage from "../sample/SamplePage"
+import PrivateLayoutRoute from "./PrivateLayoutRoute";
+import AuthRedirectRoute from "./AuthRedirectRoute";
 
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
 // 이러한 파일을 네트워크에서는 routing table이라고 합니다.
-function App() {
-    // user : 사용자 정보를 저장하고 있는 객체
-    // handleLoginSuccess : 로그인 성공시 동작할 액션
+function AppRoutes() {
+
     return (
         <Routes>
-            {/* path 프롭스는 요청 정보 url, element 프롭스는 컴포넌트 이름 */}
-            <Route path="/" element={<Navigate to="/home" />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/schedule" element={<SchedulePage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/home" element={<HomePage />} />
-            <Route path="/attendance" element={<AttendanceTracker />} />
-            <Route path="/leave" element={<LeaveStatus />} />
+            {/* Layout 없이 전체 화면 */}
 
-            {/* 전자결재 페이지 */}
-            <Route path="/approval" element={<Navigate to="/approval/status" />} />
-            <Route path="/approval/request" element={<ApprovalRequestPage />} />
-            <Route path="/approval/status" element={<ApprovalPage />} />
-            <Route path="/approval/temp" element={<ApprovalTempPage />} />
-            <Route path="/approval" element={<ApprovalPage />} />
+            {/* 로그인/회원가입페이지 */}
+            <Route element={<AuthRedirectRoute />}>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+            </Route>
+            
+            {/* 공통 Layout + PrivateRoute 그룹 */}
+            <Route element={<PrivateLayoutRoute />}>
+                <Route path="/" element={<Navigate to="/home" replace />} />
+                <Route path="/samplePage" element={<SamplePage />} />
+                <Route path="/schedule" element={<SchedulePage />} />                    
+                <Route path="/home" element={<HomePage />} />
+                <Route path="/attendance" element={<AttendanceTracker />} />
+                <Route path="/leave" element={<LeaveStatus />} />
 
-            {/* 급여 관련 페이지 */}
-            <Route path="/salary" element={<SalaryPage />} />
+                {/* 전자결재 페이지 */}
+                <Route path="/approval" element={<Navigate to="/approval/status" />} />
+                <Route path="/approval/request" element={<ApprovalRequestPage />} />
+                <Route path="/approval/status" element={<ApprovalPage />} />
+                <Route path="/approval/temp" element={<ApprovalTempPage />} />
+                <Route path="/approval" element={<ApprovalPage />} />
 
+                {/* 급여 관련 페이지 */}
+                <Route path="/salary" element={<SalaryPage />} />
 
-            {/* 게시판 */}
-            <Route path="/post" element={<PostPage />} />
-            <Route path="/post/create" element={<CreatePost />} />
+                {/* 게시판 */}
+                <Route path="/post" element={<PostPage />} />
+                <Route path="/post/create" element={<CreatePost />} />
+                {/* 다른 페이지 추가 */}
+            
+            </Route>                       
         </Routes>
     );
 }
 
-export default App;
+export default AppRoutes;

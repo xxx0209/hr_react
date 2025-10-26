@@ -1,9 +1,13 @@
-import axios from "../util/axios";
-import { useState } from "react";
+import axios from "../api/api";
+import { useContext, useState } from "react";
 import { Container, Row, Col, Form, Button, InputGroup, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { EnumContext } from "../context/EnumContext";
+import RadioGroup from "../sample/RadioGroup";
 
 const SignupPage = () => {
+
+    const enums = useContext(EnumContext);    
 
     const navigate = useNavigate();
 
@@ -14,7 +18,7 @@ const SignupPage = () => {
         password: "",
         confirmPassword: "",
         email: "",
-        gender: "male",
+        gender: enums?.Gender[0]?.value,
         address: ""
     });
 
@@ -185,7 +189,11 @@ const SignupPage = () => {
 
                         {/* 비밀번호 */}
                         <Form.Group controlId="formPassword" className="mb-3">
-                            <Form.Label>비밀번호</Form.Label>
+                            <Form.Label>비밀번호<br />
+                                <span style={{ fontSize: "0.8em", color: "gray" }}>
+                                    (대문자 포함 8자리 이상, 특수 문자 '!@#$%' 중 하나 이상 포함)
+                                </span>
+                            </Form.Label>
                             <Form.Control
                                 type="password"
                                 placeholder="비밀번호 입력"
@@ -237,9 +245,16 @@ const SignupPage = () => {
                             </Form.Control.Feedback>
                         </Form.Group>
 
-                        <Form.Group controlId="formGender" className="mb-3">
-                            <Form.Label>성별</Form.Label>
-                            <div>
+                        <Form.Group controlId="formGender" className="mb-3">                            
+                            <div className="mb-3">
+                                <RadioGroup
+                                  label="성별"
+                                  options={enums?.Gender || []}
+                                  value={formData.gender}                                  
+                                  onChange={(e) => setFormData({ ...formData, gender: e })}
+                                />
+                            </div>
+                            {/* <div>
                                 <Form.Check
                                     inline
                                     label="남"
@@ -260,7 +275,7 @@ const SignupPage = () => {
                                     checked={formData.gender === "female"}
                                     onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                                 />
-                            </div>
+                            </div> */}
                         </Form.Group>
 
                         {/* 주소 */}
