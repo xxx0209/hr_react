@@ -13,8 +13,14 @@ import SalaryPage from "../pages/SalaryPage";
 import PostPage from "../pages/PostPage";
 import CreatePost from "../pages/CreatePost";
 import SamplePage from "../sample/SamplePage"
+import PositionPage from "../pages/PositionPage";
 import PrivateLayoutRoute from "./PrivateLayoutRoute";
 import AuthRedirectRoute from "./AuthRedirectRoute";
+import PositionListPage from "../pages/PositionListPage";
+import PositionDetailPage from "../pages/PositionDetailPage";
+import PositionHistoryList from "../pages/PositionHistoryList";
+import PositionHistoryForm from "../pages/PositionHistoryForm";
+import PositionHistoryPage from "../pages/PositionHistoryPage";
 
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
 // 이러한 파일을 네트워크에서는 routing table이라고 합니다.
@@ -29,15 +35,23 @@ function AppRoutes() {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
             </Route>
-            
+
             {/* 공통 Layout + PrivateRoute 그룹 */}
             <Route element={<PrivateLayoutRoute />}>
                 <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/samplePage" element={<SamplePage />} />
-                <Route path="/schedule" element={<SchedulePage />} />                    
+                <Route path="/schedule" element={<SchedulePage />} />
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/attendance" element={<AttendanceTracker />} />
                 <Route path="/leave" element={<LeaveStatus />} />
+                <Route path="/position" element={<PositionPage />} />
+                <Route path="/position/list" element={<PositionListPage />} />
+                <Route path="/position/:id" element={<PositionDetailPage />} />
+                <Route path="/position/history/page" element={<PositionHistoryPage />} />
+                <Route path="/position/history" element={<PositionHistoryList />} />
+                <Route path="/position/history/:id" element={<PositionHistoryForm />} />
+                <Route path="/position/history/save" element={<PositionHistoryForm />} />
+
 
                 {/* 전자결재 페이지 */}
                 <Route path="/approval" element={<Navigate to="/approval/status" />} />
@@ -53,8 +67,8 @@ function AppRoutes() {
                 <Route path="/post" element={<PostPage />} />
                 <Route path="/post/create" element={<CreatePost />} />
                 {/* 다른 페이지 추가 */}
-            
-            </Route>                       
+
+            </Route>
         </Routes>
     );
 }

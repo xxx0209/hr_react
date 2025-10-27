@@ -96,16 +96,16 @@ function App() {
                 <Nav className="flex-column border-start ps-3">
                     <h3 className="m-0" >게시판</h3>
                     <Row className="mb-3">
-                    <Col xs={12} className="text-center">
-                    <Button
-                        variant="primary"
-                        size="lg"
-                        className="w-100"
-                        onClick={() => navigate('/post/create')} // 글쓰기 페이지로 이동
-                    >
-                        글쓰기
-                    </Button>
-                    </Col>
+                        <Col xs={12} className="text-center">
+                            <Button
+                                variant="primary"
+                                size="lg"
+                                className="w-100"
+                                onClick={() => navigate('/post/create')} // 글쓰기 페이지로 이동
+                            >
+                                글쓰기
+                            </Button>
+                        </Col>
                     </Row>
                     <Nav.Link
                         onClick={() => navigate('/post/create')}
@@ -152,6 +152,30 @@ function App() {
                         active={location.pathname === '/signup'}
                     >
                         회원가입 테스트
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/position')}
+                        active={location.pathname === '/position'}
+                    >
+                        직급등록 테스트
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/position/list')}
+                        active={location.pathname === '/position/list'}
+                    >
+                        직급 리스트 테스트
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/position/history/page')}
+                        active={location.pathname === '/position/history/page'}
+                    >
+                        직급내역 리스트 테스트
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/position/history/save')}
+                        active={location.pathname === '/position/history/save'}
+                    >
+                        직급내역 등록 테스트
                     </Nav.Link>
                     <Nav.Link
                         onClick={() => navigate('/attendance')}

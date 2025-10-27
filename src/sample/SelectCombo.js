@@ -25,6 +25,7 @@ export default function SelectCombo({
   disabled = false,
   className = "",
   noOptionsText = "옵션이 없습니다",
+  required = false, // 추가된 부분
 }) {
   // normalize options to objects { value, label }
   const normOptions = useMemo(() => {
@@ -144,6 +145,15 @@ export default function SelectCombo({
               ) : (
                 <span style={{ color: "#6c757d" }}>{placeholder}</span>
               )}
+
+              {/* 🔹 여기에 추가 */}
+              {multiple && required && (
+                <input
+                  type="hidden"
+                  value={(Array.isArray(selected) && selected.length > 0) ? selected.join(",") : ""}
+                  required
+                />
+              )}
             </div>
           ) : (
             <Form.Control
@@ -152,6 +162,7 @@ export default function SelectCombo({
               value={displayLabel()}
               placeholder={placeholder}
               disabled={disabled}
+              required={required && !multiple} // 추가된 부분
               style={{ cursor: disabled ? "not-allowed" : "pointer", background: disabled ? "#e9ecef" : "white" }}
             />
           )}
