@@ -28,6 +28,7 @@ function App() {
             <Route path="/home" element={<HomePage />} />
             <Route path="/attendance" element={<AttendanceTracker />} />
             <Route path="/leave" element={<LeaveStatus />} />
+            
             {/* 전자결재 페이지 */}
             <Route path="/approval" element={<Navigate to="/approval/status" />} />
             <Route path="/approval/request" element={<ApprovalRequestPage />} />
