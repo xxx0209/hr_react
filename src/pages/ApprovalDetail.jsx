@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import AuthContext from '../context/AuthContext'; // ✅ context (복수 아님!)
+import { AuthContext } from '../context/AuthContext'; // ✅ context (복수 아님!)
 // import { useParams } from 'react-router-dom'; //문서 ID 등 URL 파라미터
 import './ApprovalDetail.css'; //스타일 파일 (선택)
 
