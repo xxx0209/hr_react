@@ -1,15 +1,24 @@
 import AppRoutes from './routes/AppRoutes';
-import Layout from "./pages/Layout";
-// import './index.css';
+import AuthContext from './context/AuthContext'; // 경로 맞게 수정
+import React from 'react';
+
+import './index.css';
 import './App.css';
-import React, { useState } from "react";
 
 function App() {
+  const user = {
+    name: '홍길동',
+    email: 'user@example.com',
+    role: '관리자',
+  };
+
   return (
-    <Layout>
+    <AuthContext.Provider value={{ user }}>
       <AppRoutes />
-    </Layout>
+    </AuthContext.Provider>
   );
 }
 
+
 export default App;
+

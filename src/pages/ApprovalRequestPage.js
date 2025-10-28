@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { Container, Card } from "react-bootstrap";
 
 function ApprovalRequestPage() {

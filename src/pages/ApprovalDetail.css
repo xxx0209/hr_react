@@ -1,0 +1,10 @@
+.approval-detail {
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+.button-group {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}

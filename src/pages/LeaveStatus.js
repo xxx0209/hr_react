@@ -3,13 +3,13 @@ import LeaveRequestForm from "./LeaveRequestForm";
 
 
 function LeaveStatus() {
-    const [leaveBalance, setLeaveBalance] = useState({
+    const [leaveBalance] = useState({
         annual: 4.5,
         half: 2,
         quarter: 1,
     });
 
-    const [calendarEvents, setCalendarEvents] = useState([
+    const [calendarEvents] = useState([
         { date: "2025-10-18", type: "반차", status: "승인완료" }
     ]);
 
