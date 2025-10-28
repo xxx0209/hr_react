@@ -8,8 +8,13 @@ function App() {
     const navigate = useNavigate();
     const location = useLocation();
 
+<<<<<<< HEAD
     // 전자결제 메뉴 활성화 여부 체크
+=======
+    // 전자결재 메뉴 활성화 여부 체크, 급여추가
+>>>>>>> byeongjin
     const [isApprovalMode, setIsApprovalMode] = useState(false);
+    const [isSalaryMode, setIsSalaryMode] = useState(false);
 
     // 게시판 메뉴 하위 메뉴 활성화 여부 체크
     const [isPostMenuOpen, setIsPostMenuOpen] = useState(false);
@@ -25,9 +30,17 @@ function App() {
         // 전자결재 메뉴 눌렀을 때만 하위 메뉴로 전환
         if (path === "/approval") {
             setIsApprovalMode(true);
+<<<<<<< HEAD
             setIsPostMenuOpen(false); // 게시판 하위 메뉴 닫기
+=======
+            setIsSalaryMode(false);
+        } else if (path === "/salary") { // 급여 메뉴 클릭시
+            setIsSalaryMode(true);
+            setIsApprovalMode(false);
+>>>>>>> byeongjin
         } else {
             setIsApprovalMode(false);
+            setIsSalaryMode(false);
         }
 
         // 게시판 메뉴 눌렀을 때 하위 메뉴 토글
@@ -91,6 +104,7 @@ function App() {
                         📂 임시 보관함
                     </Nav.Link>
                 </Nav>
+<<<<<<< HEAD
             ) : activeMenu === 'post' && isPostMenuOpen ? (
                 // ✅ 게시판 하위 메뉴
                 <Nav className="flex-column border-start ps-3">
@@ -125,8 +139,38 @@ function App() {
                     >
                         📂 게시글 관리
                     </Nav.Link>
+=======
+            ) : isSalaryMode ? (
+                <Nav className="flex-column border-start ps-3">
+                    <Nav.Link
+                        onClick={() => navigate('/salary/manage')}
+                        active={location.pathname === '/salary/manage'}
+                    >
+                        📋 나의 급여 내역
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/salary/admin')}
+                        active={location.pathname === '/salary/admin'}
+                    >
+                        🧾 급여 관리 (관리자)
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/salary/admin/create')}
+                        active={location.pathname === '/salary/admin/create'}
+                    >
+                        ➕ 급여 생성
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/salary/base-salary')}
+                        active={location.pathname === '/salary/base-salary'}
+                    >
+                        ⚙️ 기본급 설정
+                    </Nav.Link>
+                    
+>>>>>>> byeongjin
                 </Nav>
             ) : (
+
                 // 기본 중분류 메뉴
                 <Nav className="flex-column border-start ps-3">
                     <Nav.Link
