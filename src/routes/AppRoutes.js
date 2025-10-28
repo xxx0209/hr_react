@@ -45,18 +45,20 @@ function AppRoutes() {
             {/* 공통 Layout + PrivateRoute 그룹 */}
             <Route element={<PrivateLayoutRoute />}>
                 <Route path="/" element={<Navigate to="/home" replace />} />
-                <Route path="/samplePage" element={<SamplePage />} />
-                <Route path="/schedule" element={<SchedulePage />} />
+                <Route path="/member/samplePage" element={<SamplePage />} />
+                <Route path="/member/position" element={<PositionPage />} />
+                <Route path="/member/position/list" element={<PositionListPage />} />
+                <Route path="/member/position/:id" element={<PositionDetailPage />} />
+                <Route path="/member/position/history/page" element={<PositionHistoryPage />} />
+                <Route path="/member/position/history/list" element={<PositionHistoryList />} />
+                <Route path="/member/position/history/:id" element={<PositionHistoryForm />} />
+                <Route path="/member/position/history/save" element={<PositionHistoryForm />} />
+                <Route path="/member/schedule" element={<SchedulePage />} />
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/attendance" element={<AttendanceTracker />} />
                 <Route path="/leave" element={<LeaveStatus />} />
-                <Route path="/position" element={<PositionPage />} />
-                <Route path="/position/list" element={<PositionListPage />} />
-                <Route path="/position/:id" element={<PositionDetailPage />} />
-                <Route path="/position/history/page" element={<PositionHistoryPage />} />
-                <Route path="/position/history/list" element={<PositionHistoryList />} />
-                <Route path="/position/history/:id" element={<PositionHistoryForm />} />
-                <Route path="/position/history/save" element={<PositionHistoryForm />} />
+
+
                 {/* 급여 관련 페이지 */}
                 <Route path="/salary" element={<Navigate to="/salary/manage" />} />
                 <Route path="/salary/manage" element={<SalaryPage />} />
