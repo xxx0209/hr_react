@@ -166,8 +166,8 @@ function App() {
                         직급 리스트 테스트
                     </Nav.Link>
                     <Nav.Link
-                        onClick={() => navigate('/position/history/page')}
-                        active={location.pathname === '/position/history/page'}
+                        onClick={() => navigate('/position/history/list')}
+                        active={location.pathname === '/position/history/list'}
                     >
                         직급내역 리스트 테스트
                     </Nav.Link>

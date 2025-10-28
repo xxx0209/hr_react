@@ -48,7 +48,7 @@ function AppRoutes() {
                 <Route path="/position/list" element={<PositionListPage />} />
                 <Route path="/position/:id" element={<PositionDetailPage />} />
                 <Route path="/position/history/page" element={<PositionHistoryPage />} />
-                <Route path="/position/history" element={<PositionHistoryList />} />
+                <Route path="/position/history/list" element={<PositionHistoryList />} />
                 <Route path="/position/history/:id" element={<PositionHistoryForm />} />
                 <Route path="/position/history/save" element={<PositionHistoryForm />} />
 

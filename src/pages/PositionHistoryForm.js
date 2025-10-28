@@ -31,7 +31,7 @@ export default function ChangePositionPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await axios.post("/position/change", null, { params: form });
+        await axios.post("/position/history/change", null, { params: form });
         alert("직급 변경 완료!");
     };
 
@@ -77,6 +77,7 @@ export default function ChangePositionPage() {
                         value={form.reason}
                         onChange={(v) => handleChange(v.target.value, 'reason')}
                         rows={3}
+                        required
                     />
                 </Form.Group>
 

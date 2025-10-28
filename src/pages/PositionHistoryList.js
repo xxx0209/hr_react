@@ -1,42 +1,95 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button } from "react-bootstrap";
+import { Table, Button, Pagination, Spinner } from "react-bootstrap";
 import axios from "../api/api";
 
-export default function PositionHistoryList({ onAdd }) {
-    const [list, setList] = useState([]);
+export default function PositionHistoryPage() {
+  const [histories, setHistories] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const pageSize = 10;
 
-    useEffect(() => {
-        axios.get("/position/history/list").then((res) => setList(res.data));
-    }, []);
+  const fetchData = (p = 0) => {
+    setLoading(true);
+    axios
+      .get(`/position/history/list?page=${p}&size=${pageSize}`)
+      .then((res) => {
+        setHistories(res.data.content);
+        setTotalPages(res.data.totalPages);
+        setPage(res.data.number);
+      })
+      .finally(() => setLoading(false));
+  };
 
-    return (
-        <div>
-            <h3>직급 변경 이력</h3>
-            <Button variant="primary" onClick={onAdd}>+ 추가</Button>
-            <Table striped bordered hover className="mt-3">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>회원ID</th>
-                        <th>이전 직급</th>
-                        <th>변경 직급</th>
-                        <th>사유</th>
-                        <th>변경일시</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {list.map((item) => (
-                        <tr key={item.id}>
-                            <td>{item.id}</td>
-                            <td>{item.memberId}</td>
-                            <td>{item.oldPositionId || "-"}</td>
-                            <td>{item.newPositionId}</td>
-                            <td>{item.changeReason}</td>
-                            <td>{item.changedAt?.substring(0, 19)}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handlePrev = () => fetchData(page - 1);
+  const handleNext = () => fetchData(page + 1);
+
+  const renderPagination = () => (
+    <Pagination className="justify-content-center mt-3">
+      <Pagination.Prev onClick={handlePrev} disabled={page <= 0} />
+      <Pagination.Item active>{page + 1}</Pagination.Item>
+      <Pagination.Next onClick={handleNext} disabled={page >= totalPages - 1} />
+    </Pagination>
+  );
+
+  return (
+    <div className="container mt-4">
+      <h3 className="mb-3">직급 변경 이력</h3>
+
+      {loading ? (
+        <div className="text-center my-5">
+          <Spinner animation="border" />
         </div>
-    );
+      ) : (
+        <>
+          <Table striped bordered hover responsive>
+            <thead>
+              <tr>
+                <th>변경일자</th>
+                <th>회원아이디</th>
+                <th>회원명</th>
+                <th>이전직급아이디</th>
+                <th>이전직급</th>
+                <th>직급아이디</th>
+                <th>변경직급</th>
+                <th>변경사유</th>
+              </tr>
+            </thead>
+            <tbody>
+              {histories.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="text-center">
+                    데이터가 없습니다
+                  </td>
+                </tr>
+              ) : (
+                histories.map((h) => (
+                  <tr key={h.id}>
+                    <td>{new Date(h.changedAt)
+                        .toLocaleDateString("ko-KR")
+                        .replace(/\s/g, "")   // 공백 제거
+                        .slice(0, -1)}
+                    </td>
+                    <td>{h.memberId}</td>
+                    <td>{h.memberName}</td>
+                    <td>{h.oldPositionId || "-"}</td>
+                    <td>{h.oldPositionName || "-"}</td>
+                    <td>{h.newPositionId}</td>
+                    <td>{h.newPositionName}</td>
+                    <td>{h.changeReason}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </Table>
+
+          {renderPagination()}
+        </>
+      )}
+    </div>
+  );
 }

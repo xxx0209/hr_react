@@ -1,10 +1,11 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
-import { Form, InputGroup, Badge, Button, Dropdown, ListGroup } from "react-bootstrap";
+import { Form, InputGroup, Badge, Button, ListGroup } from "react-bootstrap";
 
 /**
+ * SelectCombo
  * props:
  * - options: Array<string> | Array<{ value, label }>
- * - value: string | Array<string>  (controlled)
+ * - value: string | Array<string>
  * - onChange: (newValue) => void
  * - label: string
  * - placeholder: string
@@ -13,6 +14,7 @@ import { Form, InputGroup, Badge, Button, Dropdown, ListGroup } from "react-boot
  * - disabled: boolean
  * - className: string
  * - noOptionsText: string
+ * - required: boolean
  */
 export default function SelectCombo({
   options = [],
@@ -25,19 +27,18 @@ export default function SelectCombo({
   disabled = false,
   className = "",
   noOptionsText = "옵션이 없습니다",
-  required = false, // 추가된 부분
+  required = false,
 }) {
-  // normalize options to objects { value, label }
   const normOptions = useMemo(() => {
-    return options.map((o) => (typeof o === "string" ? { value: o, label: o } : o));
+    return options.map((o) =>
+      typeof o === "string" ? { value: o, label: o } : o
+    );
   }, [options]);
 
-  // internal state if uncontrolled
   const [internalValue, setInternalValue] = useState(multiple ? [] : "");
   const controlled = value !== undefined;
   const selected = controlled ? value : internalValue;
 
-  // search state
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef();
@@ -52,14 +53,16 @@ export default function SelectCombo({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // filtered options
   const filtered = useMemo(() => {
     const q = String(search || "").trim().toLowerCase();
     if (!q) return normOptions;
-    return normOptions.filter((o) => o.label.toLowerCase().includes(q) || String(o.value).toLowerCase().includes(q));
+    return normOptions.filter(
+      (o) =>
+        o.label.toLowerCase().includes(q) ||
+        String(o.value).toLowerCase().includes(q)
+    );
   }, [normOptions, search]);
 
-  // helpers
   const isSelected = (val) => {
     if (multiple) {
       return Array.isArray(selected) && selected.includes(val);
@@ -91,20 +94,22 @@ export default function SelectCombo({
     updateValue(multiple ? [] : "");
   };
 
-  // display label for single select
   const displayLabel = () => {
     if (multiple) return null;
-    if (!selected) return placeholder;
+    if (!selected) return "";
     const found = normOptions.find((o) => o.value === selected);
     return found ? found.label : selected;
   };
 
   return (
-    <div className={`select-combo ${className}`} ref={wrapperRef} style={{ position: "relative" }}>
+    <div
+      className={`select-combo ${className}`}
+      ref={wrapperRef}
+      style={{ position: "relative" }}
+    >
       {label && <Form.Label>{label}</Form.Label>}
 
       <div>
-        {/* Input / display area */}
         <InputGroup>
           {multiple ? (
             <div
@@ -126,8 +131,18 @@ export default function SelectCombo({
                 selected.map((val) => {
                   const opt = normOptions.find((o) => o.value === val);
                   return (
-                    <Badge key={val} pill bg="secondary" style={{ display: "inline-flex", alignItems: "center" }}>
-                      <span style={{ marginRight: 6 }}>{opt ? opt.label : val}</span>
+                    <Badge
+                      key={val}
+                      pill
+                      bg="secondary"
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span style={{ marginRight: 6 }}>
+                        {opt ? opt.label : val}
+                      </span>
                       <Button
                         size="sm"
                         variant="light"
@@ -146,32 +161,59 @@ export default function SelectCombo({
                 <span style={{ color: "#6c757d" }}>{placeholder}</span>
               )}
 
-              {/* 🔹 여기에 추가 */}
-              {multiple && required && (
+              {/* ✅ required 검증용 hidden input */}
+              {required && (
                 <input
-                  type="hidden"
-                  value={(Array.isArray(selected) && selected.length > 0) ? selected.join(",") : ""}
+                  type="text"
+                  tabIndex={-1}
+                  style={{ opacity: 0, height: 0, width: 0, position: "absolute" }}
+                  value={
+                    Array.isArray(selected) && selected.length > 0
+                      ? selected.join(",")
+                      : ""
+                  }
                   required
+                  onChange={() => {}}
                 />
               )}
             </div>
           ) : (
-            <Form.Control
-              readOnly
-              onClick={() => !disabled && setOpen((s) => !s)}
-              value={displayLabel()}
-              placeholder={placeholder}
-              disabled={disabled}
-              required={required && !multiple} // 추가된 부분
-              style={{ cursor: disabled ? "not-allowed" : "pointer", background: disabled ? "#e9ecef" : "white" }}
-            />
+            <>
+              <Form.Control
+                readOnly
+                onClick={() => !disabled && setOpen((s) => !s)}
+                value={displayLabel() || ""}
+                placeholder={placeholder}
+                disabled={disabled}
+                style={{
+                  cursor: disabled ? "not-allowed" : "pointer",
+                  background: disabled ? "#e9ecef" : "white",
+                }}
+              />
+              {/* ✅ required 검증용 hidden input */}
+              {required && (
+                <input
+                  type="text"
+                  tabIndex={-1}
+                  style={{ opacity: 0, height: 0, width: 0, position: "absolute" }}
+                  value={selected || ""}
+                  required
+                  onChange={() => {}}
+                />
+              )}
+            </>
           )}
 
           <Button
             variant="outline-secondary"
             onClick={(e) => {
               e.stopPropagation();
-              if (selected && (multiple ? (Array.isArray(selected) && selected.length > 0) : selected !== "")) {
+              if (
+                selected &&
+                (multiple
+                  ? Array.isArray(selected) && selected.length > 0
+                  : selected !== "")
+              ) {
                 handleClear(e);
               } else {
                 setOpen((s) => !s);
@@ -180,11 +222,15 @@ export default function SelectCombo({
             aria-label="toggle"
             disabled={disabled}
           >
-            {selected && (multiple ? Array.isArray(selected) && selected.length > 0 : selected !== "") ? "×" : "▾"}
+            {selected &&
+            (multiple
+              ? Array.isArray(selected) && selected.length > 0
+              : selected !== "")
+              ? "×"
+              : "▾"}
           </Button>
         </InputGroup>
 
-        {/* dropdown area */}
         {open && (
           <div
             style={{
@@ -211,7 +257,9 @@ export default function SelectCombo({
 
             <div style={{ maxHeight: 240, overflow: "auto" }}>
               {filtered.length === 0 ? (
-                <div style={{ padding: 12, color: "#6c757d" }}>{noOptionsText}</div>
+                <div style={{ padding: 12, color: "#6c757d" }}>
+                  {noOptionsText}
+                </div>
               ) : (
                 <ListGroup variant="flush">
                   {filtered.map((opt) => (
@@ -220,10 +268,16 @@ export default function SelectCombo({
                       action
                       onClick={() => handleSelect(opt.value)}
                       active={isSelected(opt.value)}
-                      style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
                     >
                       <span>{opt.label}</span>
-                      {isSelected(opt.value) && <span style={{ opacity: 0.7 }}>✓</span>}
+                      {isSelected(opt.value) && (
+                        <span style={{ opacity: 0.7 }}>✓</span>
+                      )}
                     </ListGroup.Item>
                   ))}
                 </ListGroup>
