@@ -9,8 +9,9 @@ function App() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // 전자결재 메뉴 활성화 여부 체크
+    // 전자결재 메뉴 활성화 여부 체크, 급여추가
     const [isApprovalMode, setIsApprovalMode] = useState(false);
+    const [isSalaryMode, setIsSalaryMode] = useState(false);
 
     // 메뉴 클릭 시 동작
     const handleNavigate = (path) => {
@@ -19,8 +20,13 @@ function App() {
         // 전자결재 메뉴 눌렀을 때만 하위 메뉴로 전환
         if (path === "/approval") {
             setIsApprovalMode(true);
+            setIsSalaryMode(false);
+        } else if (path === "/salary") { // 급여 메뉴 클릭시
+            setIsSalaryMode(true);
+            setIsApprovalMode(false);
         } else {
             setIsApprovalMode(false);
+            setIsSalaryMode(false);
         }
     };
 
@@ -78,7 +84,36 @@ function App() {
                         📂 임시 보관함
                     </Nav.Link>
                 </Nav>
+            ) : isSalaryMode ? (
+                <Nav className="flex-column border-start ps-3">
+                    <Nav.Link
+                        onClick={() => navigate('/salary/manage')}
+                        active={location.pathname === '/salary/manage'}
+                    >
+                        📋 나의 급여 내역
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/salary/admin')}
+                        active={location.pathname === '/salary/admin'}
+                    >
+                        🧾 급여 관리 (관리자)
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/salary/admin/create')}
+                        active={location.pathname === '/salary/admin/create'}
+                    >
+                        ➕ 급여 생성
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/salary/base-salary')}
+                        active={location.pathname === '/salary/base-salary'}
+                    >
+                        ⚙️ 기본급 설정
+                    </Nav.Link>
+                    
+                </Nav>
             ) : (
+
                 // 기본 중분류 메뉴
                 <Nav className="flex-column border-start ps-3">
                     <Nav.Link
