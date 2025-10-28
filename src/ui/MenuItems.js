@@ -8,11 +8,7 @@ function App() {
     const navigate = useNavigate();
     const location = useLocation();
 
-<<<<<<< HEAD
     // 전자결제 메뉴 활성화 여부 체크
-=======
-    // 전자결재 메뉴 활성화 여부 체크, 급여추가
->>>>>>> byeongjin
     const [isApprovalMode, setIsApprovalMode] = useState(false);
     const [isSalaryMode, setIsSalaryMode] = useState(false);
 
@@ -30,14 +26,11 @@ function App() {
         // 전자결재 메뉴 눌렀을 때만 하위 메뉴로 전환
         if (path === "/approval") {
             setIsApprovalMode(true);
-<<<<<<< HEAD
             setIsPostMenuOpen(false); // 게시판 하위 메뉴 닫기
-=======
             setIsSalaryMode(false);
         } else if (path === "/salary") { // 급여 메뉴 클릭시
             setIsSalaryMode(true);
             setIsApprovalMode(false);
->>>>>>> byeongjin
         } else {
             setIsApprovalMode(false);
             setIsSalaryMode(false);
@@ -104,7 +97,7 @@ function App() {
                         📂 임시 보관함
                     </Nav.Link>
                 </Nav>
-<<<<<<< HEAD
+
             ) : activeMenu === 'post' && isPostMenuOpen ? (
                 // ✅ 게시판 하위 메뉴
                 <Nav className="flex-column border-start ps-3">
@@ -139,7 +132,8 @@ function App() {
                     >
                         📂 게시글 관리
                     </Nav.Link>
-=======
+                </Nav>
+
             ) : isSalaryMode ? (
                 <Nav className="flex-column border-start ps-3">
                     <Nav.Link
@@ -166,8 +160,8 @@ function App() {
                     >
                         ⚙️ 기본급 설정
                     </Nav.Link>
-                    
->>>>>>> byeongjin
+
+
                 </Nav>
             ) : (
 

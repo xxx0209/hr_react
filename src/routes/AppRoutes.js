@@ -9,7 +9,6 @@ import LeaveStatus from "../pages/LeaveStatus";
 
 import ApprovalRequestPage from "../pages/ApprovalRequestPage";
 import ApprovalTempPage from "../pages/ApprovalTempPage";
-<<<<<<< HEAD
 import SalaryPage from "../pages/SalaryPage";
 import PostPage from "../pages/PostPage";
 import CreatePost from "../pages/CreatePost";
@@ -22,14 +21,12 @@ import PositionDetailPage from "../pages/PositionDetailPage";
 import PositionHistoryList from "../pages/PositionHistoryList";
 import PositionHistoryForm from "../pages/PositionHistoryForm";
 import PositionHistoryPage from "../pages/PositionHistoryPage";
-=======
 
 import SalaryPage from '../pages/SalaryPage';
 import SalaryAllList from '../pages/SalaryAllList';
 import SalaryForm from '../pages/SalaryForm';
 import BaseSalaryForm from '../pages/BaseSalaryForm';
 import SalaryDetailPage from '../pages/SalaryDetailPage';
->>>>>>> byeongjin
 
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
 // 이러한 파일을 네트워크에서는 routing table이라고 합니다.
@@ -45,7 +42,6 @@ function AppRoutes() {
                 <Route path="/signup" element={<SignupPage />} />
             </Route>
 
-<<<<<<< HEAD
             {/* 공통 Layout + PrivateRoute 그룹 */}
             <Route element={<PrivateLayoutRoute />}>
                 <Route path="/" element={<Navigate to="/home" replace />} />
@@ -61,15 +57,13 @@ function AppRoutes() {
                 <Route path="/position/history/list" element={<PositionHistoryList />} />
                 <Route path="/position/history/:id" element={<PositionHistoryForm />} />
                 <Route path="/position/history/save" element={<PositionHistoryForm />} />
-=======
-            {/* 급여 관련 페이지 */}
-            <Route path="/salary" element={<Navigate to="/salary/manage" />} />
-            <Route path="/salary/manage" element={<SalaryPage />} />
-            <Route path="/salary/admin" element={<SalaryAllList />} />
-            <Route path="/salary/admin/create" element={<SalaryForm />} />
-            <Route path="/salary/base-salary" element={<BaseSalaryForm />} />
-            <Route path="/salary/detail/:id" element={<SalaryDetailPage />} />
->>>>>>> byeongjin
+                {/* 급여 관련 페이지 */}
+                <Route path="/salary" element={<Navigate to="/salary/manage" />} />
+                <Route path="/salary/manage" element={<SalaryPage />} />
+                <Route path="/salary/admin" element={<SalaryAllList />} />
+                <Route path="/salary/admin/create" element={<SalaryForm />} />
+                <Route path="/salary/base-salary" element={<BaseSalaryForm />} />
+                <Route path="/salary/detail/:id" element={<SalaryDetailPage />} />
 
 
                 {/* 전자결재 페이지 */}
