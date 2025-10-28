@@ -63,7 +63,7 @@ const LoginPage = () => {
                             </Button>
 
                             <div style={{ textAlign: "center", fontSize: "0.9rem" }}>
-                                Don't have any account? <a href="#">Sign Up</a>
+                                Dont have any account? <a href="#">Sign Up</a>
                             </div>
                         </Form>
                     </div>
