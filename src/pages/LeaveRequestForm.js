@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function LeaveRequestForm({ onSubmit }) {
+function LeaveRequestForm() {
     const [type, setType] = useState("연차");
     const [date, setDate] = useState(() => {
         const today = new Date().toISOString().split("T")[0];
@@ -10,50 +10,65 @@ function LeaveRequestForm({ onSubmit }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const newRequest = {
+
+        //TODO: 백엔드 연동 or 상태 저장
+        console.log('휴가 신청 정보:', {
             type,
             date,
-            status: "결재대기",
             reason,
-        };
-        onSubmit(newRequest); //부모 컴포넌트로 전달
-        setType("연차");
-        setDate(new Date().toISOString().split("T")[0]);
-        setReason("");
+        });
+
+        //상태 초기화
+        setType('');
+        setDate('');
+        setReason('');
     };
 
     return (
-        <form onSubmit={handleSubmit} style={{ padding: "20px" }}>
-            <h3>휴가 신청 폼</h3>
+        <form onSubmit={handleSubmit} style={{ padding: '2rem', maxWidth: '500px', margin: '0 auto' }}>
+            <h2 className="mb-4">휴가 신청</h2>
 
-            <label>
-                휴가 종류:
-                <select value={type} onChange={(e) => setType(e.target.value)}>
-                    <option value="연차">연차</option>
-                    <option value="반차">반차</option>
-                    <option value="반반차">반반차</option>
+            <div className="mb-3">
+                <label htmlFor="type" className="form-label">휴가 종류</label>
+                <select
+                    id="type"
+                    className="form-select"
+                    value={type}
+                    onChange={(e) => setType(e.target.value)}
+                    required>
+
+                    <option value="">-- 선택하세요 --</option>
+                    <option value="annual">연차</option>
+                    <option value="sick">병가</option>
+                    <option value="half">반차</option>
                 </select>
-            </label>
+            </div>
 
-            <br />
+            <div className="mb-3">
+                <label htmlFor="date" className="form-label">사용일자</label>
+                <input
+                    type="date"
+                    id="date"
+                    className="form-control"
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    required />
+            </div>
 
-            <label>
-                사용일자:
-                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-            </label>
+            <div className="mb-3">
+                <label htmlFor="reason" className="form-label">신청 사유</label>
+                <input
+                    type="text"
+                    id="reason"
+                    className="form-control"
+                    value={reason}
+                    onChange={(e) => setReason(e.target.value)}
+                    placeholder="사유를 입력하세요"
+                    required />
+            </div >
 
-            <br />
-
-            <label>
-                신청 사유:
-                <input type="text" value={reason} onChange={(e) => setReason(e.target.value)} />
-            </label>
-
-            <br />
-
-            <button type="submit">신청하기</button>
+            <button type="submit" className="btn brn-primary w-100">신청하기</button>
         </form>
-
     );
 }
 

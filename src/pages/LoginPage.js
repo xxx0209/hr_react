@@ -1,13 +1,78 @@
-import React from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Alert, InputGroup } from "react-bootstrap";
 import bannerImg from "./../assets/logo192.png";
+import { Link, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { login } from "../api/auth";
+import { getCurrentUser } from "../api/user";
+import { AuthContext } from "../context/AuthContext";
 
 const LoginPage = () => {
+
+    const navigate = useNavigate();
+
+    const { setUser } = useContext(AuthContext);
+
+    //폼 데이터 state 정의
+    const [formData, setFormData] = useState({
+        memberId: "",
+        password: "",
+    });
+
+    //폼 유효성 검사(Form Validation Check) 관련 state 정의 : 입력 양식에 문제 발생시 값을 저장할 곳
+    const [errors, setErrors] = useState({
+        memberId: '', password: '', general: ''
+    });
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (formData.memberId.trim() === "") {
+            setErrors(prevErrors => ({
+                ...prevErrors,
+                memberId: "아이디를 입력해 주세요."
+            }));
+            return;
+        }
+
+        if (formData.password.trim() === "") {
+            setErrors(prevErrors => ({
+                ...prevErrors,
+                password: "비밀번호를 입력해 주세요."
+            }));
+            return;
+        }
+
+        try {
+
+            const response = await login(formData.memberId, formData.password);
+
+            if (response.status === 200) { // 스프링의 MemberController 파일 참조
+
+                const token = response.data.token;
+
+                // JWT 토큰 저장 (실무에선 httpOnly cookie 권장)
+                localStorage.setItem('accessToken', token);
+                const res = await getCurrentUser();
+                setUser(res.data);
+                alert("회원가입이 완료되었습니다!");
+                navigate('/');
+            }
+        } catch (error) {
+            if (error.response && error.response.data) {
+                // 서버에서 받은 오류 정보를 객체로 저장합니다.
+                setErrors(error.response.data);
+            } else { // 입력 값 이외에 발생하는 다른 오류와 관련됨.
+                setErrors((previous) => ({ ...previous, general: '로그인 오류가 발생하였습니다.' }));
+            }
+        }
+    }
+
     return (
         <Container
             className="d-flex justify-content-center align-items-center"
             style={{ height: "100vh" }}
         >
+
             {/* 로그인 박스 */}
             <Row
                 style={{
@@ -30,25 +95,58 @@ const LoginPage = () => {
                 >
 
                     <h2 style={{ marginBottom: "30px" }}>Log in</h2>
-                    <div className="d-flex gap-3 mb-3">
-                        <Form style={{ width: "100%" }}>
-                            <Form.Group controlId="formEmail" className="mb-3">
-                                <Form.Label>Email</Form.Label>
-                                <Form.Control type="email" placeholder="Enter email" />
+                    {errors.general && <Alert variant="danger">{errors.general}</Alert>}
+                    <div className="d-flex w-100 gap-3 mb-3 ">
+                        <Form onSubmit={handleSubmit} style={{ width: "100%" }}>
+                            <Form.Group controlId="formMemberId" className="mb-3">
+                                <Form.Label>아이디</Form.Label>
+                                <InputGroup>
+                                    <Form.Control
+                                        type="text"
+                                        placeholder="아이디"
+                                        value={formData.memberId}
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, memberId: e.target.value });
+                                            setErrors(prevErrors => ({ ...prevErrors, memberId: "" }));  // 오류 초기화
+                                        }}
+                                        isInvalid={!!errors.memberId}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.memberId}
+                                    </Form.Control.Feedback>
+                                </InputGroup>
                             </Form.Group>
 
                             <Form.Group controlId="formPassword" className="mb-2">
-                                <Form.Label>Password</Form.Label>
-                                <Form.Control type="password" placeholder="Password" />
+                                <Form.Label>비밀번호</Form.Label>
+                                <InputGroup>
+                                    <Form.Control
+                                        type="password"
+                                        placeholder="비밀번호"
+                                        value={formData.password}
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, password: e.target.value });
+                                            setErrors(prevErrors => ({ ...prevErrors, password: "" }));  // 오류 초기화
+                                        }}
+                                        isInvalid={!!errors.password}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.password}
+                                    </Form.Control.Feedback>
+                                </InputGroup>
                             </Form.Group>
 
                             <div
                                 className="mb-4 align-items-end"
                                 style={{ width: "100%", textAlign: "right", fontSize: "0.9rem" }}
                             >
-                                Forgot your password?
+                                비밀번호를 잊으셨나요?
                             </div>
-
+                            {errors.password && (
+                                <div className="text-danger mt-1" style={{ fontSize: "0.9rem" }}>
+                                    {errors.password}
+                                </div>
+                            )}
                             <Button
                                 variant="primary"
                                 type="submit"
@@ -59,11 +157,14 @@ const LoginPage = () => {
                                     marginBottom: "15px",
                                 }}
                             >
-                                Log In
+                                로그인
                             </Button>
 
-                            <div style={{ textAlign: "center", fontSize: "0.9rem" }}>
-                                Don't have any account? <a href="#">Sign Up</a>
+                            <div className="text-center mt-3">
+                                <span>회원이 아니신가요? </span>
+                                <Link to="/member/signup">
+                                    회원가입
+                                </Link>
                             </div>
                         </Form>
                     </div>

@@ -7,30 +7,30 @@ function AttendanceTracker() {
     const [clockInTime, setClockInTime] = useState(null);
     const [clockOutTime, setClockOutTime] = useState(null);
     const [workStatus, setWorkStatus] = useState("정상");
-    const [weeklyStats, setWeeklyStats] = useState({
+    const [weeklyStats] = useState({
         totalHours: "0h 0m",
         lateCount: 0,
         earlyLeaveCount: 0,
         absentCount: 0,
     });
 
-    const [leaveBalance, setLeaveBalance] = useState({
-        annual: 4.5,       //연차
-        half: 2,           //반차
-        quarter: 1         //반반차
-    });
+    // const [leaveBalance, setLeaveBalance] = useState({
+    //     annual: 4.5,       //연차
+    //     half: 2,           //반차
+    //     quarter: 1         //반반차
+    // });
 
-    const [recentRequests, setRecentRequests] = useState([
-        //예시 데이터
-        { type: "연차", date: "2025-10-20", status: "결재대기" },
-        { type: "반차", date: "2025-10-18", status: "승인완료" },
-        { type: "반반차", date: "2025-10-15", status: "반려" }
-    ]);
+    // const [recentRequests, setRecentRequests] = useState([
+    //     //예시 데이터
+    //     { type: "연차", date: "2025-10-20", status: "결재대기" },
+    //     { type: "반차", date: "2025-10-18", status: "승인완료" },
+    //     { type: "반반차", date: "2025-10-15", status: "반려" }
+    // ]);
 
-    const [calendarEvents, setCalendarEvents] = useState([
-        //승인된 휴가만 표시
-        { date: "2025-10-18", type: "반차", status: "승인완료" }
-    ]);
+    // const [calendarEvents, setCalendarEvents] = useState([
+    //     //승인된 휴가만 표시
+    //     { date: "2025-10-18", type: "반차", status: "승인완료" }
+    // ]);
 
     useEffect(() => {
         const savedClockIn = localStorage.getItem("clockInTime");
