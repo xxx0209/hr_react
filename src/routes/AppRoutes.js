@@ -9,7 +9,6 @@ import LeaveStatus from "../pages/LeaveStatus";
 
 import ApprovalRequestPage from "../pages/ApprovalRequestPage";
 import ApprovalTempPage from "../pages/ApprovalTempPage";
-import SalaryPage from "../pages/SalaryPage";
 import PostPage from "../pages/PostPage";
 import CreatePost from "../pages/CreatePost";
 import SamplePage from "../sample/SamplePage"
