@@ -31,7 +31,7 @@ function App() {
         }
 
         // 게시판 메뉴 눌렀을 때 하위 메뉴 토글
-        if (path === "/post") {
+        if (path === "/board") {
             setIsPostMenuOpen(!isPostMenuOpen);  // 게시판 메뉴 상태 변경 (열고 닫기)
         } else {
             setIsPostMenuOpen(false);  // 다른 메뉴를 클릭하면 게시판 하위 메뉴 닫기
@@ -66,6 +66,12 @@ function App() {
                 >
                     급여관련
                 </Nav.Link>
+                <Nav.Link
+                    onClick={() => handleNavigate('/board', 'board')}
+                    active={location.pathname === '/board'}
+                >
+                    게시판
+                </Nav.Link>
             </Nav>
 
             {/* 두 번째 메뉴 그룹 */}
@@ -91,39 +97,33 @@ function App() {
                         📂 임시 보관함
                     </Nav.Link>
                 </Nav>
-            ) : activeMenu === 'post' && isPostMenuOpen ? (
+            ) : activeMenu === 'board' && isPostMenuOpen ? (
                 // ✅ 게시판 하위 메뉴
                 <Nav className="flex-column border-start ps-3">
-                    <h3 className="m-0" >게시판</h3>
                     <Row className="mb-3">
                     <Col xs={12} className="text-center">
                     <Button
                         variant="primary"
                         size="lg"
                         className="w-100"
-                        onClick={() => navigate('/post/create')} // 글쓰기 페이지로 이동
+                        onClick={() => navigate('/board/create')} // 글쓰기 페이지로 이동
                     >
                         글쓰기
                     </Button>
                     </Col>
                     </Row>
+                   
                     <Nav.Link
-                        onClick={() => navigate('/post/create')}
-                        active={location.pathname === '/post/create'}
+                        onClick={() => navigate('/board/notice')}
+                        active={location.pathname === '/board/notice'}
                     >
-                        📝 게시글 작성
+                        📄 공지사항
                     </Nav.Link>
                     <Nav.Link
-                        onClick={() => navigate('/post/list')}
-                        active={location.pathname === '/post/list'}
+                        onClick={() => navigate('/board/free')}
+                        active={location.pathname === '/board/free'}
                     >
-                        📄 게시글 목록
-                    </Nav.Link>
-                    <Nav.Link
-                        onClick={() => navigate('/post/manage')}
-                        active={location.pathname === '/post/manage'}
-                    >
-                        📂 게시글 관리
+                        📂 자유 게시판
                     </Nav.Link>
                 </Nav>
             ) : (
