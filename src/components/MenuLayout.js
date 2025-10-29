@@ -3,6 +3,7 @@ import { Row, Col, Nav } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import MemberSubMenu from "../ui/MemberSubMenu";
+import AttendanceSubMenu from "../ui/AttendanceSubMenu"
 
 // 하위 메뉴 컴포넌트 import
 // import ApprovalSubMenu from "./ApprovalSubMenu";
@@ -65,13 +66,19 @@ export default function MenuItems() {
                     >
                         💰 급여관리
                     </Nav.Link>
+                    <Nav.Link
+                        onClick={() => handleSelect("attendance", "/attendance/attendance")}
+                        active={location.pathname.startsWith("/attendance")}
+                    >
+                        💰 출퇴근 현황
+                    </Nav.Link>
                 </Nav>
             </Col>
 
             {/* 오른쪽: 소분류 */}
             <Col md={7} className="ps-3">
                 {activeMenu === "member" && <MemberSubMenu />}
-                {/* {activeMenu === "board" && <BoardSubMenu />} */}
+                {activeMenu === "attendance" && <AttendanceSubMenu />}
                 {/* {activeMenu === "salary" && <SalarySubMenu />} */}
 
                 {!activeMenu && (
