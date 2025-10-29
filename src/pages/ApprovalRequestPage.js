@@ -26,7 +26,7 @@ export default function ApprovalRequestPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await api.get("/user/me"); // 쿠키 인증으로 로그인 유저 반환
+        const res = await axios.get("/user/me"); // 쿠키 인증으로 로그인 유저 반환
         setUser(res.data);
         setForm((prev) => ({
           ...prev,
