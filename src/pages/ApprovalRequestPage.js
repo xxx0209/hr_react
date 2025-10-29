@@ -1,17 +1,15 @@
 // src/pages/ApprovalRequestPage.js
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Table, Modal, Badge } from "react-bootstrap";
-import axios from "axios";
+import api from "../api/api"; // ← 기존 axios 인스턴스 (withCredentials 포함)
 import { API_BASE_URL } from "../config/config";
 
 export default function ApprovalRequestPage() {
+  const [user, setUser] = useState(null);
   const [requests, setRequests] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [editId, setEditId] = useState(null);
-
   const [form, setForm] = useState({
     memberId: "",
+    memberName: "",
     requestType: "",
     content: "",
     startDate: "",
@@ -20,6 +18,29 @@ export default function ApprovalRequestPage() {
     status: "작성중",
   });
 
+  const [showModal, setShowModal] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [editId, setEditId] = useState(null);
+
+  // 🔹 로그인 사용자 정보 가져오기
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await api.get("/user/me"); // 쿠키 인증으로 로그인 유저 반환
+        setUser(res.data);
+        setForm((prev) => ({
+          ...prev,
+          memberId: res.data.memberId,
+          memberName: res.data.name,
+        }));
+      } catch (err) {
+        console.error("로그인 사용자 정보 불러오기 실패:", err);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  // 최초 기안 목록 불러오기
   useEffect(() => {
     fetchRequests();
   }, []);
@@ -27,30 +48,35 @@ export default function ApprovalRequestPage() {
   const fetchRequests = async () => {
     try {
       const res = await axios.get(`${API_BASE_URL}/api/requests`);
-      const filtered = res.data.filter((r) => r.status !== "임시저장"); // 임시저장 제외
+      // 임시저장 제외
+      const filtered = res.data.filter((r) => r.status !== "임시저장");
       setRequests(filtered);
     } catch (err) {
       console.error("기안 목록 조회 실패:", err);
     }
   };
 
+  // 입력 변경 처리
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 기안 등록 및 수정
+  // 기안 등록 및 임시저장
   const handleSubmit = async (e, isTemp = false) => {
     e.preventDefault();
     try {
-      const submitData = { ...form, status: isTemp ? "임시저장" : "작성중" };
+      const submitData = {
+        ...form,
+        status: isTemp ? "임시저장" : "작성중",
+      };
 
       if (editMode) {
         await axios.put(`${API_BASE_URL}/api/requests/${editId}`, submitData);
-        alert(isTemp ? "기안이 임시저장되었습니다 " : "기안이 수정되었습니다 ");
+        alert(isTemp ? "기안이 임시저장되었습니다" : "기안이 수정되었습니다");
       } else {
         await axios.post(`${API_BASE_URL}/api/requests`, submitData);
-        alert(isTemp ? "임시저장되었습니다 " : "기안서가 등록되었습니다 ");
+        alert(isTemp ? "임시저장되었습니다" : "기안서가 등록되었습니다");
       }
 
       setShowModal(false);
@@ -64,6 +90,7 @@ export default function ApprovalRequestPage() {
     }
   };
 
+  // 폼 초기화
   const resetForm = () => {
     setForm({
       memberId: "",
@@ -76,6 +103,7 @@ export default function ApprovalRequestPage() {
     });
   };
 
+  // 수정 모드 진입
   const handleEdit = (r) => {
     setEditMode(true);
     setEditId(r.id);
@@ -91,6 +119,7 @@ export default function ApprovalRequestPage() {
     setShowModal(true);
   };
 
+  // 회수(삭제)
   const handleDelete = async (id) => {
     if (!window.confirm("정말 이 기안을 회수하시겠습니까?")) return;
     try {
@@ -141,7 +170,11 @@ export default function ApprovalRequestPage() {
                 <td>{r.startDate?.slice(0, 10)} ~ {r.endDate?.slice(0, 10)}</td>
                 <td>{r.content}</td>
                 <td>
-                  <Badge bg={r.status === "임시저장" ? "warning" : r.status === "승인" ? "success" : "secondary"}>
+                  <Badge bg={
+                    r.status === "임시저장" ? "warning" :
+                    r.status === "승인" ? "success" :
+                    "secondary"
+                  }>
                     {r.status}
                   </Badge>
                 </td>
@@ -163,8 +196,13 @@ export default function ApprovalRequestPage() {
         <Modal.Body>
           <Form onSubmit={(e) => handleSubmit(e, false)}>
             <Form.Group className="mb-3">
-              <Form.Label>작성자 ID</Form.Label>
-              <Form.Control name="memberId" value={form.memberId} onChange={handleChange} required disabled={editMode} />
+              <Form.Label>작성자 이름</Form.Label>
+              <Form.Control
+                type="text"
+                value={form.memberName}
+                disabled
+                placeholder="로그인한 사용자 이름"
+              />
             </Form.Group>
 
             <Form.Group className="mb-3">
@@ -178,16 +216,30 @@ export default function ApprovalRequestPage() {
               </Form.Select>
             </Form.Group>
 
+            {/* 지출품의서일 때만 금액 입력란 표시 */}
             {form.requestType === "지출품의서" && (
               <Form.Group className="mb-3">
                 <Form.Label>금액</Form.Label>
-                <Form.Control type="number" name="price" value={form.price} onChange={handleChange} min="0" />
+                <Form.Control
+                  type="number"
+                  name="price"
+                  value={form.price}
+                  onChange={handleChange}
+                  min="0"
+                />
               </Form.Group>
             )}
 
             <Form.Group className="mb-3">
               <Form.Label>내용</Form.Label>
-              <Form.Control as="textarea" rows={3} name="content" value={form.content} onChange={handleChange} required />
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="content"
+                value={form.content}
+                onChange={handleChange}
+                required
+              />
             </Form.Group>
 
             <Row>
