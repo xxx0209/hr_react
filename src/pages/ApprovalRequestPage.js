@@ -1,17 +1,15 @@
 // src/pages/ApprovalRequestPage.js
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Table, Modal, Badge } from "react-bootstrap";
-import axios from "axios";
+import api from "../api/api"; // ← 기존 axios 인스턴스 (withCredentials 포함)
 import { API_BASE_URL } from "../config/config";
 
 export default function ApprovalRequestPage() {
+  const [user, setUser] = useState(null);
   const [requests, setRequests] = useState([]);
-  const [showModal, setShowModal] = useState(false);
-  const [editMode, setEditMode] = useState(false);
-  const [editId, setEditId] = useState(null);
-
   const [form, setForm] = useState({
     memberId: "",
+    memberName: "",
     requestType: "",
     content: "",
     startDate: "",
@@ -19,6 +17,28 @@ export default function ApprovalRequestPage() {
     price: "",
     status: "작성중",
   });
+
+  const [showModal, setShowModal] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [editId, setEditId] = useState(null);
+
+  // 🔹 로그인 사용자 정보 가져오기
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await api.get("/user/me"); // 쿠키 인증으로 로그인 유저 반환
+        setUser(res.data);
+        setForm((prev) => ({
+          ...prev,
+          memberId: res.data.memberId,
+          memberName: res.data.name,
+        }));
+      } catch (err) {
+        console.error("로그인 사용자 정보 불러오기 실패:", err);
+      }
+    };
+    fetchUser();
+  }, []);
 
   // 최초 기안 목록 불러오기
   useEffect(() => {
@@ -176,13 +196,12 @@ export default function ApprovalRequestPage() {
         <Modal.Body>
           <Form onSubmit={(e) => handleSubmit(e, false)}>
             <Form.Group className="mb-3">
-              <Form.Label>작성자 ID</Form.Label>
+              <Form.Label>작성자 이름</Form.Label>
               <Form.Control
-                name="memberId"
-                value={form.memberId}
-                onChange={handleChange}
-                required
-                disabled={editMode}
+                type="text"
+                value={form.memberName}
+                disabled
+                placeholder="로그인한 사용자 이름"
               />
             </Form.Group>
 
