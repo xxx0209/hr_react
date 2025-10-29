@@ -31,9 +31,11 @@ function App() {
         } else if (path === "/salary") { // 급여 메뉴 클릭시
             setIsSalaryMode(true);
             setIsApprovalMode(false);
+            setIsPostMenuOpen(false);
         } else {
             setIsApprovalMode(false);
             setIsSalaryMode(false);
+            setIsPostMenuOpen(false);
         }
 
         // 게시판 메뉴 눌렀을 때 하위 메뉴 토글
@@ -67,11 +69,12 @@ function App() {
                     캘린더
                 </Nav.Link>
                 <Nav.Link
-                    onClick={() => handleNavigate('/salary')}
-                    active={location.pathname === '/salary'}
+                    onClick={() => handleNavigate('/salary', 'salary')}
+                    active={location.pathname === "/salary"}
                 >
                     급여관련
                 </Nav.Link>
+
             </Nav>
 
             {/* 두 번째 메뉴 그룹 */}
@@ -137,22 +140,28 @@ function App() {
             ) : isSalaryMode ? (
                 <Nav className="flex-column border-start ps-3">
                     <Nav.Link
-                        onClick={() => navigate('/salary/manage')}
-                        active={location.pathname === '/salary/manage'}
+                        onClick={() => navigate('/my-salaries')}
+                        active={location.pathname === '/my-salaries'}
                     >
                         📋 나의 급여 내역
                     </Nav.Link>
                     <Nav.Link
-                        onClick={() => navigate('/salary/admin')}
-                        active={location.pathname === '/salary/admin'}
+                        onClick={() => navigate('/salaries')}
+                        active={location.pathname === '/salaries'}
                     >
-                        🧾 급여 관리 (관리자)
+                        🧾 전체 급여 목록 (관리자)
                     </Nav.Link>
                     <Nav.Link
-                        onClick={() => navigate('/salary/admin/create')}
-                        active={location.pathname === '/salary/admin/create'}
+                        onClick={() => navigate('/salaries/new')}
+                        active={location.pathname === '/salaries/new'}
                     >
                         ➕ 급여 생성
+                    </Nav.Link>
+                    <Nav.Link
+                        onClick={() => navigate('/salaries/pending')}
+                        active={location.pathname === '/salaries/pending'}
+                    >
+                        ⏳ 승인 대기 급여
                     </Nav.Link>
                     <Nav.Link
                         onClick={() => navigate('/salary/base-salary')}
@@ -160,8 +169,6 @@ function App() {
                     >
                         ⚙️ 기본급 설정
                     </Nav.Link>
-
-
                 </Nav>
             ) : (
 
