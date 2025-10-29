@@ -1,7 +1,7 @@
 // src/pages/ApprovalRequestPage.js
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Table, Modal, Badge } from "react-bootstrap";
-import api from "../api/api"; // ← 기존 axios 인스턴스 (withCredentials 포함)
+import axios from "../api/api"; // ← 기존 axios 인스턴스 (withCredentials 포함)
 import { API_BASE_URL } from "../config/config";
 
 export default function ApprovalRequestPage() {
@@ -47,7 +47,7 @@ export default function ApprovalRequestPage() {
 
   const fetchRequests = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/requests`);
+      const res = await axios.get('/api/requests');
       // 임시저장 제외
       const filtered = res.data.filter((r) => r.status !== "임시저장");
       setRequests(filtered);
@@ -72,10 +72,10 @@ export default function ApprovalRequestPage() {
       };
 
       if (editMode) {
-        await axios.put(`${API_BASE_URL}/api/requests/${editId}`, submitData);
+        await axios.put(`/api/requests/${editId}`, submitData);
         alert(isTemp ? "기안이 임시저장되었습니다" : "기안이 수정되었습니다");
       } else {
-        await axios.post(`${API_BASE_URL}/api/requests`, submitData);
+        await axios.post(`/api/requests`, submitData);
         alert(isTemp ? "임시저장되었습니다" : "기안서가 등록되었습니다");
       }
 
@@ -123,7 +123,7 @@ export default function ApprovalRequestPage() {
   const handleDelete = async (id) => {
     if (!window.confirm("정말 이 기안을 회수하시겠습니까?")) return;
     try {
-      await axios.delete(`${API_BASE_URL}/api/requests/${id}`);
+      await axios.delete(`/api/requests/${id}`);
       alert("기안이 회수되었습니다 ❌");
       fetchRequests();
     } catch (err) {
@@ -172,8 +172,8 @@ export default function ApprovalRequestPage() {
                 <td>
                   <Badge bg={
                     r.status === "임시저장" ? "warning" :
-                    r.status === "승인" ? "success" :
-                    "secondary"
+                      r.status === "승인" ? "success" :
+                        "secondary"
                   }>
                     {r.status}
                   </Badge>
