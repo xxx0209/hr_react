@@ -1,9 +1,9 @@
 // PositionRegisterPage.jsx
 import { useContext, useState } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
-import axios from "../api/api";
-import SelectCombo from "../sample/SelectCombo";
-import { EnumContext } from "../context/EnumContext";
+import axios from "../../api/api";
+import SelectCombo from "../../sample/SelectCombo";
+import { EnumContext } from "../../context/EnumContext";
 
 export default function PositionPage() {
 

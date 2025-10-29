@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
-import axios from "../api/api";
+import axios from "../../api/api";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function PositionDetailPage() {

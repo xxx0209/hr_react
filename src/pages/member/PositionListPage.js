@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Table, Button, Pagination, Container } from "react-bootstrap";
-import axios from "../api/api";
+import axios from "../../api/api";
 import { useNavigate } from "react-router-dom";
 
 export default function PositionListPage() {
