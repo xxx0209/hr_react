@@ -55,8 +55,8 @@ function AppRoutes() {
                 <Route path="/member/position/history/save" element={<PositionHistoryForm />} />
                 <Route path="/member/schedule" element={<SchedulePage />} />
                 <Route path="/home" element={<HomePage />} />
-                <Route path="/attendance" element={<AttendanceTracker />} />
-                <Route path="/leave" element={<LeaveStatus />} />
+                <Route path="/attendance/attendance" element={<AttendanceTracker />} />
+                <Route path="/attendance/leave" element={<LeaveStatus />} />
 
 
                 {/* 급여 관련 페이지 */}

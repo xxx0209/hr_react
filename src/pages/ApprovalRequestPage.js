@@ -1,7 +1,7 @@
 // src/pages/ApprovalRequestPage.js
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Table, Modal, Badge } from "react-bootstrap";
-import axios from "../api/api"; // ← 기존 axios 인스턴스 (withCredentials 포함)
+import api from "../api/api"; // ← 기존 axios 인스턴스 (withCredentials 포함)
 import { API_BASE_URL } from "../config/config";
 
 export default function ApprovalRequestPage() {
@@ -26,7 +26,7 @@ export default function ApprovalRequestPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("/user/me"); // 쿠키 인증으로 로그인 유저 반환
+        const res = await api.get("/user/me"); // 쿠키 인증으로 로그인 유저 반환
         setUser(res.data);
         setForm((prev) => ({
           ...prev,
@@ -47,7 +47,7 @@ export default function ApprovalRequestPage() {
 
   const fetchRequests = async () => {
     try {
-      const res = await axios.get('/api/requests');
+      const res = await api.get('/api/requests');
       // 임시저장 제외
       const filtered = res.data.filter((r) => r.status !== "임시저장");
       setRequests(filtered);
@@ -72,10 +72,10 @@ export default function ApprovalRequestPage() {
       };
 
       if (editMode) {
-        await axios.put(`/api/requests/${editId}`, submitData);
+        await api.put(`/api/requests/${editId}`, submitData);
         alert(isTemp ? "기안이 임시저장되었습니다" : "기안이 수정되었습니다");
       } else {
-        await axios.post(`/api/requests`, submitData);
+        await api.post(`/api/requests`, submitData);
         alert(isTemp ? "임시저장되었습니다" : "기안서가 등록되었습니다");
       }
 
@@ -123,7 +123,7 @@ export default function ApprovalRequestPage() {
   const handleDelete = async (id) => {
     if (!window.confirm("정말 이 기안을 회수하시겠습니까?")) return;
     try {
-      await axios.delete(`/api/requests/${id}`);
+      await api.delete(`/api/requests/${id}`);
       alert("기안이 회수되었습니다 ❌");
       fetchRequests();
     } catch (err) {
