@@ -215,21 +215,18 @@ function App() {
                     >
                         직급내역 등록 테스트
                     </Nav.Link>
-
                     <Nav.Link
-                        onClick={() => navigate('/attendance/attendance')}
+                        onClick={() => navigate('/attendance')}
                         active={location.pathname === '/attendance'}
                     >
                         출퇴근 기능 테스트
                     </Nav.Link>
                     <Nav.Link
-                        onClick={() => navigate('/attendance/leave')}
-                        active={location.pathname === '/attendance'}
+                        onClick={() => navigate('/leave')}
+                        active={location.pathname === '/leave'}
                     >
                         휴가 현황 테스트
                     </Nav.Link>
-
-
                     <Nav.Link
                         onClick={() => navigate('/help')}
                         active={location.pathname === '/help'}
