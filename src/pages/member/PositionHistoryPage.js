@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import PositionHistoryList from "../pages/PositionHistoryList";
-import PositionHistoryForm from "../pages/PositionHistoryForm";
+import PositionHistoryList from "../../pages/member/PositionHistoryList";
+import PositionHistoryForm from "../../pages/member/PositionHistoryForm";
 
 export default function PositionHistoryPage() {
     const [showForm, setShowForm] = useState(false);

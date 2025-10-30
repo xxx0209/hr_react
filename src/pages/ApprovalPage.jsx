@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Table, Button, Modal, Form, Badge } from "react-bootstrap";
 import axios from "axios";
 
@@ -112,7 +112,7 @@ export default function ApprovalPage() {
                     <td>
                       <Badge bg={
                         r.status === "승인" ? "success" :
-                        r.status === "반려" ? "danger" : "secondary"
+                          r.status === "반려" ? "danger" : "secondary"
                       }>
                         {r.status}
                       </Badge>
@@ -158,14 +158,14 @@ export default function ApprovalPage() {
                         size="sm"
                         variant="outline-success"
                         className="me-2"
-                        onClick={() => handleApproval(a.id, "승인")}
+                        onClick={() => handleApproval(a.id)}
                       >
                         승인
                       </Button>
                       <Button
                         size="sm"
                         variant="outline-danger"
-                        onClick={() => handleApproval(a.id, "반려")}
+                        onClick={() => handleApproval(a.id)}
                       >
                         반려
                       </Button>

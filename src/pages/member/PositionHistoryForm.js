@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Form, Button, Container, Row, Col } from "react-bootstrap";
-import axios from "../api/api";
-import SelectCombo from "../sample/SelectCombo";
+import axios from "../../api/api";
+import SelectCombo from "../../sample/SelectCombo";
 
 export default function ChangePositionPage() {
     const [form, setForm] = useState({

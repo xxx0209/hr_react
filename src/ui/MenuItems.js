@@ -108,18 +108,18 @@ function App() {
                 // ✅ 게시판 하위 메뉴
                 <Nav className="flex-column border-start ps-3">
                     <Row className="mb-3">
-                    <Col xs={12} className="text-center">
-                        <Button
-                            variant="primary"
-                            size="lg"
-                            className="w-100"
-                            onClick={() => navigate('/board/create')} // 글쓰기 페이지로 이동
-                        >
-                            글쓰기
-                        </Button>
-                    </Col>
+                        <Col xs={12} className="text-center">
+                            <Button
+                                variant="primary"
+                                size="lg"
+                                className="w-100"
+                                onClick={() => navigate('/board/create')} // 글쓰기 페이지로 이동
+                            >
+                                글쓰기
+                            </Button>
+                        </Col>
                     </Row>
-                   
+
                     <Nav.Link
                         onClick={() => navigate('/board/notice')}
                         active={location.pathname === '/board/notice'}

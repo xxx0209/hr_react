@@ -1,3 +1,6 @@
+import React from 'react';
+import './index.css';
+import './App.css';
 import { BrowserRouter } from 'react-router-dom';
 import './App.css';
 import { AuthProvider } from "./context/AuthContext";
@@ -7,13 +10,15 @@ import AppRoutes from './routes/AppRoutes';
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>        
-        <EnumProvider>          
-            <AppRoutes />          
-        </EnumProvider>        
+      <AuthProvider>
+        <EnumProvider>
+          <AppRoutes />
+        </EnumProvider>
       </AuthProvider>
-    </BrowserRouter>   
+    </BrowserRouter>
   );
 }
 
+
 export default App;
+

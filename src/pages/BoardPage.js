@@ -77,7 +77,11 @@ export default function Board() {
     setForm((s) => ({ ...s, [name]: value }));
   }
 
+<<<<<<< HEAD
   // ✅ 글 저장 (새로 작성 시 마지막 페이지로 자동 이동)
+=======
+  // ✅ 글 저장 (새로 작성 시 마지막 페이지로 자동 이동 + 현재 페이지면 강제 리로드)
+>>>>>>> master
 async function savePost() {
   if (!form.title.trim() || !form.createId.trim() || !form.content.trim()) {
     alert("제목, 작성자, 내용은 필수입니다.");
@@ -197,10 +201,6 @@ async function deletePost(id) {
               초기화
             </Button>
           </InputGroup>
-
-          <Button className="ms-2" onClick={openCreate}>
-            새 글
-          </Button>
         </Col>
       </Row>
 
@@ -210,7 +210,7 @@ async function deletePost(id) {
           <Table hover responsive>
             <thead>
               <tr>
-                <th style={{ width: 70 }}>No</th>
+                <th style={{ width: 100 }}>No</th>
                 <th role="button" onClick={() => toggleSort("title")} className="user-select-none">
                   제목 <span className="text-muted small">{sortIcon("title")}</span>
                 </th>
@@ -222,7 +222,7 @@ async function deletePost(id) {
                   className="user-select-none"
                   style={{ width: 140 }}
                 >
-                  날짜 <span className="text-muted small">{sortIcon("date")}</span>
+                 작성일 <span className="text-muted small">{sortIcon("date")}</span>
                 </th>
                 <th
                   role="button"
@@ -251,7 +251,7 @@ async function deletePost(id) {
                     <td>
                       <button
                         className="btn btn-link p-0 text-decoration-none"
-                        onClick={() => navigate(`/post/${p.id}`)}
+                        onClick={() => navigate(`/board/detail/${p.id}`)}
                       >
                         <strong>{p.title}</strong>
                       </button>
