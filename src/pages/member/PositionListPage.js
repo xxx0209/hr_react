@@ -20,7 +20,7 @@ export default function PositionListPage() {
     return (
         <Container style={{ marginTop: "30px" }}>
             <h2>직급 목록</h2>
-            <Button onClick={() => navigate("/position")} className="mb-3">직급 등록</Button>
+            <Button onClick={() => navigate("/member/position")} className="mb-3">직급 등록</Button>
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -41,7 +41,7 @@ export default function PositionListPage() {
                             <td>{p.description}</td>
                             <td>{p.active ? "Y" : "N"}</td>
                             <td>
-                                <Button size="sm" onClick={() => navigate(`/position/${p.positionId}`)}>상세/수정</Button>
+                                <Button size="sm" onClick={() => navigate(`/member/position/${p.positionId}`)}>상세/수정</Button>
                             </td>
                         </tr>
                     ))}

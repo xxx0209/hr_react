@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Container, Row, Col, Card, Form, Button, Modal, Badge, ButtonGroup } from "react-bootstrap";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
@@ -22,64 +22,31 @@ const localizer = dateFnsLocalizer({
     locales,
 });
 
+const ETC_SCHEDULE_LIST = ["checkIn", "checkOut"];
 
 export default function SchedulePage() {
     const { user } = useContext(AuthContext);
 
-    const [events, setEvents] = useState([
-    {
-        scheduleId: 1,
-        title: "[회의] 팀 미팅",
-        start: new Date("2025-10-29T09:00:00"),
-        end: new Date("2025-10-29T10:00:00"),
-        category: "회의",
-        color: "#0d6efd",
-        checkInTime: "2025-10-29T09:05:00",
-        checkOutTime: "2025-10-29T09:55:00",
-        memberId: 101
-    },
-    {
-        scheduleId: 2,
-        title: "[개발] 기능 구현",
-        start: new Date("2025-10-29T10:30:00"),
-        end: new Date("2025-10-29T12:00:00"),
-        category: "개발",
-        color: "#198754",
-        checkInTime: null,
-        checkOutTime: null,
-        memberId: 101
-    },
-    {
-        scheduleId: 3,
-        title: "[점심] 점심 식사",
-        start: new Date("2025-10-29T12:00:00"),
-        end: new Date("2025-10-29T13:00:00"),
-        category: "식사",
-        color: "#ffc107",
-        // checkInTime: null,
-        // checkOutTime: null,
-        memberId: 101
-    }
-    ]);
+    const [events, setEvents] = useState([]);
 
     // 출근/퇴근 이벤트만 별도
     const [checkEvents, setCheckEvents] = useState([
-      {
-        scheduleId: "checkin",
-        title: "출근",
-        start: new Date("2025-10-30T09:05:00"),
-        end: new Date("2025-10-30T09:05:00"),
-        color: "#0d6efd",
-        isCheck: true
-      },
-      {
-        scheduleId: "checkout",
-        title: "퇴근",
-        start: new Date("2025-10-30T17:25:00"),
-        end: new Date("2025-10-30T17:25:00"),
-        color: "#dc3545",
-        isCheck: true
-      }
+        {
+            scheduleId: "checkIn",
+            title: "출근",
+            start: new Date("2025-10-30T09:05:00"),
+            end: new Date("2025-10-30T09:05:00"),
+            color: "#0d6efd",
+            isCheck: true
+        },
+        {
+            scheduleId: "checkOut",
+            title: "퇴근",
+            start: new Date("2025-10-30T17:25:00"),
+            end: new Date("2025-10-30T17:25:00"),
+            color: "#dc3545",
+            isCheck: true
+        }
     ]);
 
     const [categories, setCategories] = useState([]);
@@ -92,14 +59,16 @@ export default function SchedulePage() {
     const [slotEnd, setSlotEnd] = useState(null);
     const [title, setTitle] = useState("");
     const [category, setCategory] = useState("");
+    const [content, setContent] = useState("");
 
     // ✅ 카테고리 + 회원 목록
     useEffect(() => {
         axios.get(`/categories`).then(res => setCategories(res.data));
 
-        if (user.role === "ADMIN") {
-            axios.get(`/members`).then(res => setMembers(res.data));
-            setSelectedMember(null);
+        if (user.role === "ROLE_ADMIN") {
+            setSelectedMember(user.memberId);
+            axios.get(`/member/list`).then(res => setMembers(res.data));
+            //setSelectedMember(null);
         } else {
             setSelectedMember(user.memberId);
         }
@@ -108,7 +77,7 @@ export default function SchedulePage() {
     // ✅ 일정 조회
     useEffect(() => {
         if (!selectedMember) return;
-
+        console.log("선택된 회원:", selectedMember);
         axios.get(`/schedule/member/${selectedMember}`)
             .then(res => {
                 const mapped = res.data.map(e => ({
@@ -116,7 +85,7 @@ export default function SchedulePage() {
                     start: new Date(e.start),
                     end: new Date(e.end),
                 }));
-                //setEvents(mapped); 나중에 주석풀자 
+                setEvents(mapped);
             });
     }, [selectedMember]);
 
@@ -126,17 +95,22 @@ export default function SchedulePage() {
         setSlotStart(start);
         setSlotEnd(end);
         setTitle("");
-        setCategory(categories[0]?.name || "");
+        setCategory(categories[0]?.categoryId || "");
+        setContent("");
+        if (!selectedMember) {
+            return alert("일정을 추가하려면 회원을 선택하세요.");
+        }
         setShowSlotModal(true);
     };
 
     const handleAddSlotEvent = async () => {
-        if (!title || !slotStart || !slotEnd) return alert("제목과 시간을 입력하세요");
+        if (!title || !slotStart || !slotEnd || !content) return alert("제목과 시간 그리고 내용을 입력하세요");
 
-        const catObj = categories.find(c => c.name === category);
+        const catObj = categories.find(c => c.categoryId === category);
         const body = {
             title,
             categoryId: catObj.categoryId,
+            content,
             start: formatInTimeZone(slotStart, "Asia/Seoul", "yyyy-MM-dd HH:mm:ss"),
             end: formatInTimeZone(slotEnd, "Asia/Seoul", "yyyy-MM-dd HH:mm:ss"),
             memberId: selectedMember
@@ -147,7 +121,8 @@ export default function SchedulePage() {
         // 🔹 등록 직후 KST 기준으로 Date 변환
         setEvents([...events, {
             scheduleId: res.data.scheduleId,
-            title: `[${category}] ${title}`,
+            title: "[" + categories.find(c => c.categoryId === category)?.name + "] " + title,
+            content,
             start: new Date(res.data.start),
             end: new Date(res.data.end),
             category,
@@ -155,6 +130,12 @@ export default function SchedulePage() {
             checkInTime: null,
             checkOutTime: null
         }]);
+
+        setTitle("");
+        setCategory(categories[0]?.categoryId || "");
+        setSlotStart(null);
+        setSlotEnd(null);
+        setContent(""); // 초기화
         setShowSlotModal(false);
     };
 
@@ -166,84 +147,85 @@ export default function SchedulePage() {
         setSelectedEvent(null);
     };
 
-    // // 🔹 겹치는 이벤트 색상 반투명 + 좌우 분리
-    const eventStyleGetter = (event) => ({
-        
-        style: {
-            backgroundColor: event.color ? event.color + "80" : "#6c757d80",
-            color: "white",
-            borderRadius: "6px",
-            border: "none",
-            padding: "3px",
-        },
-        className: "",
-        title : "이거 적용 안되나",
-        test : "tttttttt"
-    });
-    // 이벤트 스타일
-//   const eventStyleGetter = (event) => {
-//     if(event.scheduleId === "checkin" || event.scheduleId === "checkout") {
-//       return {
-//           style:{
-//             backgroundColor: event.color,
-//             width: "100%",
-//             height: "100%",
-//             display: "flex",
-//             alignItems: "center",
-//             justifyContent: "center",
-//             color: "white",
-//             fontSize: "0.8rem",
-//             padding: 0
-//           }
-//         }
-//     }
-//     return {
-//       style: {
-//         backgroundColor: event.color || "#6c757d",
-//         color: "white",
-//         borderRadius: "6px",
-//         padding: "4px"
-//       }
-//     }
-//   }
+    // 겹치는 이벤트 색상 반투명 + 좌우 분리
+    const eventPropGetter = (event, start, end, isSelected) => {
+        // 기존 색상 유지 (event.color 없으면 기본값 지정)
+        const baseColor = event.color || "#0d6efd"; // Bootstrap 기본 파랑
 
-    // const eventStyleGetter = (event) => {
-    //     return { style: { height: "2px", backgroundColor: event.color } };
+        // 헥사코드 → rgba 변환 함수
+        const hexToRgba = (hex, alpha = 1) => {
+            const bigint = parseInt(hex.replace("#", ""), 16);
+            const r = (bigint >> 16) & 255;
+            const g = (bigint >> 8) & 255;
+            const b = bigint & 255;
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        };
 
-    // }
+        // 같은 시간대 이벤트 간 좌우 분리용 인덱스
+        // (겹치는 이벤트 정렬 시 계산해서 event.index 로 저장하거나,
+        // 여기서 동적으로 계산해도 됨)
+        const index = event.index || 0;
+
+        return {
+            style: {
+                backgroundColor: hexToRgba(baseColor, 0.6), // ✅ 기존 색상 유지 + 투명도 60%
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                padding: "3px",
+                position: "relative",
+                left: `${index * 10}%`, // ✅ 좌우 분리 (10%씩 밀기)
+                width: `${100 - index * 10}%`, // ✅ 남은 폭 계산
+                zIndex: 10 - index, // ✅ 겹칠 때 순서 보정
+                boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                transition: "all 0.2s ease-in-out",
+            },
+        };
+    };
 
     const CustomToolbar = ({ label, onView, onNavigate, view }) => {
         const views = ["month", "week", "day"];
 
         return (
-            <div className="d-flex justify-content-between align-items-center mb-3">
-                {/* 이전 / 오늘 / 다음 버튼 */}
-                <div>
-                    <Button variant="outline-secondary" size="sm" className="me-2" onClick={() => onNavigate("PREV")}>◀</Button>
-                    <Button variant="outline-secondary" size="sm" className="me-2" onClick={() => onNavigate("TODAY")}>오늘</Button>
-                    <Button variant="outline-secondary" size="sm" onClick={() => onNavigate("NEXT")}>▶</Button>
-                </div>
+            <>
+                <div className="d-flex justify-content-between align-items-center mb-3">
+                    {/* 이전 / 오늘 / 다음 버튼 */}
+                    <div>
+                        <Button variant="outline-secondary" size="sm" className="me-2" onClick={() => onNavigate("PREV")}>◀</Button>
+                        <Button variant="outline-secondary" size="sm" className="me-2" onClick={() => onNavigate("TODAY")}>오늘</Button>
+                        <Button variant="outline-secondary" size="sm" onClick={() => onNavigate("NEXT")}>▶</Button>
+                    </div>
 
-                {/* 현재 월/연도 표시 */}
-                <div style={{ fontWeight: "bold", fontSize: "1.3rem" }}>
-                    {label}
-                    {/* {format(new Date(label), "yyyy년 MM월", { locale: ko })} */}
-                </div>
+                    {/* 현재 월/연도 표시 */}
+                    <div style={{ fontWeight: "bold", fontSize: "1.3rem" }}>
+                        {label}
+                        {/* {format(new Date(label), "yyyy년 MM월", { locale: ko })} */}
+                    </div>
 
-                {/* 뷰 선택 버튼 */}
-                <ButtonGroup>
-                    {views.map(v => (
-                        <Button
-                            key={v}
-                            size="sm"
-                            variant={view === v ? "primary" : "outline-primary"} // 클릭된 뷰 색상 표시
-                            onClick={() => onView(v)}
-                        >
-                            {v === "month" ? "월간" : v === "week" ? "주간" : "일간"}
-                        </Button>
-                    ))}
-                </ButtonGroup>
-            </div>
+                    {/* 뷰 선택 버튼 */}
+                    <ButtonGroup>
+                        {views.map(v => (
+                            <Button
+                                key={v}
+                                size="sm"
+                                variant={view === v ? "primary" : "outline-primary"} // 클릭된 뷰 색상 표시
+                                onClick={() => onView(v)}
+                            >
+                                {v === "month" ? "월간" : v === "week" ? "주간" : "일간"}
+                            </Button>
+                        ))}
+                    </ButtonGroup>
+                </div>
+                {user.role === "ROLE_ADMIN" &&
+                    <div className="mb-3">
+                        <Form.Select value={selectedMember || ""} onChange={e => setSelectedMember(e.target.value)}>
+                            <option value="">회원 선택</option>
+                            {members.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                        </Form.Select>
+                    </div>
+                }
+            </>
+
         );
     };
 
@@ -251,7 +233,7 @@ export default function SchedulePage() {
         <Container fluid className="p-5 bg-light min-vh-100">
             {/* 페이지 전용 CSS */}
             <style>
-            {`
+                {`
                 .rbc-event-content,
                 .rbc-event-label {
                 flex: 1;
@@ -263,7 +245,7 @@ export default function SchedulePage() {
               }
             `}
             </style>
-            {user.role === "ADMIN" &&
+            {/* {user.role === "ROLE_ADMIN" &&
                 <Row className="mb-3">
                     <Col md={3}>
                         <Form.Select value={selectedMember || ""} onChange={e => setSelectedMember(e.target.value)}>
@@ -272,7 +254,7 @@ export default function SchedulePage() {
                         </Form.Select>
                     </Col>
                 </Row>
-            }
+            } */}
 
             <Row className="justify-content-center">
                 <Col md={10}>
@@ -293,18 +275,18 @@ export default function SchedulePage() {
                             selectable
                             popup
                             culture="ko"
-                            eventPropGetter={eventStyleGetter}
+                            eventPropGetter={eventPropGetter}
                             onSelectEvent={handleSelectEvent}
                             onSelectSlot={handleSelectSlot}
                             dayLayoutAlgorithm="no-overlap"
                             eventTimeRangeFormat={({ start, end }, culture, localizer) => {
-    return "dfdfdfd"
-  }}
+                                return "dfdfdfd"
+                            }}
                             formats={{
-                                eventTimeRangeFormat: ({ start, end }, culture, localizer) => { 
+                                eventTimeRangeFormat: ({ start, end }, culture, localizer) => {
                                     const startTime = localizer.format(start, 'HH:mm');
                                     const endTime = localizer.format(end, 'HH:mm');
-                                return startTime === endTime ? startTime : `${startTime} - ${endTime}`
+                                    return startTime === endTime ? startTime : `${startTime} - ${endTime}`
                                 },
                                 monthHeaderFormat: (date, culture, localizer) => {
                                     // 연도 먼저, 월 뒤
@@ -316,28 +298,28 @@ export default function SchedulePage() {
                             }}
                             components={{
                                 toolbar: CustomToolbar,
-    //                             event: ({ event }) => {
-    // //   // 출근/퇴근 이벤트면 start 시간만 표시
-    // //   if(event.scheduleId === "checkin" || event.scheduleId === "checkout") {
-    // //     return (
-    // //       <div style={{textAlign:"center", width:"100%", color:"white", fontSize:"0.8rem"}}>
-    // //     {event.start.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}
-    // //   </div>
-    // //     )
-    // //   }
-    //   // 일반 일정
-    //   return (
-        
-    //       <div>
-    //   <div className="rbc-event-content" title={event.title}>
-    //     <span className="rbc-event-label">
-    //       {event.title}
-    //     </span>
-    //   </div>
-    // </div>
-        
-    //   )
-    // },
+                                //                             event: ({ event }) => {
+                                // //   // 출근/퇴근 이벤트면 start 시간만 표시
+                                // //   if(event.scheduleId === "checkin" || event.scheduleId === "checkout") {
+                                // //     return (
+                                // //       <div style={{textAlign:"center", width:"100%", color:"white", fontSize:"0.8rem"}}>
+                                // //     {event.start.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })}
+                                // //   </div>
+                                // //     )
+                                // //   }
+                                //   // 일반 일정
+                                //   return (
+
+                                //       <div>
+                                //   <div className="rbc-event-content" title={event.title}>
+                                //     <span className="rbc-event-label">
+                                //       {event.title}
+                                //     </span>
+                                //   </div>
+                                // </div>
+
+                                //   )
+                                // },
                                 month: {
                                     dateHeader: ({ date }) => {
                                         const day = date.getDay();
@@ -363,7 +345,7 @@ export default function SchedulePage() {
             </Row>
 
             {/* 이벤트 상세 Modal */}
-            <Modal show={!!selectedEvent} onHide={() => setSelectedEvent(null)} centered>
+            <Modal show={!!selectedEvent} onHide={() => setSelectedEvent(null)} centered size="lg">
                 {selectedEvent && (
                     <>
                         <Modal.Header closeButton>
@@ -371,15 +353,35 @@ export default function SchedulePage() {
                                 일정 상세보기 <Badge bg="secondary">{selectedEvent.category}</Badge>
                             </Modal.Title>
                         </Modal.Header>
-                        <Modal.Body>
+                        <Modal.Body >
                             <p><strong>제목:</strong> {selectedEvent.title}</p>
-                            <p><strong>시작:</strong> {new Date(selectedEvent.start).toLocaleString()}</p>
-                            <p><strong>종료:</strong> {new Date(selectedEvent.end).toLocaleString()}</p>
-                            {selectedEvent.checkInTime && <p>출근: {new Date(selectedEvent.checkInTime).toLocaleTimeString()}</p>}
-                            {selectedEvent.checkOutTime && <p>퇴근: {new Date(selectedEvent.checkOutTime).toLocaleTimeString()}</p>}
+                            {ETC_SCHEDULE_LIST.includes(selectedEvent.scheduleId) && (
+                                <p><strong>근태 :</strong> {new Date(selectedEvent.end).toLocaleString()}</p>
+                            )}
+
+                            {!ETC_SCHEDULE_LIST.includes(selectedEvent.scheduleId) && (
+                                <>
+                                    <p><strong>시작:</strong> {new Date(selectedEvent.start).toLocaleString()}</p>
+                                    <p><strong>종료:</strong> {new Date(selectedEvent.end).toLocaleString()}</p>
+                                    <p><strong>내용:</strong></p>
+                                    {/* 스크롤 영역: 내용 */}
+                                    <div style={{
+                                        maxHeight: "200px",   // 높이 제한
+                                        overflowY: "auto",    // 세로 스크롤
+                                        padding: "5px",
+                                        border: "1px solid #dee2e6",
+                                        borderRadius: "4px",
+                                        whiteSpace: "pre-wrap" // 엔터키 줄바꿈 적용
+                                    }} >
+                                        <p>{selectedEvent.content}</p>
+                                    </div>
+                                </>
+                            )}
                         </Modal.Body>
                         <Modal.Footer>
-                            <Button variant="danger" onClick={handleDeleteEvent}>삭제</Button>
+                            {!ETC_SCHEDULE_LIST.includes(selectedEvent.scheduleId) && (
+                                <Button variant="danger" onClick={handleDeleteEvent}>삭제</Button>
+                            )}
                             <Button variant="secondary" onClick={() => setSelectedEvent(null)}>닫기</Button>
                         </Modal.Footer>
                     </>
@@ -398,7 +400,6 @@ export default function SchedulePage() {
                             <Form.Control type="text" value={title} onChange={e => setTitle(e.target.value)} />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>카테고리</Form.Label>
                             <SelectCombo
                                 label="카테고리"
                                 options={categories}
@@ -406,7 +407,7 @@ export default function SchedulePage() {
                                 valueKey="categoryId"
                                 labelKey="name"
                                 onChange={(v) => setCategory(v)}
-                                searchable={true}
+                                searchable={false}
                                 required={true}
                             />
                             {/* <Form.Select value={category} onChange={e => setCategory(e.target.value)}>
@@ -437,6 +438,16 @@ export default function SchedulePage() {
                                 className="form-control"
                             />
                         </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>내용</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={3}
+                                value={content}
+                                onChange={e => setContent(e.target.value)}
+                                placeholder="일정 내용을 입력하세요"
+                            />
+                        </Form.Group>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
@@ -444,6 +455,6 @@ export default function SchedulePage() {
                     <Button variant="secondary" onClick={() => setShowSlotModal(false)}>닫기</Button>
                 </Modal.Footer>
             </Modal>
-        </Container>
+        </Container >
     );
 }

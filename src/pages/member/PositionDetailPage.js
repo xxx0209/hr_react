@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Form, Button, Container, Alert } from "react-bootstrap";
 import axios from "../../api/api";
 import { useParams, useNavigate } from "react-router-dom";
+import RadioGroup from "../../sample/RadioGroup";
 
 export default function PositionDetailPage() {
     const { id } = useParams();
@@ -49,11 +50,18 @@ export default function PositionDetailPage() {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                    <Form.Check type="checkbox" label="활성 여부" name="active" checked={form.active} onChange={e => setForm({ ...form, active: e.target.checked })} />
+                    <RadioGroup
+                        label="활성 여부"
+                        options={[{ label: '활성', value: true }, { label: '비활성', value: false }]}
+                        value={form.active}
+                        onChange={(e) => setForm({ ...form, active: e })}
+                    />
+                    {/* <Form.Check type="checkbox" label="활성 여부" name="active" checked={form.active} onChange={e => setForm({ ...form, active: e.target.checked })} /> */}
                 </Form.Group>
 
+
                 <Button type="submit">수정</Button>
-                <Button variant="secondary" onClick={() => navigate("/position/list")} className="ms-2">목록</Button>
+                <Button variant="secondary" onClick={() => navigate("/member/position/list")} className="ms-2">목록</Button>
             </Form>
         </Container>
     );

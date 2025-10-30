@@ -24,6 +24,7 @@ import PositionDetailPage from "../pages/member/PositionDetailPage";
 import PositionHistoryList from "../pages/member/PositionHistoryList";
 import PositionHistoryForm from "../pages/member/PositionHistoryForm";
 import PositionHistoryPage from "../pages/member/PositionHistoryPage";
+import CategoryPage from '../pages/member/CategoryPage';
 
 import SalaryPage from '../pages/SalaryPage';
 import SalaryAllList from '../pages/SalaryAllList';
@@ -57,6 +58,7 @@ function AppRoutes() {
                 <Route path="/member/position/history/:id" element={<PositionHistoryForm />} />
                 <Route path="/member/position/history/save" element={<PositionHistoryForm />} />
                 <Route path="/member/schedule" element={<SchedulePage />} />
+                <Route path="/member/category" element={<CategoryPage />} />
                 <Route path="/home" element={<HomePage />} />
 
                 <Route path="/attendance" element={<AttendanceTracker />} />
