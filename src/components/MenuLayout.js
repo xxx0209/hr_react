@@ -71,7 +71,7 @@ export default function MenuItems() {
                         onClick={() => handleSelect("attendance", "/attendance/attendance")}
                         active={location.pathname.startsWith("/attendance")}
                     >
-                        💰 출퇴근 기능
+                        🧑‍💼 출퇴근 기능
                     </Nav.Link>
 
 
