@@ -2,7 +2,7 @@ import React from "react";
 import { Nav, Button, Row, Col } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 
-export default function BoardSubMenu() {
+export default function MemberSubMenu() {
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -69,6 +69,12 @@ export default function BoardSubMenu() {
                     active={location.pathname === '/member/position/history/save'}
                 >
                     직급내역 등록 테스트
+                </Nav.Link>
+                <Nav.Link
+                    onClick={() => navigate('/member/category')}
+                    active={location.pathname === '/member/category'}
+                >
+                    카테고리 등록 테스트
                 </Nav.Link>
             </Nav>
 

@@ -3,6 +3,8 @@ import { Row, Col, Nav } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import MemberSubMenu from "../ui/MemberSubMenu";
+import BoardSubMenu from "../ui/BoardSubMenu";
+
 import ApprovalSubMenu from "../ui/ApprovalSubMenu";
 import AttendanceSubMenu from "../ui/AttendanceSubMenu"
 // 하위 메뉴 컴포넌트 import
@@ -82,6 +84,7 @@ export default function MenuItems() {
             <Col md={7} className="ps-3">
                 {activeMenu === "member" && <MemberSubMenu />}
                 {activeMenu === "attendance" && <AttendanceSubMenu />}
+                {activeMenu === "board" && <BoardSubMenu />}
                 {activeMenu === "approval" && <ApprovalSubMenu />}
                 {/* {activeMenu === "salary" && <SalarySubMenu />} */}
 
