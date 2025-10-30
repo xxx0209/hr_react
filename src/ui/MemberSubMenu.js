@@ -70,6 +70,12 @@ export default function BoardSubMenu() {
                 >
                     직급내역 등록 테스트
                 </Nav.Link>
+                <Nav.Link
+                    onClick={() => navigate('/member/category')}
+                    active={location.pathname === '/member/category'}
+                >
+                    카테고리 등록 테스트
+                </Nav.Link>
             </Nav>
 
         </>

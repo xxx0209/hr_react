@@ -1,9 +1,9 @@
-import axios from "../api/api";
+import axios from "../../api/api";
 import { useContext, useState } from "react";
 import { Container, Row, Col, Form, Button, InputGroup, Alert } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { EnumContext } from "../context/EnumContext";
-import RadioGroup from "../sample/RadioGroup";
+import { EnumContext } from "../../context/EnumContext";
+import RadioGroup from "../../sample/RadioGroup";
 
 const SignupPage = () => {
 
@@ -245,13 +245,13 @@ const SignupPage = () => {
                             </Form.Control.Feedback>
                         </Form.Group>
 
-                        <Form.Group controlId="formGender" className="mb-3">                            
+                        <Form.Group controlId="formGender" className="mb-3">
                             <div className="mb-3">
                                 <RadioGroup
-                                  label="성별"
-                                  options={enums?.Gender || []}
-                                  value={formData.gender}                                  
-                                  onChange={(e) => setFormData({ ...formData, gender: e })}
+                                    label="성별"
+                                    options={enums?.Gender || []}
+                                    value={formData.gender}
+                                    onChange={(e) => setFormData({ ...formData, gender: e })}
                                 />
                             </div>
                             {/* <div>
