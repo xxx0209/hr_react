@@ -109,23 +109,52 @@ export default function ApprovalTempPage() {
         </tbody>
       </Table>
 
-      {/* 수정 모달 */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton><Modal.Title>임시문서 수정</Modal.Title></Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3">
-              <Form.Label>종류</Form.Label>
-              <Form.Control name="requestType" value={form.requestType || ""} onChange={handleChange} />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>내용</Form.Label>
-              <Form.Control as="textarea" rows={3} name="content" value={form.content || ""} onChange={handleChange} />
-            </Form.Group>
-            <Button variant="primary" onClick={handleSave} className="w-100">저장</Button>
-          </Form>
-        </Modal.Body>
-      </Modal>
+{/* 수정 모달 */}
+<Modal show={showModal} onHide={() => setShowModal(false)} centered>
+  <Modal.Header closeButton>
+    <Modal.Title>임시문서 수정</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form>
+      <Form.Group className="mb-3">
+        <Form.Label>종류</Form.Label>
+        <Form.Control
+          name="requestType"
+          value={form.requestType || ""}
+          onChange={handleChange}
+        />
+      </Form.Group>
+
+      <Form.Group className="mb-3">
+        <Form.Label>내용</Form.Label>
+        <Form.Control
+          as="textarea"
+          rows={3}
+          name="content"
+          value={form.content || ""}
+          onChange={handleChange}
+        />
+      </Form.Group>
+
+      {/* 지출품의서일 때만 금액 입력 표시 */}
+      {form.requestType === "지출품의서" && (
+        <Form.Group className="mb-3">
+          <Form.Label>금액</Form.Label>
+          <Form.Control
+            type="number"
+            name="price"
+            value={form.price || ""}
+            onChange={handleChange}
+          />
+        </Form.Group>
+      )}
+
+      <Button variant="primary" onClick={handleSave} className="w-100">
+        저장
+      </Button>
+    </Form>
+  </Modal.Body>
+</Modal>
     </Container>
   );
 }

@@ -4,7 +4,7 @@ import { Form, InputGroup, Badge, Button, ListGroup } from "react-bootstrap";
 /**
  * SelectCombo
  * props:
- * - options: Array<string> | Array<{ value, label }>
+ * - options: Array<object> | Array<string>
  * - value: string | Array<string>
  * - onChange: (newValue) => void
  * - label: string
@@ -15,6 +15,9 @@ import { Form, InputGroup, Badge, Button, ListGroup } from "react-bootstrap";
  * - className: string
  * - noOptionsText: string
  * - required: boolean
+ * - valueKey: string (default: "value")
+ * - labelKey: string (default: "label")
+ * - colorKey: string (default: "color") ← 🎨 색상 표시용
  */
 export default function SelectCombo({
   options = [],
@@ -28,12 +31,16 @@ export default function SelectCombo({
   className = "",
   noOptionsText = "옵션이 없습니다",
   required = false,
+  valueKey = "value",
+  labelKey = "label",
+  colorKey = "color", // 🎨 추가
 }) {
   const normOptions = useMemo(() => {
-    return options.map((o) =>
-      typeof o === "string" ? { value: o, label: o } : o
-    );
-  }, [options]);
+    return options.map((o) => {
+      if (typeof o === "string") return { [valueKey]: o, [labelKey]: o };
+      return o;
+    });
+  }, [options, valueKey, labelKey]);
 
   const [internalValue, setInternalValue] = useState(multiple ? [] : "");
   const controlled = value !== undefined;
@@ -58,10 +65,10 @@ export default function SelectCombo({
     if (!q) return normOptions;
     return normOptions.filter(
       (o) =>
-        o.label.toLowerCase().includes(q) ||
-        String(o.value).toLowerCase().includes(q)
+        o[labelKey]?.toLowerCase().includes(q) ||
+        String(o[valueKey])?.toLowerCase().includes(q)
     );
-  }, [normOptions, search]);
+  }, [normOptions, search, valueKey, labelKey]);
 
   const isSelected = (val) => {
     if (multiple) {
@@ -97,8 +104,8 @@ export default function SelectCombo({
   const displayLabel = () => {
     if (multiple) return null;
     if (!selected) return "";
-    const found = normOptions.find((o) => o.value === selected);
-    return found ? found.label : selected;
+    const found = normOptions.find((o) => o[valueKey] === selected);
+    return found ? found[labelKey] : selected;
   };
 
   return (
@@ -129,7 +136,7 @@ export default function SelectCombo({
             >
               {Array.isArray(selected) && selected.length > 0 ? (
                 selected.map((val) => {
-                  const opt = normOptions.find((o) => o.value === val);
+                  const opt = normOptions.find((o) => o[valueKey] === val);
                   return (
                     <Badge
                       key={val}
@@ -140,8 +147,22 @@ export default function SelectCombo({
                         alignItems: "center",
                       }}
                     >
+                      {/* 🎨 색상 점 표시 */}
+                      {opt?.[colorKey] && (
+                        <span
+                          style={{
+                            width: 10,
+                            height: 10,
+                            borderRadius: "50%",
+                            background: opt[colorKey],
+                            display: "inline-block",
+                            marginRight: 6,
+                            border: "1px solid rgba(0,0,0,0.2)",
+                          }}
+                        />
+                      )}
                       <span style={{ marginRight: 6 }}>
-                        {opt ? opt.label : val}
+                        {opt ? opt[labelKey] : val}
                       </span>
                       <Button
                         size="sm"
@@ -160,13 +181,16 @@ export default function SelectCombo({
               ) : (
                 <span style={{ color: "#6c757d" }}>{placeholder}</span>
               )}
-
-              {/* ✅ required 검증용 hidden input */}
               {required && (
                 <input
                   type="text"
                   tabIndex={-1}
-                  style={{ opacity: 0, height: 0, width: 0, position: "absolute" }}
+                  style={{
+                    opacity: 0,
+                    height: 0,
+                    width: 0,
+                    position: "absolute",
+                  }}
                   value={
                     Array.isArray(selected) && selected.length > 0
                       ? selected.join(",")
@@ -190,12 +214,16 @@ export default function SelectCombo({
                   background: disabled ? "#e9ecef" : "white",
                 }}
               />
-              {/* ✅ required 검증용 hidden input */}
               {required && (
                 <input
                   type="text"
                   tabIndex={-1}
-                  style={{ opacity: 0, height: 0, width: 0, position: "absolute" }}
+                  style={{
+                    opacity: 0,
+                    height: 0,
+                    width: 0,
+                    position: "absolute",
+                  }}
                   value={selected || ""}
                   required
                   onChange={() => {}}
@@ -264,18 +292,34 @@ export default function SelectCombo({
                 <ListGroup variant="flush">
                   {filtered.map((opt) => (
                     <ListGroup.Item
-                      key={opt.value}
+                      key={opt[valueKey]}
                       action
-                      onClick={() => handleSelect(opt.value)}
-                      active={isSelected(opt.value)}
+                      onClick={() => handleSelect(opt[valueKey])}
+                      active={isSelected(opt[valueKey])}
                       style={{
                         display: "flex",
                         justifyContent: "space-between",
                         alignItems: "center",
                       }}
                     >
-                      <span>{opt.label}</span>
-                      {isSelected(opt.value) && (
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        {/* 🎨 색상 표시 */}
+                        {opt?.[colorKey] && (
+                          <span
+                            style={{
+                              width: 12,
+                              height: 12,
+                              borderRadius: "50%",
+                              background: opt[colorKey],
+                              display: "inline-block",
+                              marginRight: 8,
+                              border: "1px solid rgba(0,0,0,0.2)",
+                            }}
+                          />
+                        )}
+                        <span>{opt[labelKey]}</span>
+                      </div>
+                      {isSelected(opt[valueKey]) && (
                         <span style={{ opacity: 0.7 }}>✓</span>
                       )}
                     </ListGroup.Item>

@@ -1,9 +1,8 @@
 import React from 'react';
 import { Navigate, Route, Routes } from "react-router-dom";
 import HomePage from "../pages/HomePage";
-import LoginPage from "../pages/LoginPage";
-import SchedulePage from "../pages/SchedulePage";
-import SignupPage from "../pages/SignupPage";
+import LoginPage from "../pages/member/LoginPage";
+
 import ApprovalPage from "../pages/ApprovalPage";
 import AttendanceTracker from "../pages/AttendanceTracker";
 import LeaveStatus from "../pages/LeaveStatus";
@@ -17,14 +16,19 @@ import BoardNoticePage from "../pages/BoardNoticePage";
 import BoardFreePage from "../pages/BoardFreePage";
 import BoardDetail from '../pages/BoardDetail';
 import SamplePage from "../sample/SamplePage"
-import PositionPage from "../pages/PositionPage";
+import PositionPage from "../pages/member/PositionPage";
 import PrivateLayoutRoute from "./PrivateLayoutRoute";
 import AuthRedirectRoute from "./AuthRedirectRoute";
-import PositionListPage from "../pages/PositionListPage";
-import PositionDetailPage from "../pages/PositionDetailPage";
-import PositionHistoryList from "../pages/PositionHistoryList";
-import PositionHistoryForm from "../pages/PositionHistoryForm";
-import PositionHistoryPage from "../pages/PositionHistoryPage";
+
+// 회원관리
+import SchedulePage from "../pages/member/SchedulePage";
+import SignupPage from "../pages/member/SignupPage";
+import PositionListPage from "../pages/member/PositionListPage";
+import PositionDetailPage from "../pages/member/PositionDetailPage";
+import PositionHistoryList from "../pages/member/PositionHistoryList";
+import PositionHistoryForm from "../pages/member/PositionHistoryForm";
+import PositionHistoryPage from "../pages/member/PositionHistoryPage";
+import CategoryPage from '../pages/member/CategoryPage';
 
 import SalaryPage from '../pages/SalaryPage';
 import SalaryAllList from '../pages/SalaryAllList';
@@ -58,7 +62,9 @@ function AppRoutes() {
                 <Route path="/member/position/history/:id" element={<PositionHistoryForm />} />
                 <Route path="/member/position/history/save" element={<PositionHistoryForm />} />
                 <Route path="/member/schedule" element={<SchedulePage />} />
+                <Route path="/member/category" element={<CategoryPage />} />
                 <Route path="/home" element={<HomePage />} />
+
                 <Route path="/attendance" element={<AttendanceTracker />} />
                 <Route path="/leave" element={<LeaveStatus />} />
 

@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import MemberSubMenu from "../ui/MemberSubMenu";
 import BoardSubMenu from "../ui/BoardSubMenu";
 
+import ApprovalSubMenu from "../ui/ApprovalSubMenu";
 // 하위 메뉴 컴포넌트 import
 // import ApprovalSubMenu from "./ApprovalSubMenu";
 // import BoardSubMenu from "./BoardSubMenu";
@@ -47,7 +48,7 @@ export default function MenuItems() {
                     </Nav.Link>
 
                     <Nav.Link
-                        onClick={() => handleSelect("approval", "/approval")}
+                        onClick={() => handleSelect("approval", "/approval/status")}
                         active={location.pathname.startsWith("/approval")}
                     >
                         🧾 전자결재
@@ -73,6 +74,7 @@ export default function MenuItems() {
             <Col md={7} className="ps-3">
                 {activeMenu === "member" && <MemberSubMenu />}
                 {activeMenu === "board" && <BoardSubMenu />}
+                {activeMenu === "approval" && <ApprovalSubMenu />}
                 {/* {activeMenu === "salary" && <SalarySubMenu />} */}
 
                 {!activeMenu && (
