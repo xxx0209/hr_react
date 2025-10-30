@@ -77,11 +77,7 @@ export default function Board() {
     setForm((s) => ({ ...s, [name]: value }));
   }
 
-<<<<<<< HEAD
   // ✅ 글 저장 (새로 작성 시 마지막 페이지로 자동 이동)
-=======
-  // ✅ 글 저장 (새로 작성 시 마지막 페이지로 자동 이동 + 현재 페이지면 강제 리로드)
->>>>>>> master
 async function savePost() {
   if (!form.title.trim() || !form.createId.trim() || !form.content.trim()) {
     alert("제목, 작성자, 내용은 필수입니다.");
