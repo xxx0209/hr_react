@@ -77,38 +77,56 @@ export default function Board() {
     setForm((s) => ({ ...s, [name]: value }));
   }
 
-  // 글 저장
-  async function savePost() {
-    if (!form.title.trim() || !form.createId.trim() || !form.content.trim()) {
-      alert("제목, 작성자, 내용은 필수입니다.");
-      return;
-    }
-    try {
-      if (editingPost) {
-        await axios.put(`${API_BASE_URL}/api/posts/${editingPost.id}`, form);
-      } else {
-        await axios.post(`${API_BASE_URL}/api/posts`, form);
-      }
-      setShowModal(false);
-      setEditingPost(null);
-      loadPosts();
-    } catch (err) {
-      console.error("저장 실패:", err);
-      alert("게시글 저장 중 오류가 발생했습니다.");
-    }
+  // ✅ 글 저장 (새로 작성 시 마지막 페이지로 자동 이동 + 현재 페이지면 강제 리로드)
+async function savePost() {
+  if (!form.title.trim() || !form.createId.trim() || !form.content.trim()) {
+    alert("제목, 작성자, 내용은 필수입니다.");
+    return;
   }
+  try {
+    if (editingPost) {
+      await axios.put(`${API_BASE_URL}/api/posts/${editingPost.id}`, form);
+      alert("게시글이 수정되었습니다.");
+      await loadPosts(); // 수정은 현재 페이지 유지
+    } else {
+      await axios.post(`${API_BASE_URL}/api/posts`, form);
+      alert("게시글이 등록되었습니다.");
+
+      // 새 글 등록 후 마지막 페이지 계산
+      const totalAfterAdd = total + 1;
+      const lastPage = Math.ceil(totalAfterAdd / perPage);
+
+      if (page === lastPage) {
+        // ⚠️ 이미 마지막 페이지에 있으면 setPage가 변화가 없으니 직접 새로고침
+        await loadPosts();
+      } else {
+        setPage(lastPage); // 이동하면 useEffect로 자동 리로드
+      }
+    }
+
+    setShowModal(false);
+    setEditingPost(null);
+  } catch (err) {
+    console.error("저장 실패:", err);
+    alert("게시글 저장 중 오류가 발생했습니다.");
+  }
+}
 
   // 글 삭제
-  async function deletePost(id) {
-    if (!window.confirm("정말 삭제하시겠습니까?")) return;
-    try {
-      await axios.delete(`${API_BASE_URL}/api/posts/${id}`);
-      loadPosts();
-    } catch (err) {
-      console.error("삭제 실패:", err);
-      alert("게시글 삭제 중 오류가 발생했습니다.");
-    }
+  // ✅ 게시글 삭제 후 자동 새로고침 + 빈 페이지 방지
+async function deletePost(id) {
+  if (!window.confirm("정말 삭제하시겠습니까?")) return;
+  try {
+    await axios.delete(`${API_BASE_URL}/api/posts/${id}`);
+    const totalAfterDelete = total - 1;
+    const maxPageAfterDelete = Math.ceil(totalAfterDelete / perPage);
+    if (page > maxPageAfterDelete) setPage(maxPageAfterDelete); // ✅ 자동 이전 페이지로 이동
+    else loadPosts(); // ✅ 현재 페이지 새로고침
+  } catch (err) {
+    console.error("삭제 실패:", err);
+    alert("게시글 삭제 중 오류가 발생했습니다.");
   }
+}
 
   // 모달 열기/닫기
   function openCreate() {
@@ -179,10 +197,6 @@ export default function Board() {
               초기화
             </Button>
           </InputGroup>
-
-          <Button className="ms-2" onClick={openCreate}>
-            새 글
-          </Button>
         </Col>
       </Row>
 
@@ -192,7 +206,7 @@ export default function Board() {
           <Table hover responsive>
             <thead>
               <tr>
-                <th style={{ width: 70 }}>No</th>
+                <th style={{ width: 100 }}>No</th>
                 <th role="button" onClick={() => toggleSort("title")} className="user-select-none">
                   제목 <span className="text-muted small">{sortIcon("title")}</span>
                 </th>
@@ -204,7 +218,7 @@ export default function Board() {
                   className="user-select-none"
                   style={{ width: 140 }}
                 >
-                  날짜 <span className="text-muted small">{sortIcon("date")}</span>
+                 작성일 <span className="text-muted small">{sortIcon("date")}</span>
                 </th>
                 <th
                   role="button"
@@ -224,14 +238,16 @@ export default function Board() {
                     게시글이 없습니다.
                   </td>
                 </tr>
-              ) : (
-                posts.map((p) => (
+               ) : (
+                posts.map((p, idx) => (
                   <tr key={p.id}>
-                    <td>{p.id}</td>
+                    {/* ✅ No: 현재 페이지 첫 글부터 1씩 증가하게 표시 */}
+                    <td>{(page - 1) * perPage + idx + 1}</td>
+
                     <td>
                       <button
                         className="btn btn-link p-0 text-decoration-none"
-                        onClick={() => navigate(`/post/${p.id}`)}
+                        onClick={() => navigate(`/board/detail/${p.id}`)}
                       >
                         <strong>{p.title}</strong>
                       </button>
@@ -240,6 +256,7 @@ export default function Board() {
                         {p.content}
                       </div>
                     </td>
+
                     <td>{p.category}</td>
                     <td>{p.createId}</td>
                     <td>{p.createDate ? p.createDate.substring(0, 10) : "-"}</td>

@@ -12,6 +12,10 @@ import ApprovalRequestPage from "../pages/ApprovalRequestPage";
 import ApprovalTempPage from "../pages/ApprovalTempPage";
 import ApprovalDetail from '../pages/ApprovalDetail'; //경로는 실제 위치에 맞게 조정.
 import BoardPage from "../pages/BoardPage";
+import BoardWrite from "../pages/BoardWrite";
+import BoardNoticePage from "../pages/BoardNoticePage";
+import BoardFreePage from "../pages/BoardFreePage";
+import BoardDetail from '../pages/BoardDetail';
 import SamplePage from "../sample/SamplePage"
 import PositionPage from "../pages/PositionPage";
 import PrivateLayoutRoute from "./PrivateLayoutRoute";
@@ -83,6 +87,10 @@ function AppRoutes() {
 
                 {/* 게시판 */}
                 <Route path="/board" element={<BoardPage />} />
+                <Route path="/board/write" element={<BoardWrite />} />
+                <Route path="/board/notice" element={<BoardNoticePage />} />
+                <Route path="/board/free" element={<BoardFreePage />} />
+                <Route path="/board/detail/:id" element={<BoardDetail />} />
                 {/* 다른 페이지 추가 */}
 
             </Route>

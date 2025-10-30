@@ -2,7 +2,7 @@ import React from "react";
 import { Nav, Button, Row, Col } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 
-export default function BoardSubMenu() {
+export default function MemberSubMenu() {
     const navigate = useNavigate();
     const location = useLocation();
 

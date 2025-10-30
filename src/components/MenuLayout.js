@@ -3,6 +3,7 @@ import { Row, Col, Nav } from "react-bootstrap";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import MemberSubMenu from "../ui/MemberSubMenu";
+import BoardSubMenu from "../ui/BoardSubMenu";
 
 // 하위 메뉴 컴포넌트 import
 // import ApprovalSubMenu from "./ApprovalSubMenu";
@@ -71,7 +72,7 @@ export default function MenuItems() {
             {/* 오른쪽: 소분류 */}
             <Col md={7} className="ps-3">
                 {activeMenu === "member" && <MemberSubMenu />}
-                {/* {activeMenu === "board" && <BoardSubMenu />} */}
+                {activeMenu === "board" && <BoardSubMenu />}
                 {/* {activeMenu === "salary" && <SalarySubMenu />} */}
 
                 {!activeMenu && (
