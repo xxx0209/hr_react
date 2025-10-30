@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Button, Table } from 'react-bootstrap';
+import api from '../api/api'; // 
+import { Button, Table, Badge } from 'react-bootstrap';
 
 const ApprovalsPage = ({ user }) => {
     const [approvals, setApprovals] = useState([]);
@@ -9,48 +9,39 @@ const ApprovalsPage = ({ user }) => {
         fetchApprovals();
     }, []);
 
+    // 변경: status === '결재요청'인 문서만 필터링해서 조회
     const fetchApprovals = async () => {
         try {
-            const res = await axios.get('/api/approvals');
-            setApprovals(res.data);
+            const res = await api.get('/api/requests');
+            const filtered = res.data.filter(r => r.status === '결재요청');
+            setApprovals(filtered);
         } catch (err) {
-            console.error(err);
+            console.error('결재요청 문서 불러오기 실패:', err);
             alert('승인 목록을 불러오는 중 오류가 발생했습니다.');
         }
     };
 
-    const updateApprovalList = (id, updatedItem) => {
-        const updated = approvals.map(a => a.id === id ? updatedItem : a);
-        setApprovals(updated);
-    };
-
+    // 승인 처리
     const handleApprove = async (id) => {
         try {
-            const res = await axios.putForm(`/api/documents/${id}/approve`, {
-                approver: user.name,
-                approvedAt: new Date().toISOString(),
-                signature: user.signatureUrl,
-            });
-            updateApprovalList(id, res.data);
+            await api.patch(`/api/requests/${id}/approve`);
             alert('승인 완료!');
+            fetchApprovals();
         } catch (err) {
             console.error(err);
             alert('승인 처리 중 오류가 발생했습니다.');
         }
     };
 
+    // 반려 처리
     const handleReject = async (id) => {
         try {
             const reason = prompt('반려 사유를 입력하세요');
             if (!reason) return;
 
-            const res = await axios.put(`/api/documents/${id}/reject`, {
-                approver: user.name,
-                rejectedAt: new Date().toISOString(),
-                reason,
-            });
-            updateApprovalList(id, res.data);
+            await api.patch(`/api/requests/${id}/reject`, { comment: reason });
             alert('반려 완료!');
+            fetchApprovals();
         } catch (err) {
             console.error(err);
             alert('반려 처리 중 오류가 발생했습니다.');
@@ -59,47 +50,72 @@ const ApprovalsPage = ({ user }) => {
 
     return (
         <div className="container mt-5">
-            <h2 className="mb-4">승인결재 문서 목록</h2>
+            <h2 className="mb-4">🧾 결재 요청 문서 목록</h2>
             <Table striped bordered hover className="table-light table-hover">
                 <thead>
                     <tr className="text-center">
                         <th>번호</th>
-                        <th>문서 코드</th>
-                        <th>문서 제목</th>
-                        <th>기안자</th>
-                        <th>기안일</th>
-                        <th>결재 의견</th>
+                        <th>작성자</th>
+                        <th>종류</th>
+                        <th>기간</th>
+                        <th>내용</th>
+                        <th>상태</th>
                         <th>결재</th>
                     </tr>
                 </thead>
                 <tbody>
                     {approvals.length === 0 ? (
                         <tr>
-                            <td colSpan="7" className="text-center">결재 요청이 없습니다.</td>
+                            <td colSpan="7" className="text-center text-muted">
+                                결재 요청이 없습니다.
+                            </td>
                         </tr>
                     ) : (
-                        approvals.map((a, index) => (
-                            <tr key={a.id} className="text-center">
+                        approvals.map((r, index) => (
+                            <tr key={r.id} className="text-center">
                                 <td>{index + 1}</td>
-                                <td>{a.code}</td>
-                                <td>{a.title}</td>
-                                <td>{a.requester}</td>
-                                <td>{a.date}</td>
-                                <td>{a.comment || '-'}</td>
+                                <td>{r.memberName}</td>
+                                <td>{r.requestType}</td>
                                 <td>
-                                    <Button
-                                        size="sm"
-                                        variant="outline-success"
-                                        className="me-2"
-                                        onClick={() => handleApprove(a.id)}>
-                                        승인
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="outline-danger"
-                                        onClick={() => handleReject(a.id)}>
-                                        반려
-                                    </Button>
+                                    {r.startDate?.slice(0, 10)} ~ {r.endDate?.slice(0, 10)}
+                                </td>
+                                <td>{r.content}</td>
+                                <td>
+                                    <Badge
+                                        bg={
+                                            r.status === '결재요청'
+                                                ? 'warning'
+                                                : r.status === '승인'
+                                                ? 'success'
+                                                : r.status === '반려'
+                                                ? 'danger'
+                                                : 'secondary'
+                                        }
+                                    >
+                                        {r.status}
+                                    </Badge>
+                                </td>
+                                <td>
+                                    {/* 변경: 관리자만 승인/반려 가능 */}
+                                    {user?.roles?.some(role => role.authority === 'ROLE_ADMIN') && (
+                                        <>
+                                            <Button
+                                                size="sm"
+                                                variant="outline-success"
+                                                className="me-2"
+                                                onClick={() => handleApprove(r.id)}
+                                            >
+                                                승인
+                                            </Button>
+                                            <Button
+                                                size="sm"
+                                                variant="outline-danger"
+                                                onClick={() => handleReject(r.id)}
+                                            >
+                                                반려
+                                            </Button>
+                                        </>
+                                    )}
                                 </td>
                             </tr>
                         ))

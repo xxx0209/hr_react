@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Table, Button, Modal, Form, Badge, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import { API_BASE_URL } from "../config/config";
+import api from "../api/api"; 
 
 export default function ApprovalTempPage() {
   const [temps, setTemps] = useState([]);
@@ -13,15 +14,14 @@ export default function ApprovalTempPage() {
     fetchTemps();
   }, []);
 
-  const fetchTemps = async () => {
-    try {
-      const res = await axios.get(`${API_BASE_URL}/api/requests`);
-      const filtered = res.data.filter((r) => r.status === "임시저장");
-      setTemps(filtered);
-    } catch (err) {
-      console.error("임시보관함 조회 실패:", err);
-    }
-  };
+const fetchTemps = async () => {
+  try {
+    const res = await api.get("/api/requests/temp");
+    setTemps(res.data);
+  } catch (err) {
+    console.error("임시보관함 조회 실패:", err);
+  }
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -94,7 +94,7 @@ export default function ApprovalTempPage() {
             temps.map((t) => (
               <tr key={t.id}>
                 <td>{t.id}</td>
-                <td>{t.member?.id || t.memberId}</td>
+                <td>{t.memberName || t.name || t.member?.name || "이름없음"}</td>
                 <td>{t.requestType}</td>
                 <td>{t.content}</td>
                 <td><Badge bg="secondary">{t.status}</Badge></td>

@@ -1,8 +1,7 @@
 // src/pages/ApprovalRequestPage.js
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Table, Modal, Badge } from "react-bootstrap";
-import axios from "../api/api"; // ← 기존 axios 인스턴스 (withCredentials 포함)
-import { API_BASE_URL } from "../config/config";
+import api from "../api/api"; // axios 인스턴스 (withCredentials 포함)
 
 export default function ApprovalRequestPage() {
   const [user, setUser] = useState(null);
@@ -26,7 +25,7 @@ export default function ApprovalRequestPage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("/user/me"); // 쿠키 인증으로 로그인 유저 반환
+        const res = await api.get("/user/me");
         setUser(res.data);
         setForm((prev) => ({
           ...prev,
@@ -40,20 +39,27 @@ export default function ApprovalRequestPage() {
     fetchUser();
   }, []);
 
-  // 최초 기안 목록 불러오기
+  // 🔹 기안 목록 불러오기
   useEffect(() => {
     fetchRequests();
   }, []);
 
   const fetchRequests = async () => {
     try {
-      const res = await axios.get('/api/requests');
-      // 임시저장 제외
+      const res = await api.get("/api/requests");
       const filtered = res.data.filter((r) => r.status !== "임시저장");
       setRequests(filtered);
     } catch (err) {
       console.error("기안 목록 조회 실패:", err);
     }
+  };
+
+  // 🔹 날짜 포맷 함수 (날짜 표시 문제 해결)
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const d = new Date(dateString);
+    if (isNaN(d)) return "";
+    return d.toISOString().slice(0, 10);
   };
 
   // 입력 변경 처리
@@ -62,20 +68,38 @@ export default function ApprovalRequestPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 기안 등록 및 임시저장
+  // 🔹 새 기안 작성 버튼 (작성자 이름 자동 세팅)
+  const handleNewRequest = () => {
+    setEditMode(false);
+    setEditId(null);
+    setForm({
+      memberId: user?.memberId || "",
+      memberName: user?.name || "",
+      requestType: "",
+      content: "",
+      startDate: "",
+      endDate: "",
+      price: "",
+      status: "작성중",
+    });
+    setShowModal(true);
+  };
+
+  // 🔹 기안 등록 및 임시저장
   const handleSubmit = async (e, isTemp = false) => {
     e.preventDefault();
     try {
       const submitData = {
         ...form,
         status: isTemp ? "임시저장" : "작성중",
+        memberName: user?.name || form.memberName,
       };
 
       if (editMode) {
-        await axios.put(`/api/requests/${editId}`, submitData);
+        await api.put(`/api/requests/${editId}`, submitData);
         alert(isTemp ? "기안이 임시저장되었습니다" : "기안이 수정되었습니다");
       } else {
-        await axios.post(`/api/requests`, submitData);
+        await api.post(`/api/requests`, submitData);
         alert(isTemp ? "임시저장되었습니다" : "기안서가 등록되었습니다");
       }
 
@@ -94,6 +118,7 @@ export default function ApprovalRequestPage() {
   const resetForm = () => {
     setForm({
       memberId: "",
+      memberName: "",
       requestType: "",
       content: "",
       startDate: "",
@@ -108,11 +133,12 @@ export default function ApprovalRequestPage() {
     setEditMode(true);
     setEditId(r.id);
     setForm({
-      memberId: r.member?.id || r.memberId || "",
+      memberId: r.memberId || "",
+      memberName: r.memberName || user?.name || "",
       requestType: r.requestType,
       content: r.content,
-      startDate: r.startDate ? r.startDate.slice(0, 10) : "",
-      endDate: r.endDate ? r.endDate.slice(0, 10) : "",
+      startDate: r.startDate ? formatDate(r.startDate) : "",
+      endDate: r.endDate ? formatDate(r.endDate) : "",
       price: r.price || "",
       status: r.status,
     });
@@ -123,7 +149,7 @@ export default function ApprovalRequestPage() {
   const handleDelete = async (id) => {
     if (!window.confirm("정말 이 기안을 회수하시겠습니까?")) return;
     try {
-      await axios.delete(`/api/requests/${id}`);
+      await api.delete(`/api/requests/${id}`);
       alert("기안이 회수되었습니다 ❌");
       fetchRequests();
     } catch (err) {
@@ -137,7 +163,7 @@ export default function ApprovalRequestPage() {
       <Row className="mb-4 align-items-center">
         <Col><h3>📝 기안 작성</h3></Col>
         <Col className="text-end">
-          <Button variant="primary" onClick={() => { setEditMode(false); setShowModal(true); }}>
+          <Button variant="primary" onClick={handleNewRequest}>
             새 기안 작성
           </Button>
         </Col>
@@ -148,7 +174,7 @@ export default function ApprovalRequestPage() {
         <thead className="table-light">
           <tr>
             <th>#</th>
-            <th>작성자 ID</th>
+            <th>작성자</th>
             <th>종류</th>
             <th>기간</th>
             <th>내용</th>
@@ -165,15 +191,15 @@ export default function ApprovalRequestPage() {
             requests.map((r) => (
               <tr key={r.id}>
                 <td>{r.id}</td>
-                <td>{r.member?.id || r.memberId}</td>
+                <td>{r.memberName || "이름없음"}</td>
                 <td>{r.requestType}</td>
-                <td>{r.startDate?.slice(0, 10)} ~ {r.endDate?.slice(0, 10)}</td>
+                <td>{formatDate(r.startDate)} ~ {formatDate(r.endDate)}</td>
                 <td>{r.content}</td>
                 <td>
                   <Badge bg={
                     r.status === "임시저장" ? "warning" :
-                      r.status === "승인" ? "success" :
-                        "secondary"
+                    r.status === "승인" ? "success" :
+                    "secondary"
                   }>
                     {r.status}
                   </Badge>

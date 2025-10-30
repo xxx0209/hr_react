@@ -1,217 +1,204 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Row, Col, Table, Button, Modal, Form, Badge } from "react-bootstrap";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import { Table, Button, Badge, Container, Row, Col, Modal, Form } from "react-bootstrap";
+import api from "../api/api"; // JWT 쿠키 인증 axios 인스턴스
 
 export default function ApprovalPage() {
+  const [user, setUser] = useState(null);
   const [requests, setRequests] = useState([]);
-  const [approvals, setApprovals] = useState([]);
 
-  // 작성 모달창
+  // ✅ 승인/반려 모달 상태
   const [showModal, setShowModal] = useState(false);
-  const [form, setForm] = useState({
-    memberId: "",
-    requestType: "",
-    content: "",
-    startDate: "",
-    endDate: "",
-  });
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [actionType, setActionType] = useState(null); // "approve" | "reject"
+  const [comment, setComment] = useState("");
 
-  // 서버에서 데이터 불러오기
+  // 로그인한 사용자 정보 불러오기
   useEffect(() => {
-    fetchRequests();
-    fetchApprovals();
+    const fetchUser = async () => {
+      try {
+        const res = await api.get("/user/me");
+        setUser(res.data);
+      } catch (err) {
+        console.error("사용자 정보 불러오기 실패:", err);
+      }
+    };
+    fetchUser();
   }, []);
+
+  // 결재 문서 불러오기
+  useEffect(() => {
+    if (user) fetchRequests();
+  }, [user]);
 
   const fetchRequests = async () => {
     try {
-      const res = await axios.get("/api/requests");
+      const res = await api.get("/api/requests");
       setRequests(res.data);
     } catch (err) {
-      console.error(err);
+      console.error("문서 목록 불러오기 실패:", err);
     }
   };
 
-  const fetchApprovals = async () => {
-    try {
-      const res = await axios.get("/api/approvals/request/1"); // 예시: requestId=1
-      setApprovals(res.data);
-    } catch (err) {
-      console.error(err);
-    }
+  // ✅ 승인/반려 모달 열기
+  const openModal = (request, type) => {
+    setSelectedRequest(request);
+    setActionType(type);
+    setComment("");
+    setShowModal(true);
   };
 
-  // 기안 작성 핸들러
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((s) => ({ ...s, [name]: value }));
-  };
+  // ✅ 승인/반려 요청
+  const handleAction = async () => {
+    if (!selectedRequest) return;
+    const id = selectedRequest.id;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
     try {
-      await axios.post("/api/requests", form);
+      if (actionType === "approve") {
+        await api.patch(`/api/requests/${id}/approve`, { comment });
+        alert("✅ 결재 승인 완료");
+      } else if (actionType === "reject") {
+        await api.patch(`/api/requests/${id}/reject`, { comment });
+        alert("❌ 결재 반려 완료");
+      }
+
       setShowModal(false);
       fetchRequests();
     } catch (err) {
-      console.error(err);
-    }
-  };
-
-  // 결재 승인/반려
-  const handleApproval = async (id, status) => {
-    try {
-      await axios.post("/api/approvals", {
-        id,
-        status,
-        updatedAt: new Date(),
-      });
-      fetchApprovals();
-      alert(`문서가 ${status} 처리되었습니다.`);
-    } catch (err) {
-      console.error(err);
+      console.error("결재 처리 오류:", err);
+      alert("결재 처리 중 오류가 발생했습니다.");
     }
   };
 
   return (
     <Container className="py-4">
-      <Row className="align-items-center mb-3">
-        <Col><h3>전자결재 시스템</h3></Col>
-        <Col className="text-end">
-          <Button variant="primary" onClick={() => setShowModal(true)}>기안 작성</Button>
-        </Col>
-      </Row>
-
-      {/* 기안서 목록 */}
-      <Row>
+      <Row className="mb-3">
         <Col>
-          <h5>기안 목록</h5>
-          <Table hover responsive bordered>
-            <thead className="table-light">
-              <tr>
-                <th>#</th>
-                <th>작성자</th>
-                <th>종류</th>
-                <th>기간</th>
-                <th>내용</th>
-                <th>상태</th>
-              </tr>
-            </thead>
-            <tbody>
-              {requests.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="text-center text-muted">등록된 문서가 없습니다.</td>
-                </tr>
-              ) : (
-                requests.map((r) => (
-                  <tr key={r.id}>
-                    <td>{r.id}</td>
-                    <td>{r.memberId}</td>
-                    <td>{r.requestType}</td>
-                    <td>{r.startDate} ~ {r.endDate}</td>
-                    <td>{r.content}</td>
-                    <td>
-                      <Badge bg={
-                        r.status === "승인" ? "success" :
-                          r.status === "반려" ? "danger" : "secondary"
-                      }>
-                        {r.status}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </Table>
+          <h3>📋 결재 현황</h3>
         </Col>
       </Row>
 
-      {/* 결재 목록 */}
-      <Row className="mt-5">
-        <Col>
-          <h5>결재 요청</h5>
-          <Table hover responsive bordered>
-            <thead className="table-light">
-              <tr>
-                <th>#</th>
-                <th>문서 ID</th>
-                <th>결재자</th>
-                <th>상태</th>
-                <th>코멘트</th>
-                <th>액션</th>
-              </tr>
-            </thead>
-            <tbody>
-              {approvals.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="text-center text-muted">결재 요청이 없습니다.</td>
-                </tr>
-              ) : (
-                approvals.map((a) => (
-                  <tr key={a.id}>
-                    <td>{a.id}</td>
-                    <td>{a.requestId}</td>
-                    <td>{a.approverId}</td>
-                    <td>{a.status}</td>
-                    <td>{a.comment || "-"}</td>
-                    <td>
-                      <Button
-                        size="sm"
-                        variant="outline-success"
-                        className="me-2"
-                        onClick={() => handleApproval(a.id)}
-                      >
-                        승인
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline-danger"
-                        onClick={() => handleApproval(a.id)}
-                      >
-                        반려
-                      </Button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </Table>
-        </Col>
-      </Row>
+      <Table hover responsive bordered>
+        <thead className="table-light">
+          <tr className="text-center">
+            <th>#</th>
+            <th>작성자</th>
+            <th>종류</th>
+            <th>기간</th>
+            <th>내용</th>
+            <th>상태</th>
+            <th>결재자</th>
+            <th>결재일</th>
+            <th>결재 의견</th>
+            {user?.roles?.some((r) => r.authority === "ROLE_ADMIN") && <th>액션</th>}
+          </tr>
+        </thead>
+        <tbody>
+          {requests.length === 0 ? (
+            <tr>
+              <td colSpan={10} className="text-center text-muted">
+                결재 문서가 없습니다.
+              </td>
+            </tr>
+          ) : (
+            requests.map((r, index) => (
+              <tr key={r.id} className="text-center align-middle">
+                <td>{index + 1}</td>
+                <td>{r.memberName || r.memberId}</td>
+                <td>{r.requestType}</td>
+                <td>
+                  {r.startDate?.slice(0, 10)} ~ {r.endDate?.slice(0, 10)}
+                </td>
+                <td>{r.content}</td>
+                <td>
+                  <Badge
+                    bg={
+                      r.status === "승인"
+                        ? "success"
+                        : r.status === "반려"
+                        ? "danger"
+                        : r.status === "임시저장"
+                        ? "warning"
+                        : "secondary"
+                    }
+                  >
+                    {r.status}
+                  </Badge>
+                </td>
+                <td>{r.approver || "-"}</td>
+                <td>{r.approvalDate ? r.approvalDate.slice(0, 10) : "-"}</td>
+                <td>{r.comment || "-"}</td>
 
-      {/* 기안 작성 모달창 */}
+                {/* 관리자 전용 버튼 */}
+                {user?.roles?.some((r) => r.authority === "ROLE_ADMIN") && (
+                  <td>
+                    {r.status === "작성중" || r.status === "결재요청" ? (
+                      <>
+                        <Button
+                          size="sm"
+                          variant="outline-success"
+                          className="me-2"
+                          onClick={() => openModal(r, "approve")}
+                        >
+                          승인
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline-danger"
+                          onClick={() => openModal(r, "reject")}
+                        >
+                          반려
+                        </Button>
+                      </>
+                    ) : (
+                      <span className="text-muted">처리 완료</span>
+                    )}
+                  </td>
+                )}
+              </tr>
+            ))
+          )}
+        </tbody>
+      </Table>
+
+      {/* ✅ 승인/반려 모달 */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton><Modal.Title>기안 작성</Modal.Title></Modal.Header>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {actionType === "approve" ? "승인 의견 작성" : "반려 사유 작성"}
+          </Modal.Title>
+        </Modal.Header>
         <Modal.Body>
-          <Form onSubmit={handleSubmit}>
-            <Form.Group className="mb-3">
-              <Form.Label>작성자 ID</Form.Label>
-              <Form.Control name="memberId" value={form.memberId} onChange={handleChange} required />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>신청 종류</Form.Label>
-              <Form.Control name="requestType" value={form.requestType} onChange={handleChange} required />
-            </Form.Group>
-            <Form.Group className="mb-3">
-              <Form.Label>내용</Form.Label>
-              <Form.Control as="textarea" rows={3} name="content" value={form.content} onChange={handleChange} />
-            </Form.Group>
-            <Row>
-              <Col>
-                <Form.Group className="mb-3">
-                  <Form.Label>시작일</Form.Label>
-                  <Form.Control type="date" name="startDate" value={form.startDate} onChange={handleChange} />
-                </Form.Group>
-              </Col>
-              <Col>
-                <Form.Group className="mb-3">
-                  <Form.Label>종료일</Form.Label>
-                  <Form.Control type="date" name="endDate" value={form.endDate} onChange={handleChange} />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Button type="submit" variant="primary" className="w-100">기안 등록</Button>
-          </Form>
+          <Form.Group>
+            <Form.Label>
+              {actionType === "approve"
+                ? "결재 승인 시 의견 (선택)"
+                : "반려 사유 (필수)"}
+            </Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder={
+                actionType === "approve"
+                  ? "승인 의견을 입력하세요 (선택사항)"
+                  : "반려 사유를 입력하세요"
+              }
+              required={actionType === "reject"}
+            />
+          </Form.Group>
         </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            취소
+          </Button>
+          <Button
+            variant={actionType === "approve" ? "success" : "danger"}
+            onClick={handleAction}
+          >
+            {actionType === "approve" ? "승인" : "반려"}
+          </Button>
+        </Modal.Footer>
       </Modal>
     </Container>
   );
