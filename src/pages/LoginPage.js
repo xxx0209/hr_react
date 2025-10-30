@@ -40,10 +40,10 @@ const LoginPage = () => {
                 password: "비밀번호를 입력해 주세요."
             }));
             return;
-        }        
+        }
 
         try {
-            
+
             const response = await login(formData.memberId, formData.password);
 
             if (response.status === 200) { // 스프링의 MemberController 파일 참조
@@ -96,7 +96,7 @@ const LoginPage = () => {
 
                     <h2 style={{ marginBottom: "30px" }}>Log in</h2>
                     {errors.general && <Alert variant="danger">{errors.general}</Alert>}
-                    <div className="d-flex w-100 gap-3 mb-3 ">                        
+                    <div className="d-flex w-100 gap-3 mb-3 ">
                         <Form onSubmit={handleSubmit} style={{ width: "100%" }}>
                             <Form.Group controlId="formMemberId" className="mb-3">
                                 <Form.Label>아이디</Form.Label>

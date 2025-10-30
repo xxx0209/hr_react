@@ -1,3 +1,4 @@
+import React from 'react';
 import { Navigate, Route, Routes } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/LoginPage";
@@ -9,8 +10,8 @@ import LeaveStatus from "../pages/LeaveStatus";
 
 import ApprovalRequestPage from "../pages/ApprovalRequestPage";
 import ApprovalTempPage from "../pages/ApprovalTempPage";
-import PostPage from "../pages/PostPage";
-import CreatePost from "../pages/CreatePost";
+import ApprovalDetail from '../pages/ApprovalDetail'; //경로는 실제 위치에 맞게 조정.
+import BoardPage from "../pages/BoardPage";
 import SamplePage from "../sample/SamplePage"
 import PositionPage from "../pages/PositionPage";
 import PrivateLayoutRoute from "./PrivateLayoutRoute";
@@ -48,46 +49,51 @@ function AppRoutes() {
             {/* 공통 Layout + PrivateRoute 그룹 */}
             <Route element={<PrivateLayoutRoute />}>
                 <Route path="/" element={<Navigate to="/home" replace />} />
-                <Route path="/samplePage" element={<SamplePage />} />
-                <Route path="/schedule" element={<SchedulePage />} />
+                <Route path="/member/samplePage" element={<SamplePage />} />
+                <Route path="/member/position" element={<PositionPage />} />
+                <Route path="/member/position/list" element={<PositionListPage />} />
+                <Route path="/member/position/:id" element={<PositionDetailPage />} />
+                <Route path="/member/position/history/page" element={<PositionHistoryPage />} />
+                <Route path="/member/position/history/list" element={<PositionHistoryList />} />
+                <Route path="/member/position/history/:id" element={<PositionHistoryForm />} />
+                <Route path="/member/position/history/save" element={<PositionHistoryForm />} />
+                <Route path="/member/schedule" element={<SchedulePage />} />
                 <Route path="/home" element={<HomePage />} />
                 <Route path="/attendance" element={<AttendanceTracker />} />
                 <Route path="/leave" element={<LeaveStatus />} />
-                <Route path="/position" element={<PositionPage />} />
-                <Route path="/position/list" element={<PositionListPage />} />
-                <Route path="/position/:id" element={<PositionDetailPage />} />
-                <Route path="/position/history/page" element={<PositionHistoryPage />} />
-                <Route path="/position/history/list" element={<PositionHistoryList />} />
-                <Route path="/position/history/:id" element={<PositionHistoryForm />} />
-                <Route path="/position/history/save" element={<PositionHistoryForm />} />
+
+
+
 
                 {/* 급여 관련 페이지 */}
-                    <Route path="/salary" element={<Navigate to="/my-salaries"/>} />
-                    {/* 나의 급여 내역 */}
-                    <Route path="/my-salaries" element={<MySalaryHistory />} />
-                    {/* 전체 급여 목록 (관리자) */}
-                    <Route path="/salaries" element={<SalaryListPage />} />
-                    {/* 급여 생성 */}
-                    <Route path="/salaries/new" element={<SalaryForm />} />
-                    {/* 급여 상세 조회 */}
-                    <Route path="/salaries/:salaryId" element={<SalaryDetailPage />} />
-                    {/* 급여 수정 (관리자) */}
-                    <Route path="/salaries/:salaryId/edit" element={<SalaryEditPage />} />
-                    {/* 승인 대기 급여 목록 */}
-                    <Route path="/salaries/pending" element={<PendingSalaryList />} />
-                    {/* 기본급 설정 */}
-                    <Route path="/salary/base-salary" element={<BaseSalaryPage />} />
+                <Route path="/salary/salary" element={<Navigate to="/salary/my-salaries" />} />
+                {/* 나의 급여 내역 */}
+                <Route path="/salary/my-salaries" element={<MySalaryHistory />} />
+                {/* 전체 급여 목록 (관리자) */}
+                <Route path="/salary/salaries" element={<SalaryListPage />} />
+                {/* 급여 생성 */}
+                <Route path="/salary/salaries/new" element={<SalaryForm />} />
+                {/* 급여 상세 조회 */}
+                <Route path="/salary/salaries/:salaryId" element={<SalaryDetailPage />} />
+                {/* 급여 수정 (관리자) */}
+                <Route path="/salary/salaries/:salaryId/edit" element={<SalaryEditPage />} />
+                {/* 승인 대기 급여 목록 */}
+                <Route path="/salary/salaries/pending" element={<PendingSalaryList />} />
+                {/* 기본급 설정 */}
+                <Route path="/salary/base-salary" element={<BaseSalaryPage />} />
+
 
                 {/* 전자결재 페이지 */}
                 <Route path="/approval" element={<Navigate to="/approval/status" />} />
                 <Route path="/approval/request" element={<ApprovalRequestPage />} />
                 <Route path="/approval/status" element={<ApprovalPage />} />
                 <Route path="/approval/temp" element={<ApprovalTempPage />} />
+                <Route path="/test-approval" element={<ApprovalDetail />} />
+                <Route path="/approval/detail/:id" element={<ApprovalDetail />} />
                 <Route path="/approval" element={<ApprovalPage />} />
 
                 {/* 게시판 */}
-                <Route path="/post" element={<PostPage />} />
-                <Route path="/post/create" element={<CreatePost />} />
+                <Route path="/board" element={<BoardPage />} />
                 {/* 다른 페이지 추가 */}
 
             </Route>

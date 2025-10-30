@@ -10,6 +10,7 @@ import { getCurrentUser } from "../api/user";
 export const AuthContext = createContext();
 
 // 2.Provider 정의
+// eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 

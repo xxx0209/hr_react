@@ -1,103 +1,116 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState, useContext } from 'react';
+import axios from '../api/api';
+import { AuthContext } from '../context/AuthContext';
 import SalaryDetailCard from './SalaryDetailCard';
 
 const MySalaryHistory = () => {
-  const [year, setYear] = useState(new Date().getFullYear());
-  const [monthlySalaries, setMonthlySalaries] = useState([]);
-  const [selectedSalaryId, setSelectedSalaryId] = useState(null);
-  const [showDetail, setShowDetail] = useState(false);
-  const memberId = '로그인된사용자ID'; // 실제 로그인 정보로 대체
+  const { currentUser } = useContext(AuthContext);
+  const memberId = currentUser?.id;
+
+  const [salaries, setSalaries] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedSalary, setSelectedSalary] = useState(null);
+
+  const fetchSalaries = async () => {
+    if (!memberId) return;
+    try {
+      const res = await axios.get(`/api/salaries/member/${memberId}/list`, {
+        withCredentials: true
+      });
+      setSalaries(res.data);
+    } catch (err) {
+      console.error('급여 내역 조회 실패:', err);
+      alert('급여 내역을 불러오지 못했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchAllMonths = async () => {
-      const requests = Array.from({ length: 12 }, (_, i) =>
-        axios.get(`/salaries/member/${memberId}/monthly`, {
-          params: { year, month: i + 1 },
-          withCredentials: true
-        })
-      );
-
-      try {
-        const results = await Promise.all(requests);
-        const allSalaries = results
-          .map((res, i) => ({ month: i + 1, data: res.data }))
-          .filter(entry => entry.data.length > 0)
-          .sort((a, b) => b.month - a.month); // 내림차순
-
-        setMonthlySalaries(allSalaries);
-      } catch (err) {
-        console.error('급여 내역 조회 실패:', err);
-        alert('급여 내역을 불러오지 못했습니다.');
-      }
-    };
-
-    fetchAllMonths();
-  }, [memberId, year]);
+    fetchSalaries();
+  }, [memberId]);
 
   return (
-    <div>
-      <h2>나의 급여 내역</h2>
-
-      <div style={{ marginBottom: '1rem' }}>
-        <label>연도: </label>
-        <input
-          type="number"
-          value={year}
-          onChange={(e) => setYear(parseInt(e.target.value))}
-        />
+    <div style={styles.wrapper}>
+      <div style={styles.left}>
+        <h2 style={styles.title}>나의 급여 내역</h2>
+        {loading ? (
+          <p>불러오는 중...</p>
+        ) : salaries.length === 0 ? (
+          <p>급여 내역이 없습니다.</p>
+        ) : (
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th>급여 월</th>
+                <th>총지급액</th>
+                <th>상태</th>
+                <th>상세</th>
+              </tr>
+            </thead>
+            <tbody>
+              {salaries.map(salary => (
+                <tr key={salary.salaryId}>
+                  <td>{salary.salaryMonth}</td>
+                  <td>{format(salary.grossPay)} 원</td>
+                  <td>{salary.status}</td>
+                  <td>
+                    <button style={styles.detailButton} onClick={() => setSelectedSalary(salary)}>
+                      상세보기
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
-      <div style={{ display: 'flex', gap: '2rem' }}>
-        {/* 왼쪽 4 */}
-        <div style={{ flex: 1 }}>
-          {monthlySalaries.length === 0 ? (
-            <p>급여 내역이 없습니다.</p>
-          ) : (
-            <table style={{ borderCollapse: 'collapse', width: '100%' }}>
-              <thead>
-                <tr>
-                  <th>월</th>
-                  <th>총 급여</th>
-                  <th>상태</th>
-                  <th>상세</th>
-                </tr>
-              </thead>
-              <tbody>
-                {monthlySalaries.map(entry => {
-                  const salary = entry.data[0]; // 월별 첫 번째 급여
-                  return (
-                    <tr key={salary.id}>
-                      <td>{entry.month}월</td>
-                      <td>{salary.grossPay.toLocaleString()}원</td>
-                      <td>{salary.status}</td>
-                      <td>
-                        <button
-                          onClick={() => {
-                            setSelectedSalaryId(salary.id);
-                            setShowDetail(true);
-                          }}
-                        >
-                          상세보기
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          )}
-        </div>
-
-        {/* 오른쪽 8 */}
-        <div style={{ flex: 2 }}>
-          {showDetail && selectedSalaryId && (
-            <SalaryDetailCard salaryId={selectedSalaryId} />
-          )}
-        </div>
+      <div style={styles.right}>
+        <SalaryDetailCard salary={selectedSalary} />
       </div>
     </div>
   );
+};
+
+const format = (value) => {
+  if (!value) return '0';
+  return Number(value).toLocaleString();
+};
+
+const styles = {
+  wrapper: {
+    display: 'flex',
+    gap: '20px',
+    padding: '20px',
+    maxWidth: '1200px',
+    margin: '0 auto'
+  },
+  left: {
+    flex: 4,
+    backgroundColor: '#f4f6f8',
+    padding: '20px',
+    borderRadius: '12px'
+  },
+  right: {
+    flex: 8
+  },
+  title: {
+    textAlign: 'center',
+    color: '#333'
+  },
+  table: {
+    width: '100%',
+    borderCollapse: 'collapse'
+  },
+  detailButton: {
+    padding: '6px 12px',
+    backgroundColor: '#0078d4',
+    color: 'white',
+    border: 'none',
+    borderRadius: '6px',
+    cursor: 'pointer'
+  }
 };
 
 export default MySalaryHistory;
