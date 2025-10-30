@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Pagination, Spinner } from "react-bootstrap";
-import axios from "../api/api";
+import axios from "../../api/api";
 
 export default function PositionHistoryPage() {
   const [histories, setHistories] = useState([]);
@@ -70,9 +70,9 @@ export default function PositionHistoryPage() {
                 histories.map((h) => (
                   <tr key={h.id}>
                     <td>{new Date(h.changedAt)
-                        .toLocaleDateString("ko-KR")
-                        .replace(/\s/g, "")   // 공백 제거
-                        .slice(0, -1)}
+                      .toLocaleDateString("ko-KR")
+                      .replace(/\s/g, "")   // 공백 제거
+                      .slice(0, -1)}
                     </td>
                     <td>{h.memberId}</td>
                     <td>{h.memberName}</td>

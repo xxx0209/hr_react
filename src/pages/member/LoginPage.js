@@ -1,10 +1,10 @@
 import { Container, Row, Col, Form, Button, Alert, InputGroup } from "react-bootstrap";
-import bannerImg from "./../assets/logo192.png";
+import bannerImg from "./../../assets/logo192.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
-import { login } from "../api/auth";
-import { getCurrentUser } from "../api/user";
-import { AuthContext } from "../context/AuthContext";
+import { login } from "../../api/auth";
+import { getCurrentUser } from "../../api/user";
+import { AuthContext } from "../../context/AuthContext";
 
 const LoginPage = () => {
 
