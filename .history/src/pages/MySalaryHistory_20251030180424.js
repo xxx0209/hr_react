@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../api/api';
-import SalaryDetailCard from '../pages/SalaryDetailCard'; // 경로에 맞게 수정하세요
+import SalaryDetailCard from '../pa/SalaryDetailCard'; // 경로에 맞게 수정하세요
 
 const MySalaryHistory = () => {
   const [year, setYear] = useState(new Date().getFullYear());

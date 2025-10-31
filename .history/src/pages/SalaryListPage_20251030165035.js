@@ -66,6 +66,7 @@ const SalaryListPage = () => {
           onChange={(id) => setFilters(prev => ({ ...prev, memberId: id }))}
           searchable={true}
           placeholder="회원"
+
         />
         <select
           value={filters.year}

@@ -67,26 +67,17 @@ const SalaryListPage = () => {
           searchable={true}
           placeholder="회원"
         />
-        <select
-          value={filters.year}
-          onChange={(e) => setFilters(prev => ({ ...prev, year: e.target.value }))}
-          style={styles.select}
-        >
-          <option value="">년도 선택</option>
-          {[2023, 2024, 2025].map(y => (
-            <option key={y} value={y}>{y}</option>
-          ))}
-        </select>
-        <select
-          value={filters.month}
-          onChange={(e) => setFilters(prev => ({ ...prev, month: e.target.value }))}
-          style={styles.select}
-        >
-          <option value="">월 선택</option>
-          {[...Array(12)].map((_, i) => (
-            <option key={i + 1} value={i + 1}>{i + 1}월</option>
-          ))}
-        </select>
+           <div>
+            <label >급여 대상 월</label>
+            <input
+              name="salaryMonth"
+              type="month"
+              value={form.salaryMonth}
+              onChange={handleChange}
+              required
+              style={inputStyle}
+            />
+          </div>
         <button onClick={handleSearch} style={styles.button}>검색</button>
       </div>
 
