@@ -10,7 +10,7 @@ import AttendanceSubMenu from "../ui/AttendanceSubMenu"
 // 하위 메뉴 컴포넌트 import
 // import ApprovalSubMenu from "./ApprovalSubMenu";
 // import BoardSubMenu from "./BoardSubMenu";
-// import SalarySubMenu from "./SalarySubMenu";
+import SalarySubMenu from "../ui/SalarySubMenu";
 
 export default function MenuItems() {
     const navigate = useNavigate();
@@ -63,7 +63,7 @@ export default function MenuItems() {
                     </Nav.Link>
 
                     <Nav.Link
-                        onClick={() => handleSelect("salary", "/salary")}
+                        onClick={() => handleSelect("salary", "/salary/salary")}
                         active={location.pathname.startsWith("/salary")}
                     >
                         💰 급여관리
@@ -86,7 +86,7 @@ export default function MenuItems() {
                 {activeMenu === "attendance" && <AttendanceSubMenu />}
                 {activeMenu === "board" && <BoardSubMenu />}
                 {activeMenu === "approval" && <ApprovalSubMenu />}
-                {/* {activeMenu === "salary" && <SalarySubMenu />} */}
+                {activeMenu === "salary" && <SalarySubMenu />}
 
                 {!activeMenu && (
                     <div className="text-muted mt-3">
