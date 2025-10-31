@@ -30,11 +30,15 @@ import PositionHistoryForm from "../pages/member/PositionHistoryForm";
 import PositionHistoryPage from "../pages/member/PositionHistoryPage";
 import CategoryPage from '../pages/member/CategoryPage';
 
-import SalaryPage from '../pages/SalaryPage';
-import SalaryAllList from '../pages/SalaryAllList';
+import MySalaryHistory from '../pages/MySalaryHistory';
+import SalaryListPage from '../pages/SalaryListPage';
 import SalaryForm from '../pages/SalaryForm';
-import BaseSalaryForm from '../pages/BaseSalaryForm';
-import SalaryDetailPage from '../pages/SalaryDetailPage';
+import SalaryDetailPage from '../pages/SalaryDetailCard';
+import SalaryEditPage from '../pages/SalaryEditpage';
+import PendingSalaryList from '../pages/PendingSalaryList';
+import BaseSalaryPage from '../pages/BaseSalaryPage';
+
+
 
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
 // 이러한 파일을 네트워크에서는 routing table이라고 합니다.
@@ -69,14 +73,24 @@ function AppRoutes() {
                 <Route path="/leave" element={<LeaveStatus />} />
 
 
-                {/* 급여 관련 페이지 */}
-                <Route path="/salary" element={<Navigate to="/salary/manage" />} />
-                <Route path="/salary/manage" element={<SalaryPage />} />
-                <Route path="/salary/admin" element={<SalaryAllList />} />
-                <Route path="/salary/admin/create" element={<SalaryForm />} />
-                <Route path="/salary/base-salary" element={<BaseSalaryForm />} />
-                <Route path="/salary/detail/:id" element={<SalaryDetailPage />} />
 
+
+                {/* 급여 관련 페이지 */}
+                <Route path="/salary/salary" element={<Navigate to="/salary/my-salaries" />} />
+                {/* 나의 급여 내역 */}
+                <Route path="/salary/my-salaries" element={<MySalaryHistory />} />
+                {/* 전체 급여 목록 (관리자) */}
+                <Route path="/salary/salaries" element={<SalaryListPage />} />
+                {/* 급여 생성 */}
+                <Route path="/salary/salaries/new" element={<SalaryForm />} />
+                {/* 급여 상세 조회 */}
+                <Route path="/salary/salaries/:salaryId" element={<SalaryDetailPage />} />
+                {/* 급여 수정 (관리자) */}
+                <Route path="/salary/salaries/:salaryId/edit" element={<SalaryEditPage />} />
+                {/* 승인 대기 급여 목록 */}
+                <Route path="/salary/salaries/pending" element={<PendingSalaryList />} />
+                {/* 기본급 설정 */}
+                <Route path="/salary/base-salary" element={<BaseSalaryPage />} />
 
 
                 {/* 전자결재 페이지 */}
@@ -87,9 +101,6 @@ function AppRoutes() {
                 <Route path="/test-approval" element={<ApprovalDetail />} />
                 <Route path="/approval/detail/:id" element={<ApprovalDetail />} />
                 <Route path="/approval" element={<ApprovalPage />} />
-
-                {/* 급여 관련 페이지 */}
-                <Route path="/salary" element={<SalaryPage />} />
 
                 {/* 게시판 */}
                 <Route path="/board" element={<BoardPage />} />
