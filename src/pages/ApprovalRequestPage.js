@@ -1,4 +1,3 @@
-// src/pages/ApprovalRequestPage.js
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Form, Button, Table, Modal, Badge } from "react-bootstrap";
 import api from "../api/api"; // axios 인스턴스 (withCredentials 포함)
@@ -6,6 +5,8 @@ import api from "../api/api"; // axios 인스턴스 (withCredentials 포함)
 export default function ApprovalRequestPage() {
   const [user, setUser] = useState(null);
   const [requests, setRequests] = useState([]);
+  const [approvers, setApprovers] = useState([]); // 결재자 목록 상태 추가
+
   const [form, setForm] = useState({
     memberId: "",
     memberName: "",
@@ -15,6 +16,8 @@ export default function ApprovalRequestPage() {
     endDate: "",
     price: "",
     status: "작성중",
+    approverId: "",
+    approverName: "", // 추가
   });
 
   const [showModal, setShowModal] = useState(false);
@@ -39,7 +42,20 @@ export default function ApprovalRequestPage() {
     fetchUser();
   }, []);
 
-  // 🔹 기안 목록 불러오기
+  // 결재자 목록 불러오기
+  useEffect(() => {
+    const fetchApprovers = async () => {
+      try {
+        const res = await api.get("/api/requests/approvers");
+        setApprovers(res.data);
+      } catch (err) {
+        console.error("결재자 목록 불러오기 실패:", err);
+      }
+    };
+    fetchApprovers();
+  }, []);
+
+  // 기안 목록 불러오기
   useEffect(() => {
     fetchRequests();
   }, []);
@@ -54,7 +70,7 @@ export default function ApprovalRequestPage() {
     }
   };
 
-  // 🔹 날짜 포맷 함수 (날짜 표시 문제 해결)
+  // 날짜 포맷 함수
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const d = new Date(dateString);
@@ -68,7 +84,7 @@ export default function ApprovalRequestPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🔹 새 기안 작성 버튼 (작성자 이름 자동 세팅)
+  // 🔹 새 기안 작성 버튼
   const handleNewRequest = () => {
     setEditMode(false);
     setEditId(null);
@@ -81,26 +97,33 @@ export default function ApprovalRequestPage() {
       endDate: "",
       price: "",
       status: "작성중",
+      approverId: "",
+      approverName: "", 
     });
     setShowModal(true);
   };
 
-  // 🔹 기안 등록 및 임시저장
+  // 기안 등록 및 임시저장
   const handleSubmit = async (e, isTemp = false) => {
     e.preventDefault();
     try {
       const submitData = {
         ...form,
-        status: isTemp ? "임시저장" : "작성중",
+        status: isTemp ? "임시저장" : "결재요청",
         memberName: user?.name || form.memberName,
       };
 
+      if (!isTemp && !form.approverId) {
+        alert("결재자를 선택하세요.");
+        return;
+      }
+
       if (editMode) {
         await api.put(`/api/requests/${editId}`, submitData);
-        alert(isTemp ? "기안이 임시저장되었습니다" : "기안이 수정되었습니다");
+        alert(isTemp ? "기안이 임시저장되었습니다" : "결재요청이 완료되었습니다");
       } else {
         await api.post(`/api/requests`, submitData);
-        alert(isTemp ? "임시저장되었습니다" : "기안서가 등록되었습니다");
+        alert(isTemp ? "임시저장되었습니다" : "결재요청이 등록되었습니다");
       }
 
       setShowModal(false);
@@ -125,6 +148,8 @@ export default function ApprovalRequestPage() {
       endDate: "",
       price: "",
       status: "작성중",
+      approverId: "",
+      approverName: "",
     });
   };
 
@@ -141,6 +166,8 @@ export default function ApprovalRequestPage() {
       endDate: r.endDate ? formatDate(r.endDate) : "",
       price: r.price || "",
       status: r.status,
+      approverId: r.approverId || "",
+      approverName: r.approverName || "",
     });
     setShowModal(true);
   };
@@ -150,7 +177,7 @@ export default function ApprovalRequestPage() {
     if (!window.confirm("정말 이 기안을 회수하시겠습니까?")) return;
     try {
       await api.delete(`/api/requests/${id}`);
-      alert("기안이 회수되었습니다 ❌");
+      alert("기안이 회수되었습니다");
       fetchRequests();
     } catch (err) {
       console.error("기안 삭제 실패:", err);
@@ -242,6 +269,31 @@ export default function ApprovalRequestPage() {
               </Form.Select>
             </Form.Group>
 
+            {/* 결재자 선택 필드 추가 */}
+            <Form.Group className="mb-3">
+              <Form.Label>결재자 지정</Form.Label>
+              <Form.Select
+                name="approverId"
+                value={form.approverId || ""}
+                onChange={(e) => {
+                  const selected = approvers.find(a => a.memberId === e.target.value);
+                  setForm((prev) => ({
+                    ...prev,
+                    approverId: selected?.memberId || "",
+                    approverName: selected?.name || "",
+                  }));
+                }}
+                required
+              >
+                <option value="">결재자를 선택하세요</option>
+                {approvers.map((a) => (
+                  <option key={a.memberId} value={a.memberId}>
+                    {a.name}
+                  </option>
+                ))}
+              </Form.Select>
+            </Form.Group>
+
             {/* 지출품의서일 때만 금액 입력란 표시 */}
             {form.requestType === "지출품의서" && (
               <Form.Group className="mb-3">
@@ -283,10 +335,9 @@ export default function ApprovalRequestPage() {
               </Col>
             </Row>
 
-            {/* 등록 / 임시저장 버튼 */}
             <div className="d-flex gap-2">
               <Button type="submit" variant="primary" className="w-100">
-                {editMode ? "수정 완료" : "등록"}
+                {editMode ? "수정 완료" : "결재요청"}
               </Button>
               <Button variant="secondary" className="w-100" onClick={(e) => handleSubmit(e, true)}>
                 임시저장
