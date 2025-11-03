@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
-
+import UserInfoCard from '../components/UserInfoCard';
+import ClockButtons from '../components/ClockButtons';
 
 function AttendanceTracker() {
     //상태 정의
@@ -33,104 +34,39 @@ function AttendanceTracker() {
     // ]);
 
     useEffect(() => {
-        const savedClockIn = localStorage.getItem("clockInTime");
-        const savedClockOut = localStorage.getItem("clockOutTime");
-        if (savedClockIn) setClockInTime(savedClockIn);
-        if (savedClockOut) setClockOutTime(savedClockOut);
+        const storedClockIn = localStorage.getItem("clockInTime");
+        const storedClockOut = localStorage.getItem("clockOutTime");
+        if (storedClockIn) setClockInTime(storedClockIn);
+        if (storedClockOut) setClockOutTime(storedClockOut);
     }, []);
 
     const handleClockIn = () => {
-        const now = new Date().toLocaleTimeString("ko-KR", {
-            hour: "2-digit",
-            minute: "2-digit",
-        });
+        const now = new Date().toLocaleTimeString();
         setClockInTime(now);
         localStorage.setItem("clockInTime", now);
     };
 
     const handleClockOut = () => {
-        const now = new Date().toLocaleTimeString("ko-KR", {
-            hour: "2-digit",
-            minute: "2-digit",
-        });
+        const now = new Date().toLocaleTimeString();
         setClockOutTime(now);
         localStorage.setItem("clockOutTime", now);
     };
 
-    const handleStatusChange = () => {
-        const nextStatus =
-            workStatus === "정상"
-                ? "재택"
-                : workStatus === "재택"
-                    ? "외근"
-                    : "정상";
-        setWorkStatus(nextStatus);
+    const user = {
+        name: '승규',
+        position: '대리',
+        workType: '정규직',
     };
-
-    const statusColor = {
-        정상: "#666",
-        재택: "#007bff",
-        외근: "#ff9800",
-    };
-
-    const progressPercentage = 65; //예시 값, 나중에 계산해서 넣기.
 
     return (
-        <div style={{ padding: "20px", fontFamily: "sans-serif" }}>
-            <h2>출퇴근 기능 테스트</h2>
-
-            <div style={{ marginTop: "20px" }}>
-                <div style={{ marginBottom: "10px" }}>
-                    <strong>이번 주 누적 근무 시간</strong>
-                    <div style={{
-                        background: "#eee",
-                        borderRadius: "5px",
-                        overflow: "hidden",
-                        height: "20px",
-                        marginTop: "5px"
-                    }}>
-                        <div style={{
-                            width: `${progressPercentage}%`,
-                            background: "#4caf50",
-                            height: "100%",
-                            transition: "width 0.3s ease"
-                        }} />
-                    </div>
-                    <span>{weeklyStats.totalHours}</span>
-                </div>
-                <ul>
-                    <li>지각: {weeklyStats.lateCount}회</li>
-                    <li>조퇴: {weeklyStats.earlyLeaveCount}회</li>
-                    <li>결근: {weeklyStats.absentCount}회</li>
-                </ul>
-            </div>
-
-            <div style={{ color: statusColor[workStatus], fontWeight: "bold", marginBottom: "10px" }}>
-                <strong>근무 상태:</strong> {workStatus}
-                <button onClick={handleStatusChange} style={{ marginLeft: "10px" }}>
-                    상태 변경
-                </button>
-            </div>
-
-            <div style={{ marginTop: "20px" }}>
-                <button onClick={handleClockIn}>출근</button>
-                {clockInTime && <span> 출근 시간: {clockInTime}</span>}
-            </div>
-
-            <div style={{ marginTop: "10px" }}>
-                <button onClick={handleClockOut}>퇴근</button>
-                {clockOutTime && <span> 퇴근 시간: {clockOutTime}</span>}
-            </div>
-
-            <div style={{ marginTop: "20px" }}>
-                <h4>주간 근무 통계</h4>
-                <ul>
-                    <li>총 근무 시간: {weeklyStats.totalHours}</li>
-                    <li>지각 횟수: {weeklyStats.lateCount}</li>
-                    <li>조퇴 횟수: {weeklyStats.earlyLeaveCount}</li>
-                    <li>결근 횟수: {weeklyStats.absentCount}</li>
-                </ul>
-            </div>
+        <div>
+            <UserInfoCard name="승규" position="대리" workType="정규직" />
+            <ClockButtons
+                clockInTime={clockInTime}
+                clockOutTime={clockOutTime}
+                onClockIn={handleClockIn}
+                onClockOut={handleClockOut}
+            />
         </div>
     );
 }
