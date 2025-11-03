@@ -162,7 +162,7 @@ const LoginPage = () => {
 
                             <div className="text-center mt-3">
                                 <span>회원이 아니신가요? </span>
-                                <Link to="/signup">
+                                <Link to="/member/signup">
                                     회원가입
                                 </Link>
                             </div>

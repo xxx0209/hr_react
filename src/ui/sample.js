@@ -1,7 +1,7 @@
 function App() {
     return (
         <>
-            기본 샘플
+            메뉴 아이템
         </>
     );
 }
