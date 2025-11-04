@@ -2,71 +2,64 @@
 import React, { useState, useEffect } from "react";
 import UserInfoCard from '../components/UserInfoCard';
 import ClockButtons from '../components/ClockButtons';
+import AttendanceHistory from '../components/AttendanceHistory';
 
 function AttendanceTracker() {
-    //상태 정의
-    const [clockInTime, setClockInTime] = useState(null);
-    const [clockOutTime, setClockOutTime] = useState(null);
-    const [workStatus, setWorkStatus] = useState("정상");
-    const [weeklyStats] = useState({
-        totalHours: "0h 0m",
-        lateCount: 0,
-        earlyLeaveCount: 0,
-        absentCount: 0,
-    });
-
-    // const [leaveBalance, setLeaveBalance] = useState({
-    //     annual: 4.5,       //연차
-    //     half: 2,           //반차
-    //     quarter: 1         //반반차
-    // });
-
-    // const [recentRequests, setRecentRequests] = useState([
-    //     //예시 데이터
-    //     { type: "연차", date: "2025-10-20", status: "결재대기" },
-    //     { type: "반차", date: "2025-10-18", status: "승인완료" },
-    //     { type: "반반차", date: "2025-10-15", status: "반려" }
-    // ]);
-
-    // const [calendarEvents, setCalendarEvents] = useState([
-    //     //승인된 휴가만 표시
-    //     { date: "2025-10-18", type: "반차", status: "승인완료" }
-    // ]);
+    const [attendanceRecords, setAttendanceRecords] = useState([]);
 
     useEffect(() => {
-        const storedClockIn = localStorage.getItem("clockInTime");
-        const storedClockOut = localStorage.getItem("clockOutTime");
-        if (storedClockIn) setClockInTime(storedClockIn);
-        if (storedClockOut) setClockOutTime(storedClockOut);
+        const saved = localStorage.getItem('attendanceRecords');
+        if (saved) {
+            setAttendanceRecords(JSON.parse(saved));
+        }
     }, []);
 
-    const handleClockIn = () => {
-        const now = new Date().toLocaleTimeString();
-        setClockInTime(now);
-        localStorage.setItem("clockInTime", now);
-    };
+    const handleRecord = ({ type, time }) => {
+        const today = new Date().toISOString().split('T')[0];
+        const existing = attendanceRecords.find(r => r.date === today);
 
-    const handleClockOut = () => {
-        const now = new Date().toLocaleTimeString();
-        setClockOutTime(now);
-        localStorage.setItem("clockOutTime", now);
-    };
+        let updated;
+        if (existing) {
+            updated = attendanceRecords.map(r =>
+                r.date === today
+                    ? { ...r, [type === 'clockIn' ? 'clockIn' : 'clockOut']: time }
+                    : r
+            );
+        } else {
+            updated = [
+                ...attendanceRecords,
+                {
+                    date: today,
+                    clockIn: type === 'clockIn' ? time : null,
+                    clockOut: type === 'clockOut' ? time : null,
+                    status: '정상', //나중에 자동 판별 로직으로 바꿀 예정
+                },
+            ];
+        }
 
-    const user = {
-        name: '승규',
-        position: '대리',
-        workType: '정규직',
+        setAttendanceRecords(updated);
+        localStorage.setItem('attendanceRecords', JSON.stringify(updated));
     };
 
     return (
-        <div>
-            <UserInfoCard name="승규" position="대리" workType="정규직" />
-            <ClockButtons
-                clockInTime={clockInTime}
-                clockOutTime={clockOutTime}
-                onClockIn={handleClockIn}
-                onClockOut={handleClockOut}
-            />
+        <div style={{ display: 'flex' }}>
+            <div style={{ width: '250px', padding: '16px' }}>
+                <UserInfoCard
+                    name="홍길동"
+                    position="사원"
+                    workType="정규직"
+                />
+            </div>
+            <div style={{ flex: 1, padding: '16px' }}>
+                <ClockButtons onRecord={handleRecord} />
+                <div>
+                    {attendanceRecords.map((record, index) => (
+                        <div key={index}>
+                            {record.status} - {record.time}
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 }

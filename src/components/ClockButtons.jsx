@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './ClockButtons.css';
 
-const ClockButtons = ({ clockInTime, clockOutTime, onClockIn, onClockOut }) => {
+const ClockButtons = ({ onRecord }) => {
+    const [clockInTime, setClockInTime] = useState(null);
+    const [clockOutTime, setClockOutTime] = useState(null);
+
+    const handleClockIn = () => {
+        const now = new Date().toLocaleTimeString();
+        setClockInTime(now);
+        onRecord({ type: 'clockIn', time: now });
+    };
+
+    const handleClockOut = () => {
+        const now = new Date().toLocaleTimeString();
+        setClockOutTime(now);
+        onRecord({ type: 'clockOut', time: now });
+    };
+
     return (
-        <div className="clock-buttons">
-            <button onClick={onClockIn}>출근</button>
-            <button onClick={onClockIn}>퇴근</button>
-            <div className="clock-times">
-                <p>출근 시간: {clockInTime || '미기록'}</p>
-                <p>퇴근 시간: {clockOutTime || '미기록'}</p>
-            </div>
+        <div>
+            <button onClick={handleClockIn}>출근</button>
+            <button onClick={handleClockOut}>퇴근</button>
         </div>
     );
 };
