@@ -230,7 +230,7 @@ export default function SchedulePage() {
     };
 
     return (
-        <Container fluid className="p-5 bg-light min-vh-100">
+        <Container fluid className="p- bg-light min-vh-100">
             {/* 페이지 전용 CSS */}
             <style>
                 {`

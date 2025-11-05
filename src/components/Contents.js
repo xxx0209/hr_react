@@ -1,24 +1,21 @@
-// Layout.js
+import React from "react";
 import { Container, Row, Col } from "react-bootstrap";
-import MenuItems from "../ui/MenuItems";
 import MenuLayout from "./MenuLayout";
-function Contents({ children }) {
+
+export default function Contents({ children }) {
     return (
-        <Container fluid className="flex-grow-1">
+        <Container fluid className="flex-grow-1 h-100 p-3">
             <Row className="h-100">
-                {/* 왼쪽 사이드 메뉴 */}
-                <Col md={3} className="border-end p-3" style={{ height: '100%' }}>
-                    <div className="d-flex h-100">
-                        <MenuLayout />
-                    </div>
+                {/* 왼쪽 메뉴 영역 (대분류 + 하위 메뉴) */}
+                <Col md={3} className="border-end p-0" style={{ height: "100%" }}>
+                    <MenuLayout />
                 </Col>
-                {/* 오른쪽 콘텐츠 */}
-                <Col md={9} className="p-4" style={{ overflowY: 'auto' }}>
+
+                {/* 오른쪽 페이지 컨텐츠 */}
+                <Col md={9} className="p-4" style={{ height: "100%", overflowY: "auto" }}>
                     {children}
                 </Col>
             </Row>
         </Container>
     );
 }
-
-export default Contents;

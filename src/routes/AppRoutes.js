@@ -37,6 +37,7 @@ import SalaryDetailPage from '../pages/SalaryDetailCard';
 import SalaryEditPage from '../pages/SalaryEditpage';
 import PendingSalaryList from '../pages/PendingSalaryList';
 import BaseSalaryPage from '../pages/BaseSalaryPage';
+import TestPage from '../sample/TestPage';
 
 
 
@@ -52,6 +53,7 @@ function AppRoutes() {
             <Route element={<AuthRedirectRoute />}>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
+                <Route path="/test" element={<TestPage />} />
             </Route>
 
             {/* 공통 Layout + PrivateRoute 그룹 */}
