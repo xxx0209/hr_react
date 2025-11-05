@@ -1,280 +1,194 @@
 /*
-React + React-Bootstrap 기본 게시판 컴포넌트
+React + React-Bootstrap 기본 컴포넌트 템플릿
 사용법:
 1) 의존성 설치:
-   npm install react-bootstrap bootstrap
+   npm install react-bootstrap bootstrap react-icons axios react-router-dom
 2) index.js 또는 App 진입점에 Bootstrap CSS 추가:
    import 'bootstrap/dist/css/bootstrap.min.css';
-3) 이 파일을 프로젝트에 추가하고 App에서 import Board from './React-Board-ReactBootstrap'; 사용
+3) 이 파일을 프로젝트에 추가하고 App에서 import HomepagePage from './HomepagePage'; 사용
 
-설명: 게시글 목록, 검색, 페이징, 글 생성/수정 모달, 삭제 기능이 포함된 기본 예시입니다. 필요한 부분을 자유롭게 확장하세요.
+설명:
+- 전자결재 카드 포함한 기본 대시보드 예시입니다.
+- 결재요청 미리보기 / 결재 대기 문서 수 표시 기능 포함.
+- 근무 관련 기능은 아래 주석된 영역 참고하여 추후 확장 가능합니다.
 */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Row,
   Col,
-  Table,
+  Card,
   Button,
-  Modal,
-  Form,
-  Pagination,
-  InputGroup,
-  FormControl,
   Badge,
-} from 'react-bootstrap';
+  Table,
+} from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { FaFileSignature, FaClipboardList, FaCalendarCheck } from "react-icons/fa";
+import api from "../api/api";
 
-export default function Board() {
-  // 샘플 데이터
-  const initialPosts = Array.from({ length: 13 }).map((_, i) => ({
-    id: i + 1,
-    title: `샘플 게시글 #${i + 1}`,
-    author: `작성자${(i % 4) + 1}`,
-    content: `이것은 샘플 본문입니다. 게시글 번호 ${i + 1}입니다.`,
-    date: new Date(Date.now() - i * 1000 * 60 * 60 * 24).toLocaleDateString(),
-    views: Math.floor(Math.random() * 200),
-  }));
+export default function Homepage() {
+  const navigate = useNavigate();
+  const [approvalSummary, setApprovalSummary] = useState({ waiting: 0, recent: [] });
 
-  const [posts, setPosts] = useState(initialPosts);
-  const [query, setQuery] = useState('');
-  const [page, setPage] = useState(1);
-  const perPage = 5;
+  // 결재 현황 요약 데이터 (최근 요청 + 대기 문서 수)
+  useEffect(() => {
+    const fetchApprovals = async () => {
+      try {
+        const res = await api.get("/api/requests/approvals");
+        const waitingCount = res.data.requests?.length || 0;
+        const recentList = res.data.requests?.slice(0, 3) || [];
+        setApprovalSummary({ waiting: waitingCount, recent: recentList });
+      } catch (err) {
+        console.error("결재 현황 불러오기 실패:", err);
+      }
+    };
+    fetchApprovals();
+  }, []);
 
-  // 모달 상태 (작성/수정)
-  const [showModal, setShowModal] = useState(false);
-  const [editingPost, setEditingPost] = useState(null);
-
-  // 폼 필드 상태
-  const [form, setForm] = useState({ title: '', author: '', content: '' });
-
-  // 필터링된 결과
-  const filtered = useMemo(() => {
-    if (!query.trim()) return posts;
-    const q = query.toLowerCase();
-    return posts.filter(
-      (p) => p.title.toLowerCase().includes(q) || p.author.toLowerCase().includes(q) || p.content.toLowerCase().includes(q)
-    );
-  }, [posts, query]);
-
-  const totalPages = Math.max(1, Math.ceil(filtered.length / perPage));
-  const pageData = filtered.slice((page - 1) * perPage, page * perPage);
-
-  function openCreate() {
-    setEditingPost(null);
-    setForm({ title: '', author: '', content: '' });
-    setShowModal(true);
-  }
-
-  function openEdit(post) {
-    setEditingPost(post);
-    setForm({ title: post.title, author: post.author, content: post.content });
-    setShowModal(true);
-  }
-
-  function closeModal() {
-    setShowModal(false);
-    setEditingPost(null);
-  }
-
-  function handleFormChange(e) {
-    const { name, value } = e.target;
-    setForm((s) => ({ ...s, [name]: value }));
-  }
-
-  function savePost() {
-    if (!form.title.trim() || !form.author.trim()) {
-      alert('제목과 작성자는 필수입니다.');
-      return;
-    }
-
-    if (editingPost) {
-      // 수정
-      setPosts((prev) => prev.map((p) => (p.id === editingPost.id ? { ...p, ...form } : p)));
-    } else {
-      // 생성
-      const nextId = posts.length ? Math.max(...posts.map((p) => p.id)) + 1 : 1;
-      const newPost = {
-        id: nextId,
-        title: form.title,
-        author: form.author,
-        content: form.content,
-        date: new Date().toLocaleDateString(),
-        views: 0,
-      };
-      setPosts((prev) => [newPost, ...prev]);
-      // 생성 후 첫 페이지로 이동
-      setPage(1);
-    }
-
-    closeModal();
-  }
-
-  function deletePost(id) {
-    if (!window.confirm('정말 삭제하시겠습니까?')) return;
-    setPosts((prev) => prev.filter((p) => p.id !== id));
-  }
-
-  function gotoPage(n) {
-    const np = Math.max(1, Math.min(totalPages, n));
-    setPage(np);
-  }
-
-  // function AttendanceTracker() {
-  //   //출근/퇴근 시간
-  //   const [clockInTime, setClockInTime] = useState(null); //예: "08:43"
-  //   const [clockOutTime, setClockOutTime] = useState(null); //예: "18:02"
-
-  //   //근무 상태 (재택, 외근, 정상 등)
-  //   const [workStatus, setWorkStatus] = useState("정상");
-
-  //   //주간 근무 통계
-  //   const [weeklyStats, setWeeklyStats] = useState({
-  //     totalHours: "0h 0m",
-  //     lateCount: 0,
-  //     earlyLeaveCount: 0,
-  //     absentCount: 0,
+  // ===========================================
+  // 근무 관련 로직 (추후 확장 가능)
+  // ===========================================
+  // const [clockInTime, setClockInTime] = useState(null); // 예: "08:43"
+  // const [clockOutTime, setClockOutTime] = useState(null); // 예: "18:02"
+  // const [workStatus, setWorkStatus] = useState("정상");
+  // const [weeklyStats, setWeeklyStats] = useState({
+  //   totalHours: "0h 0m",
+  //   lateCount: 0,
+  //   earlyLeaveCount: 0,
+  //   absentCount: 0,
+  // });
+  // const handleClockIn = () => {
+  //   const now = new Date().toLocaleTimeString("ko-KR", {
+  //     hour: "2-digit",
+  //     minute: "2-digit",
   //   });
-
-  //   //출근 버튼 클릭 핸들러
-  //   const handleClockIn = () => {
-  //     const now = new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
-  //     setClockInTime(now);
-  //     //TODO: API 호출로 출근 시간 저장
-  //   };
-
-  //   //퇴근 버튼 클릭 핸들러
-  //   const handleClockOUt = () => {
-  //     const now = new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
-  //     setClockOutTime(now);
-  //     //TODO: API 호출로 퇴근 시간 저장
-  //   };
-
-  // //근무 상태 변경 핸들러
-  // const handleStatusChange = (newStatus) => {
-  //   setWorkStatus(newStatus);
-  //   //TODO: API 호출로 상태 변경 저장
+  //   setClockInTime(now);
+  //   // TODO: API 호출로 출근 시간 저장
+  // };
+  // const handleClockOut = () => {
+  //   const now = new Date().toLocaleTimeString("ko-KR", {
+  //     hour: "2-digit",
+  //     minute: "2-digit",
+  //   });
+  //   setClockOutTime(now);
+  //   // TODO: API 호출로 퇴근 시간 저장
   // };
 
-  // return (
-  //   <div className="attendance-card">
-  //     {/* UI는 추후 회의에서 결정 */}
-  //   </div>
-  // )
-
   return (
-    < Container className="py-4" >
-      <Row className="align-items-center mb-3">
-        <Col xs={12} md={6}>
-          <h3 className="m-0">게시판</h3>
-          <small className="text-muted">기본 CRUD + 검색 + 페이징 예시</small>
+    <Container fluid className="py-4" style={{ backgroundColor: "#f8f9fa", minHeight: "100vh" }}>
+      <h3 className="mb-4">🏠 메인 대시보드</h3>
+
+      <Row className="g-4">
+        {/* 왼쪽: 프로필 카드 */}
+        <Col md={3}>
+          <Card className="shadow-sm border-0 rounded-4">
+            <Card.Body className="text-center">
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/219/219983.png"
+                alt="프로필"
+                className="rounded-circle mb-3"
+                style={{ width: 100, height: 100, objectFit: "cover" }}
+              />
+              <h5>관리자</h5>
+              <p className="text-muted small mb-1">개발팀 / 과장</p>
+            </Card.Body>
+          </Card>
         </Col>
-        <Col xs={12} md={6} className="text-md-end mt-2 mt-md-0">
-          <Button variant="primary" onClick={openCreate} className="me-2">글쓰기</Button>
-          <InputGroup style={{ maxWidth: 360, display: 'inline-flex' }}>
-            <FormControl
-              placeholder="검색어를 입력하세요"
-              value={query}
-              onChange={(e) => { setQuery(e.target.value); setPage(1); }}
-            />
-            <Button variant="outline-secondary" onClick={() => setQuery('')}>초기화</Button>
-          </InputGroup>
+
+        {/* 오른쪽: 기능 카드들 */}
+        <Col md={9}>
+          <Row className="g-4">
+            {/* 전자결재 카드 */}
+            <Col md={6} lg={4}>
+              <Card
+                className="shadow-sm border-0 rounded-4 hover-card"
+                onClick={() => navigate("/approval")}
+                style={{ cursor: "pointer", transition: "0.2s" }}
+              >
+                <Card.Body className="text-center">
+                  <FaFileSignature size={40} className="text-primary mb-3" />
+                  <h5 className="mb-2">
+                    전자결재{" "}
+                    {approvalSummary.waiting > 0 && (
+                      <Badge bg="danger" pill className="ms-2">
+                        {approvalSummary.waiting}
+                      </Badge>
+                    )}
+                  </h5>
+                  <p className="text-muted small mb-3">결재 요청 / 승인 / 현황 확인</p>
+
+                  {/* 최근 결재 문서 3건 미리보기 */}
+                  {approvalSummary.recent.length > 0 ? (
+                    <Table size="sm" bordered hover className="text-start small">
+                      <thead className="table-light">
+                        <tr>
+                          <th>종류</th>
+                          <th>작성자</th>
+                          <th>상태</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {approvalSummary.recent.map((r) => (
+                          <tr key={r.id}>
+                            <td>{r.requestType}</td>
+                            <td>{r.memberName}</td>
+                            <td>
+                              <Badge bg="warning">{r.status}</Badge>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  ) : (
+                    <p className="text-muted small mb-2">최근 결재 요청이 없습니다.</p>
+                  )}
+
+                  <Button variant="outline-primary" size="sm" className="mt-2">
+                    바로가기
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+
+            {/* 근태 관리 카드 */}
+            <Col md={6} lg={4}>
+              <Card className="shadow-sm border-0 rounded-4 text-center">
+                <Card.Body>
+                  <FaCalendarCheck size={40} className="text-success mb-3" />
+                  <h5>근태 관리</h5>
+                  <p className="text-muted small">출근 / 퇴근 기록 및 주간 통계</p>
+                  <Button variant="outline-success" size="sm" disabled>
+                    준비 중
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+
+            {/* 보고서 카드 */}
+            <Col md={6} lg={4}>
+              <Card className="shadow-sm border-0 rounded-4 text-center">
+                <Card.Body>
+                  <FaClipboardList size={40} className="text-info mb-3" />
+                  <h5>보고서</h5>
+                  <p className="text-muted small">업무 일지 및 주간 보고 관리</p>
+                  <Button variant="outline-info" size="sm" disabled>
+                    준비 중
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
         </Col>
       </Row>
 
-      <Row>
-        <Col>
-          <Table hover responsive>
-            <thead>
-              <tr>
-                <th style={{ width: 70 }}>#</th>
-                <th>제목</th>
-                <th style={{ width: 140 }}>작성자</th>
-                <th style={{ width: 120 }}>날짜</th>
-                <th style={{ width: 100 }}>조회</th>
-                <th style={{ width: 150 }}>액션</th>
-              </tr>
-            </thead>
-            <tbody>
-              {pageData.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="text-center text-muted">게시글이 없습니다.</td>
-                </tr>
-              ) : (
-                pageData.map((p) => (
-                  <tr key={p.id}>
-                    <td>{p.id}</td>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                        <strong>{p.title}</strong>
-                        {p.views > 100 && <Badge bg="success">인기</Badge>}
-                      </div>
-                      <div className="text-muted small text-truncate" style={{ maxWidth: 400 }}>{p.content}</div>
-                    </td>
-                    <td>{p.author}</td>
-                    <td>{p.date}</td>
-                    <td>{p.views}</td>
-                    <td>
-                      <Button size="sm" variant="outline-primary" className="me-2" onClick={() => openEdit(p)}>수정</Button>
-                      <Button size="sm" variant="outline-danger" onClick={() => deletePost(p.id)}>삭제</Button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </Table>
-
-          {/* Pagination */}
-          <div className="d-flex justify-content-between align-items-center">
-            <div className="text-muted">총 {filtered.length}건</div>
-            <Pagination className="mb-0">
-              <Pagination.First onClick={() => gotoPage(1)} disabled={page === 1} />
-              <Pagination.Prev onClick={() => gotoPage(page - 1)} disabled={page === 1} />
-
-              {/* 페이지 번호 간단 렌더링: 현재 페이지 중심으로 +/-2 */}
-              {Array.from({ length: totalPages }).map((_, idx) => {
-                const num = idx + 1;
-                if (Math.abs(num - page) > 3 && num !== 1 && num !== totalPages) return null;
-                return (
-                  <Pagination.Item key={num} active={num === page} onClick={() => gotoPage(num)}>{num}</Pagination.Item>
-                );
-              })}
-
-              <Pagination.Next onClick={() => gotoPage(page + 1)} disabled={page === totalPages} />
-              <Pagination.Last onClick={() => gotoPage(totalPages)} disabled={page === totalPages} />
-            </Pagination>
-          </div>
-        </Col>
-      </Row>
-
-      {/* Create / Edit Modal */}
-      <Modal show={showModal} onHide={closeModal} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>{editingPost ? '게시글 수정' : '새 게시글 작성'}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group className="mb-3" controlId="formTitle">
-              <Form.Label>제목</Form.Label>
-              <Form.Control name="title" value={form.title} onChange={handleFormChange} />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formAuthor">
-              <Form.Label>작성자</Form.Label>
-              <Form.Control name="author" value={form.author} onChange={handleFormChange} />
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formContent">
-              <Form.Label>내용</Form.Label>
-              <Form.Control name="content" value={form.content} onChange={handleFormChange} as="textarea" rows={6} />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={closeModal}>취소</Button>
-          <Button variant="primary" onClick={savePost}>{editingPost ? '수정 저장' : '작성 완료'}</Button>
-        </Modal.Footer>
-      </Modal>
-    </Container >
+      {/* 카드 hover 효과 */}
+      <style>{`
+        .hover-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+        }
+      `}</style>
+    </Container>
   );
 }

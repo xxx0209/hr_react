@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Table, Button, Modal, Form, Badge } from "react-bootstrap";
+import { Container, Table, Button, Modal, Form, Badge, Pagination, Row, Col } from "react-bootstrap";
 import axios from "axios";
 import { API_BASE_URL } from "../config/config";
 import api from "../api/api";
@@ -8,11 +8,26 @@ export default function ApprovalTempPage() {
   const [temps, setTemps] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({});
-  const [approvers, setApprovers] = useState([]); // 결재자 목록
+  const [approvers, setApprovers] = useState([]);
+
+  // 필터 상태
+  const [filters, setFilters] = useState({
+    writer: "",
+    approver: "",
+    type: "",
+    startDate: "",
+    endDate: "",
+  });
+  const [appliedFilters, setAppliedFilters] = useState(filters);
+  const [searchMode, setSearchMode] = useState("or");
+
+  // 페이징 관련
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     fetchTemps();
-    fetchApprovers(); // 결재자 목록 불러오기
+    fetchApprovers();
   }, []);
 
   // 임시보관함 목록 조회
@@ -35,12 +50,43 @@ export default function ApprovalTempPage() {
     }
   };
 
+  // 필터 적용
+  const applyFilters = (data) => {
+    const hasFilter = Object.values(appliedFilters).some((v) => v);
+    if (!hasFilter) return data;
+
+    return data.filter((r) => {
+      const matchWriter = appliedFilters.writer && r.memberName?.includes(appliedFilters.writer);
+      const matchApprover = appliedFilters.approver && r.approverName?.includes(appliedFilters.approver);
+      const matchType = appliedFilters.type && r.requestType === appliedFilters.type;
+      const matchStart = appliedFilters.startDate && new Date(r.dateTime) >= new Date(appliedFilters.startDate);
+      const matchEnd = appliedFilters.endDate && new Date(r.dateTime) <= new Date(appliedFilters.endDate);
+
+      if (searchMode === "and") {
+        return (
+          (!appliedFilters.writer || matchWriter) &&
+          (!appliedFilters.approver || matchApprover) &&
+          (!appliedFilters.type || matchType) &&
+          (!appliedFilters.startDate || matchStart) &&
+          (!appliedFilters.endDate || matchEnd)
+        );
+      }
+      return matchWriter || matchApprover || matchType || matchStart || matchEnd;
+    });
+  };
+
+  const handleSearch = () => setAppliedFilters(filters);
+  const handleReset = () => {
+    const empty = { writer: "", approver: "", type: "", startDate: "", endDate: "" };
+    setFilters(empty);
+    setAppliedFilters(empty);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 결재자 선택 시 approverName 자동 세팅
   const handleApproverChange = (e) => {
     const selectedId = e.target.value;
     const selectedApprover = approvers.find((a) => a.memberId === selectedId);
@@ -51,13 +97,11 @@ export default function ApprovalTempPage() {
     }));
   };
 
-  // 수정 버튼 클릭 시
   const handleEdit = (item) => {
     setForm(item);
     setShowModal(true);
   };
 
-  // 수정 저장 요청
   const handleSave = async () => {
     try {
       await axios.put(`${API_BASE_URL}/api/requests/${form.id}`, form);
@@ -70,7 +114,6 @@ export default function ApprovalTempPage() {
     }
   };
 
-  // 삭제 버튼 클릭 시
   const handleDelete = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     try {
@@ -83,7 +126,6 @@ export default function ApprovalTempPage() {
     }
   };
 
-  // 결재요청 버튼 클릭 시
   const handleSubmit = async (id) => {
     if (!form.approverId) {
       alert("결재자를 지정하세요!");
@@ -98,55 +140,117 @@ export default function ApprovalTempPage() {
     }
   };
 
+  // 필터 적용 + 페이지네이션
+  const filteredTemps = applyFilters(temps);
+  const paginatedTemps = filteredTemps.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
+  // 페이지네이션 렌더링
+  const renderPagination = () => {
+    const totalPages = Math.ceil(filteredTemps.length / itemsPerPage);
+    if (totalPages <= 1) return null;
+    return (
+      <div className="d-flex justify-content-between align-items-center mt-3">
+        <div className="text-muted">총 {filteredTemps.length}건</div>
+        <Pagination>
+          <Pagination.First onClick={() => setPage(1)} disabled={page === 1} />
+          <Pagination.Prev onClick={() => setPage(page - 1)} disabled={page === 1} />
+          {Array.from({ length: totalPages }).map((_, idx) => (
+            <Pagination.Item
+              key={idx + 1}
+              active={page === idx + 1}
+              onClick={() => setPage(idx + 1)}
+            >
+              {idx + 1}
+            </Pagination.Item>
+          ))}
+          <Pagination.Next onClick={() => setPage(page + 1)} disabled={page === totalPages} />
+          <Pagination.Last onClick={() => setPage(totalPages)} disabled={page === totalPages} />
+        </Pagination>
+      </div>
+    );
+  };
+
   return (
     <Container className="py-4">
       <h3>📂 임시보관함</h3>
+
+      {/* 필터 영역 */}
+      <Form className="p-2 bg-light rounded mb-3 shadow-sm">
+        <Row className="g-2 align-items-center mb-1">
+          <Col md={3}><Form.Control placeholder="작성자" value={filters.writer} onChange={(e) => setFilters({ ...filters, writer: e.target.value })} /></Col>
+          <Col md={3}><Form.Control placeholder="결재자" value={filters.approver} onChange={(e) => setFilters({ ...filters, approver: e.target.value })} /></Col>
+          <Col md={3}>
+            <Form.Select value={filters.type} onChange={(e) => setFilters({ ...filters, type: e.target.value })}>
+              <option value="">문서 종류</option>
+              <option value="연차">연차</option>
+              <option value="반차">반차</option>
+              <option value="출장">출장</option>
+              <option value="지출품의서">지출품의서</option>
+            </Form.Select>
+          </Col>
+          <Col md={3} className="text-end">
+            <div className="d-flex gap-1 justify-content-end">
+              <Button size="sm" variant="primary" onClick={handleSearch}>🔍검색</Button>
+              <Button size="sm" variant="secondary" onClick={handleReset}>↺초기화</Button>
+            </div>
+          </Col>
+        </Row>
+        <Row className="g-2 align-items-center mt-1">
+          <Col md={6}>
+            <div className="d-flex align-items-center">
+              <Form.Control type="date" value={filters.startDate} onChange={(e) => setFilters({ ...filters, startDate: e.target.value })} />
+              <span className="mx-2">~</span>
+              <Form.Control type="date" value={filters.endDate} onChange={(e) => setFilters({ ...filters, endDate: e.target.value })} />
+            </div>
+          </Col>
+          <Col md={6} className="text-end">
+            <Form.Check inline label="통합검색" type="radio" name="mode" checked={searchMode === "and"} onChange={() => setSearchMode("and")} />
+            <Form.Check inline label="카테고리검색" type="radio" name="mode" checked={searchMode === "or"} onChange={() => setSearchMode("or")} />
+          </Col>
+        </Row>
+      </Form>
+
+      {/* 테이블 */}
       <Table hover responsive bordered>
         <thead className="table-light">
           <tr>
             <th>#</th>
             <th>작성자</th>
             <th>종류</th>
-            <th>내용</th>
-            <th>결재자</th> {/* 결재자 표시 */}
+            <th>결재자</th>
+            <th>작성일자</th>
             <th>상태</th>
             <th>액션</th>
           </tr>
         </thead>
         <tbody>
-          {temps.length === 0 ? (
+          {paginatedTemps.length === 0 ? (
             <tr>
               <td colSpan={7} className="text-center text-muted">
                 임시저장된 문서가 없습니다.
               </td>
             </tr>
           ) : (
-            temps.map((t) => (
+            paginatedTemps.map((t) => (
               <tr key={t.id}>
                 <td>{t.id}</td>
                 <td>{t.memberName || "이름없음"}</td>
                 <td>{t.requestType}</td>
-                <td>{t.content}</td>
-                <td>{t.approverName || "-"}</td> {/* 결재자 표시 */}
+                <td>{t.approverName || "-"}</td>
+                <td>{new Date(t.dateTime).toLocaleDateString()}</td>
+                <td><Badge bg="secondary">{t.status}</Badge></td>
                 <td>
-                  <Badge bg="secondary">{t.status}</Badge>
-                </td>
-                <td>
-                  <Button size="sm" variant="outline-primary" onClick={() => handleEdit(t)}>
-                    수정
-                  </Button>{" "}
-                  <Button size="sm" variant="outline-success" onClick={() => handleSubmit(t.id)}>
-                    결재요청
-                  </Button>{" "}
-                  <Button size="sm" variant="outline-danger" onClick={() => handleDelete(t.id)}>
-                    삭제
-                  </Button>
+                  <Button size="sm" variant="outline-primary" onClick={() => handleEdit(t)}>수정</Button>{" "}
+                  <Button size="sm" variant="outline-success" onClick={() => handleSubmit(t.id)}>결재요청</Button>{" "}
+                  <Button size="sm" variant="outline-danger" onClick={() => handleDelete(t.id)}>삭제</Button>
                 </td>
               </tr>
             ))
           )}
         </tbody>
       </Table>
+
+      {renderPagination()}
 
       {/* 수정 모달 */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
@@ -157,32 +261,17 @@ export default function ApprovalTempPage() {
           <Form>
             <Form.Group className="mb-3">
               <Form.Label>종류</Form.Label>
-              <Form.Control
-                name="requestType"
-                value={form.requestType || ""}
-                onChange={handleChange}
-              />
+              <Form.Control name="requestType" value={form.requestType || ""} onChange={handleChange} />
             </Form.Group>
 
             <Form.Group className="mb-3">
               <Form.Label>내용</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                name="content"
-                value={form.content || ""}
-                onChange={handleChange}
-              />
+              <Form.Control as="textarea" rows={3} name="content" value={form.content || ""} onChange={handleChange} />
             </Form.Group>
 
-            {/* 결재자 지정 */}
             <Form.Group className="mb-3">
               <Form.Label>결재자 지정</Form.Label>
-              <Form.Select
-                name="approverId"
-                value={form.approverId || ""}
-                onChange={handleApproverChange}
-              >
+              <Form.Select name="approverId" value={form.approverId || ""} onChange={handleApproverChange}>
                 <option value="">결재자를 선택하세요</option>
                 {approvers.map((a) => (
                   <option key={a.memberId} value={a.memberId}>
@@ -192,18 +281,38 @@ export default function ApprovalTempPage() {
               </Form.Select>
             </Form.Group>
 
-            {/* 지출품의서일 때만 금액 입력 표시 */}
             {form.requestType === "지출품의서" && (
               <Form.Group className="mb-3">
                 <Form.Label>금액</Form.Label>
-                <Form.Control
-                  type="number"
-                  name="price"
-                  value={form.price || ""}
-                  onChange={handleChange}
-                />
+                <Form.Control type="number" name="price" value={form.price || ""} onChange={handleChange} />
               </Form.Group>
             )}
+
+            {/* 추가된 시작일/종료일 필드 */}
+            <Row>
+              <Col>
+                <Form.Group className="mb-3">
+                  <Form.Label>시작일</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="startDate"
+                    value={form.startDate ? form.startDate.split("T")[0] : ""}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+              <Col>
+                <Form.Group className="mb-3">
+                  <Form.Label>종료일</Form.Label>
+                  <Form.Control
+                    type="date"
+                    name="endDate"
+                    value={form.endDate ? form.endDate.split("T")[0] : ""}
+                    onChange={handleChange}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
 
             <Button variant="primary" onClick={handleSave} className="w-100">
               저장
