@@ -33,13 +33,11 @@ import PositionHistoryPage from "../pages/member/PositionHistoryPage";
 import CategoryPage from '../pages/member/CategoryPage';
 
 import MySalaryHistory from '../pages/MySalaryHistory';
-import SalaryListPage from '../pages/SalaryListPage';
+import CompletedSalaries from '../pages/CompletedSalaries';
 import SalaryForm from '../pages/SalaryForm';
 import SalaryDetailPage from '../pages/SalaryDetailCard';
-import SalaryEditPage from '../pages/SalaryEditpage';
-import PendingSalaryList from '../pages/PendingSalaryList';
-import BaseSalaryPage from '../pages/BaseSalaryPage';
 
+import SalarySettingPage from '../pages/SalarySettingPage';
 
 
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
@@ -81,17 +79,14 @@ function AppRoutes() {
                 {/* 나의 급여 내역 */}
                 <Route path="/salary/my-salaries" element={<MySalaryHistory />} />
                 {/* 전체 급여 목록 (관리자) */}
-                <Route path="/salary/salaries" element={<SalaryListPage />} />
+                <Route path="/salary/salaries/completed" element={<CompletedSalaries />} />
                 {/* 급여 생성 */}
                 <Route path="/salary/salaries/new" element={<SalaryForm />} />
                 {/* 급여 상세 조회 */}
                 <Route path="/salary/salaries/:salaryId" element={<SalaryDetailPage />} />
-                {/* 급여 수정 (관리자) */}
-                <Route path="/salary/salaries/:salaryId/edit" element={<SalaryEditPage />} />
-                {/* 승인 대기 급여 목록 */}
-                <Route path="/salary/salaries/pending" element={<PendingSalaryList />} />
+
                 {/* 기본급 설정 */}
-                <Route path="/salary/base-salary" element={<BaseSalaryPage />} />
+                <Route path="/salary/salary-settings" element={<SalarySettingPage />} />
 
 
                 {/* 전자결재 페이지 */}
