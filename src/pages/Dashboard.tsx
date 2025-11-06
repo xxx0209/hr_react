@@ -1,44 +1,41 @@
 import React from 'react';
-import AttendanceCard from '../components/AttendanceCard'
-import LeaveCard from "../components/LeaveCard";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import LeaveCard from '../components/LeaveCard';
+import WeeklySummaryCard from '../components/WeeklySummaryCard';
+import { LeaveCardProps, WeeklySummaryProps } from '../types';
 
-type StatusType = '출근' | '퇴근' | '지각' | '결근';
+const Dashboard = () => {
+    const [leaveData, setLeaveData] = useState<LeaveCardProps | null>(null);
+    const [summaryData, setSummaryData] = useState<WeeklySummaryProps | null>(null);
 
-interface AttendanceInfo {
-    name: string;
-    status: StatusType;
-    time: string;
-}
+    useEffect(() => {
+        const dummyLeave: LeaveCardProps = {
+            used: 10,
+            remaining: 20,
+            expirationDate: '2023-08-12',
+        };
 
-const AttendanceData: AttendanceInfo[] = [
-    { name: '홍길동', status: '출근', time: '09:03' },
-    { name: '김철수', status: '퇴근', time: '18:12' },
-    { name: '이영희', status: '지각', time: '09:45' },
-];
+        const dummySummary: WeeklySummaryProps = {
+            totalWorkHours: 38.3,
+            breakHours: 4.5,
+            overtimeHours: 6.1,
+        };
 
-const leaveData = [
-    { date: "2025-10-12", type: "연차", reason: "개인 일정" },
-    { date: "2025-10-25", type: "반차", reason: "병원 방문" },
-    { date: "2025-11-01", type: "연차", reason: "가족 행사" },
-];
-
-<LeaveCard leaves={leaveData} />
-
-const Dashboard: React.FC = () => {
-    const navigate = useNavigate();
+        setLeaveData(dummyLeave);
+        setSummaryData(dummySummary);
+    }, []);
 
     return (
-        <div>
-            <h2>대시보드</h2>
-
-            <div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
-                <button onClick={() => navigate("/attendance")}>근태 바로가기</button>
-                <button onClick={() => navigate("/leave")}>휴가 바로가기</button>
+        <div className="dashboard">
+            <div>Hi there!</div>
+            <div>Here's a quick summary:</div>
+            <div className="dashboard-cards">
+                {summaryData ? (
+                    <WeeklySummaryCard {...summaryData} />
+                ) : (
+                    <p>요약 데이터를 불러오는 중입니다...</p>
+                )}
             </div>
-
-            <AttendanceCard name="이승규" status="출근" time="09:03" />
-            <LeaveCard leaves={leaveData} />
         </div>
     );
 };
