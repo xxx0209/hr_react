@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import Facebook from "../sample/Media";
+import CardCategory from "./CardCategory";
 
 //메뉴 경로 불러오기
 import { useNavigate } from "react-router-dom";
@@ -49,7 +49,8 @@ export default function Contents({ children }) {
             return;
         } else {
             // 기본 경로로 이동
-            cat.baseToNo && navigate(findMenu.to);
+            navigate(findMenu.to);
+
             setSelected(findMenu);
             setSelectedCategory(cat);
             updateSessionStorageItem(storedKey, { id: cat.id, no: cat.baseToNo });
@@ -68,8 +69,8 @@ export default function Contents({ children }) {
         sessionStorage.setItem(key, JSON.stringify(updated));
     }
 
-    const handleSelect = useCallback((item) => {
-        if (item.no === selected?.no) {
+    const handleSelect = ((item) => {
+        if (item?.no === selected?.no) {
             return;
         }
         if (item.isAdminMenu && user?.role !== 'ROLE_ADMIN') {
@@ -80,9 +81,11 @@ export default function Contents({ children }) {
         navigate(item.to);
         updateSessionStorageItem(storedKey, { no: item.no });
         // 스크롤 이동 기능 임시
-        const el = document.getElementById("approval-page");
-        el?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, []);
+        if (categories.id !== 'home') {
+            // const el = document.getElementById("approval-page");
+            // el?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+    });
 
     const handleToggleAll = () => setExpandedAll((prev) => !prev);
 
@@ -110,6 +113,8 @@ export default function Contents({ children }) {
         }
         return () => window.removeEventListener("resize", handleResize);
     }, []);
+
+
 
     return (
 
@@ -156,7 +161,7 @@ export default function Contents({ children }) {
                 </List>
             </Box>
 
-            {/* 오른쪽 컨텐츠(중분류) */}
+            {/* 오른쪽 컨텐츠 */}
             <Box
                 sx={{
                     flexGrow: 1,
@@ -168,8 +173,8 @@ export default function Contents({ children }) {
                     flexDirection: "column",
                 }}
             >
-                {/* 카테고리 선택이 있을 때만 메뉴 */}
-                {selectedCategory && selectedCategory.subs.length > 0 && (
+                {/* 중분류가 사용일때  */}
+                {(selectedCategory?.useSubs ?? false) && selectedCategory?.subs?.length > 0 && (
                     <>
                         <Box
                             sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1, cursor: "pointer" }}
@@ -190,8 +195,7 @@ export default function Contents({ children }) {
                             }}
                         >
                             {selectedCategory.subs.map((sub) => (
-                                // 서브메뉴 카드형태로 만들어줌                                                               
-                                <Facebook
+                                <CardCategory
                                     key={sub.no}
                                     data={sub}
                                     selected={selected?.no === sub.no}
@@ -203,7 +207,7 @@ export default function Contents({ children }) {
                     </>
                 )}
 
-                {/* Card 영역: 항상 푸터 바로 위까지 채움 */}
+                {/* 컨텐츠 영역 */}
                 <Card
                     className="w-100"
                     style={{

@@ -15,7 +15,7 @@ import {
     ManageAccounts as ManageAccountsIcon
 } from "@mui/icons-material";
 import { Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Typography, Button } from "@mui/material";
-import Facebook from "./Media";
+import Facebook from "../components/CardCategory";
 import ApprovalRequestPage from "../pages/ApprovalRequestPage";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";

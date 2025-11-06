@@ -12,6 +12,7 @@ const approval =
             icon: <AssignmentTurnedInIcon sx={{ color: '#8b8c8dff' }} />,
             label: "전자결재",
             baseToNo: 1,
+            useSubs: true,
             subs: [
                 {
                     no: 1,

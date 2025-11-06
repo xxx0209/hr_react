@@ -12,6 +12,7 @@ const attendance =
             icon: <AccessTimeIcon sx={{ color: '#8b8c8dff' }} />,
             label: "근태관리",
             baseToNo: 1,
+            useSubs: true,
             subs: [
                 {
                     no: 1,

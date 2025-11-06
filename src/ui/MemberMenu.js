@@ -12,6 +12,7 @@ const member =
             icon: <PeopleIcon sx={{ color: '#8b8c8dff' }} />,
             label: "회원관리",
             baseToNo: 2,
+            useSubs: true,
             subs: [
                 {
                     no: 1,

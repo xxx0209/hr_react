@@ -12,6 +12,7 @@ const salary =
             icon: <AttachMoneyIcon sx={{ color: '#8b8c8dff' }} />,
             label: "급여관리",
             baseToNo: 1,
+            useSubs: true,
             subs: [
                 {
                     no: 1,

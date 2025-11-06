@@ -1,7 +1,5 @@
 import {
     CalendarMonth as CalendarMonthIcon,
-    Diversity3 as Diversity3Icon,
-    EditDocument as EditDocumentIcon,
     ManageAccounts as ManageAccountsIcon,
 } from "@mui/icons-material";
 
@@ -12,6 +10,7 @@ const calendar =
             icon: <CalendarMonthIcon sx={{ color: '#8b8c8dff' }} />,
             label: "캘린더",
             baseToNo: 1,
+            useSubs: true,
             subs: [
                 {
                     no: 1,

@@ -10,14 +10,14 @@ import {
   Collapse,
 } from "@mui/material";
 
-export default function Media({ loading = false, data, selected, onSelect, expanded }) {
+export default function CardCa({ loading = false, data, selected, onSelect, expanded }) {
   const Icon = data?.icon;
 
   const handleClick = () => {
     onSelect?.(data);
   };
 
-  return (
+  return (    
     <Card
       onClick={handleClick}
       sx={{
@@ -34,9 +34,9 @@ export default function Media({ loading = false, data, selected, onSelect, expan
 
       }}
     >
-     <CardHeader
+      <CardHeader
         sx={{
-          backgroundColor: selected ?  "#cecfd1ff" : "white",
+          backgroundColor: selected ? "#cecfd1ff" : "white",
           "& .MuiCardHeader-title": { fontWeight: "bold" },
           borderBottom: "1px solid #fab2b2ff", // ← 여기서 border 지정
           py: 1,
@@ -50,20 +50,20 @@ export default function Media({ loading = false, data, selected, onSelect, expan
           loading ? (
             <Skeleton animation="wave" variant="circular" width={45} height={45} />
           ) : (
-            <Badge
-              overlap="circular"
-              badgeContent={4}
-              color="error"
-              sx={{
-                display: "flex",        // Badge 자체를 flex로
-                alignItems: "center",   // 세로 중앙
-                justifyContent: "center",
-              }}
-            >
-              <Avatar alt="icon" sx={{ width: 40, height: 40 }}>
-                {Icon && <Icon sx={{ fontSize: 30 }} />}
-              </Avatar>
-            </Badge>
+            // <Badge
+            //   overlap="circular"
+            //   badgeContent={4}
+            //   color="error"
+            //   sx={{
+            //     display: "flex",        // Badge 자체를 flex로
+            //     alignItems: "center",   // 세로 중앙
+            //     justifyContent: "center",
+            //   }}
+            // >
+            <Avatar alt="icon" sx={{ width: 40, height: 40 }}>
+              {Icon && <Icon sx={{ fontSize: 30 }} />}
+            </Avatar>
+            // </Badge>
           )
         }
         title={
@@ -74,7 +74,7 @@ export default function Media({ loading = false, data, selected, onSelect, expan
           )
         }
       />
-      
+
 
       {/* ✅ Collapse로 열림/닫힘 제어*/}
       <Collapse in={expanded} timeout="auto" unmountOnExit>

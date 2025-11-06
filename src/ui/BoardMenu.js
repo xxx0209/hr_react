@@ -12,6 +12,7 @@ const board =
             icon: <ForumIcon sx={{ color: '#8b8c8dff' }} />,
             label: "게시판",
             baseToNo: 1,
+            useSubs: true,
             subs: [
                 {
                     no: 1,

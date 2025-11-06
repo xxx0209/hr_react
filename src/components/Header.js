@@ -10,13 +10,15 @@ function Header() {
 
     const { user, setUser } = useContext(AuthContext);
 
+    const navigate = useNavigate();
+
     const handleLogout = async () => {
         await logout();
         sessionStorage.clear();
         setUser(null);
+        navigate("/login");
+        return;
     };
-
-    const navigate = useNavigate();
 
     return (
         <>

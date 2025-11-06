@@ -36,9 +36,9 @@ import MySalaryHistory from '../pages/MySalaryHistory';
 import CompletedSalaries from '../pages/CompletedSalaries';
 import SalaryForm from '../pages/SalaryForm';
 import SalaryDetailPage from '../pages/SalaryDetailCard';
-import SalaryEditPage from '../pages/SalaryEditpage';
-import PendingSalaryList from '../pages/PendingSalaryList';
-import BaseSalaryPage from '../pages/BaseSalaryPage';
+// import SalaryEditPage from '../pages/SalaryEditpage';
+// import PendingSalaryList from '../pages/PendingSalaryList';
+// import BaseSalaryPage from '../pages/BaseSalaryPage';
 import TestPage from '../sample/TestPage';
 
 import SalarySettingPage from '../pages/SalarySettingPage';
@@ -51,9 +51,11 @@ function AppRoutes() {
     const navigate = useNavigate();
 
     function NotFound() {
-
         useEffect(() => {
-            sessionStorage.clear();
+            sessionStorage.removeItem("storedCategory");
+
+            // 다시 저장
+            sessionStorage.setItem("storedCategory", JSON.stringify({ id: 'home', no: 1 }));
             alert("존재하지 않는 페이지입니다. 홈으로 이동합니다.");
             navigate("/home", { replace: true });
         }, []);
