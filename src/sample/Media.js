@@ -1,21 +1,20 @@
-import * as React from 'react';
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import Skeleton from '@mui/material/Skeleton';
-import { Avatar, Badge, Divider } from '@mui/material';
+import * as React from "react";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Typography,
+  Skeleton,
+  Avatar,
+  Badge,
+  Collapse,
+} from "@mui/material";
 
-// ✅ 화면 전환 예시용 — 실제로는 원하는 컴포넌트로 교체
-// import SchedulePage from './SchedulePage';
-// import CategoryPage from './CategoryPage';
-
-// 단일 카드 컴포넌트
-export default function Media({ loading = false, data, selected, onSelect }) {
+export default function Media({ loading = false, data, selected, onSelect, expanded }) {
   const Icon = data?.icon;
 
   const handleClick = () => {
-    onSelect(data); // ✅ 클릭 시 해당 데이터 전달
+    onSelect?.(data);
   };
 
   return (
@@ -23,31 +22,46 @@ export default function Media({ loading = false, data, selected, onSelect }) {
       onClick={handleClick}
       sx={{
         cursor: "pointer",
-        backgroundColor: selected ? "#cecfd1ff" : "white",
-        border: selected ? "1px solid #141414ff" : "1px solid #ddd",
+        backgroundColor: "white",
+        border: selected ? "1px solid #b9b8b8ff" : "1px solid #ddd",
         color: selected ? "#000" : "inherit",
         transition: "all 0.2s ease",
-        "&:hover": { boxShadow: 4 },
-        width: "100%", // grid 셀에 맞춰 자동
-        height: "auto", // 내용에 맞게 높이 자동
+        "&:hover": { boxShadow: 0 },
+        width: "100%",
         display: "flex",
         flexDirection: "column",
+        boxShadow: "none", // 기본 그림자 제거
+
       }}
     >
-      <CardHeader
+     <CardHeader
         sx={{
-          backgroundColor: '#f5f5f5',
-          color: 'text.primary',
-          '& .MuiCardHeader-title': { fontWeight: 'bold' },
-          '& .MuiCardHeader-subheader': { color: 'text.secondary' },
+          backgroundColor: selected ?  "#cecfd1ff" : "white",
+          "& .MuiCardHeader-title": { fontWeight: "bold" },
+          borderBottom: "1px solid #fab2b2ff", // ← 여기서 border 지정
+          py: 1,
+          px: 2,
+          minHeight: 48,
+          display: "flex",
+          alignItems: "center", // CardHeader 전체 세로 중앙
+          userSelect: "none", // 텍스트 선택 방지
         }}
         avatar={
           loading ? (
             <Skeleton animation="wave" variant="circular" width={45} height={45} />
           ) : (
-            <Badge overlap="circular" badgeContent={4} color="error">
-              <Avatar alt="icon" sx={{ width: 45, height: 45 }}>
-                {Icon && <Icon sx={{ fontSize: 45 }} />}
+            <Badge
+              overlap="circular"
+              badgeContent={4}
+              color="error"
+              sx={{
+                display: "flex",        // Badge 자체를 flex로
+                alignItems: "center",   // 세로 중앙
+                justifyContent: "center",
+              }}
+            >
+              <Avatar alt="icon" sx={{ width: 40, height: 40 }}>
+                {Icon && <Icon sx={{ fontSize: 30 }} />}
               </Avatar>
             </Badge>
           )
@@ -60,21 +74,30 @@ export default function Media({ loading = false, data, selected, onSelect }) {
           )
         }
       />
-      <Divider sx={{ my: 0, borderBottomWidth: 2, borderColor: '#bdbdbd' }} />
+      
 
-
-      <CardContent sx={{ flexGrow: 1 }}>
-        {loading ? (
-          <>
-            <Skeleton animation="wave" height={10} sx={{ mb: 1 }} />
-            <Skeleton animation="wave" height={10} width="80%" />
-          </>
-        ) : (
-          <Typography variant="body2" sx={{ color: selected ? '#f5f7f8ff' : 'inherit', whiteSpace: 'pre-line' }}>
-            {data.content}
-          </Typography>
-        )}
-      </CardContent>
+      {/* ✅ Collapse로 열림/닫힘 제어*/}
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <CardContent sx={{ flexGrow: 1 }}>
+          {loading ? (
+            <>
+              <Skeleton animation="wave" height={10} sx={{ mb: 1 }} />
+              <Skeleton animation="wave" height={10} width="80%" />
+            </>
+          ) : (
+            <Typography
+              variant="body2"
+              sx={{
+                color: selected ? "#000" : "inherit",
+                whiteSpace: "pre-line",
+                userSelect: "none", // 텍스트 선택 방지
+              }}
+            >
+              {data.content}
+            </Typography>
+          )}
+        </CardContent>
+      </Collapse>
     </Card>
   );
 }

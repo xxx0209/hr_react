@@ -8,9 +8,7 @@ export const EnumProvider = ({ children }) => {
 
   useEffect(() => {
     api.get("/api/enums/all")
-       .then(res => {setEnums(res.data);
-            console.log(res.data);}
-        )
+       .then(res => setEnums(res.data))
        .catch(console.error);
   }, []);
 
@@ -19,5 +17,6 @@ export const EnumProvider = ({ children }) => {
       {children}
     </EnumContext.Provider>
   );
+  
 }
 

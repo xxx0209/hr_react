@@ -1,56 +1,59 @@
-import React, { useState } from "react";
-import { Navbar, Container, Nav, Row, Col, Card } from "react-bootstrap";
+import React, { useState, useEffect } from "react";
+import { Navbar, Container, Nav, Card } from "react-bootstrap";
 import {
-    Home as HomeIcon, People as PeopleIcon, AssignmentTurnedIn as AssignmentTurnedInIcon,
-    CalendarMonth as CalendarMonthIcon, Forum as ForumIcon,
-} from "@mui/icons-material";
-import {
-    AttachMoney as AttachMoneyIcon, AccessTime as AccessTimeIcon, BeachAccess as BeachAccessIcon,
-    Logout as LogoutIcon, Diversity3 as Diversity3Icon, EditDocument as EditDocumentIcon,
+    Home as HomeIcon,
+    People as PeopleIcon,
+    AssignmentTurnedIn as AssignmentTurnedInIcon,
+    CalendarMonth as CalendarMonthIcon,
+    Forum as ForumIcon,
+    AttachMoney as AttachMoneyIcon,
+    AccessTime as AccessTimeIcon,
+    BeachAccess as BeachAccessIcon,
+    Logout as LogoutIcon,
+    Diversity3 as Diversity3Icon,
+    EditDocument as EditDocumentIcon,
     ManageAccounts as ManageAccountsIcon
 } from "@mui/icons-material";
-import Button from "@mui/material/Button";
-import { Box, List, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Typography, Button } from "@mui/material";
 import Facebook from "./Media";
 import ApprovalRequestPage from "../pages/ApprovalRequestPage";
-import Icon from '@mui/material/Icon';
-
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 function App() {
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selected, setSelected] = useState(null);
+    const [expandedAll, setExpandedAll] = useState(false);
+    const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
+    // 브라우저 창 크기 변경 시 높이 업데이트
+    useEffect(() => {
+        const handleResize = () => setWindowHeight(window.innerHeight);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
-    const handleCategoryClick = (cat) => {
-        setSelectedCategory(cat);
-
-    };
-
-    const [selected, setSelected] = React.useState(null);
-
+    const handleCategoryClick = (cat) => setSelectedCategory(cat);
     const handleSelect = (item) => {
-        setSelected(item); // ✅ 선택된 카드 정보 저장
-        // 선택한 카드로 스크롤 이동
+        setSelected(item);
         const el = document.getElementById("approval-page");
         el?.scrollIntoView({ behavior: "smooth", block: "start" });
     };
-
+    const handleToggleAll = () => setExpandedAll((prev) => !prev);
 
     const categories = [
         {
             id: 1,
-            icon: <HomeIcon sx={{ color: '#8b8c8dff' }} />, // 파란색
+            icon: <HomeIcon sx={{ color: '#8b8c8dff' }} />,
             label: "홈",
             subs: [],
         },
         {
             id: 2,
-            icon: <PeopleIcon sx={{ color: '#8b8c8dff' }} />, // 초록색
+            icon: <PeopleIcon sx={{ color: '#8b8c8dff' }} />,
             label: "회원관리",
             subs: [
-                {
-                    id: 21, label: "회원정보 수정", to: "/profile/edit", icon: ManageAccountsIcon,
-                    content: "회원의 기본 정보를 수정할수 있는 메뉴 입니다.\r\n  아이디, 비밀번호, 이메일, 프로필 사진 등을 변경할 수 있습니다."
-                },
+                { id: 21, label: "회원정보 수정", to: "/profile/edit", icon: ManageAccountsIcon, content: "회원의 기본 정보를 수정할수 있는 메뉴 입니다.\r\n  아이디, 비밀번호, 이메일, 프로필 사진 등을 변경할 수 있습니다." },
                 { id: 22, label: "직급등록", to: "/member/position/list", icon: Diversity3Icon, content: "회사의 직급체계를 관리합니다.\r\n  관리자는 직급을 추가, 수정, 삭제할 수 있습니다." },
                 { id: 23, label: "직급내역", to: "/member/position/history/list", icon: EditDocumentIcon, content: "직급의 변경 내역을 확인합니다.\r\n 관리자는 직급을 추가, 수정, 삭제할 수 있습니다." },
                 { id: 24, label: "테스트", to: "/member/position/history/list", icon: EditDocumentIcon, content: "직급의 변경 내역을 확인합니다.\r\n 관리자는 직급을 추가, 수정, 삭제할 수 있습니다." },
@@ -58,7 +61,7 @@ function App() {
         },
         {
             id: 3,
-            icon: <AssignmentTurnedInIcon sx={{ color: '#8b8c8dff' }} />, // 주황색
+            icon: <AssignmentTurnedInIcon sx={{ color: '#8b8c8dff' }} />,
             label: "전자결재",
             subs: [
                 { id: 31, label: "회원 목록", content: "모든 회원의 목록을 보여줍니다." },
@@ -67,7 +70,7 @@ function App() {
         },
         {
             id: 4,
-            icon: <CalendarMonthIcon sx={{ color: '#8b8c8dff' }} />, // 빨간색
+            icon: <CalendarMonthIcon sx={{ color: '#8b8c8dff' }} />,
             label: "캘린더",
             subs: [
                 { id: 41, label: "회원 목록", content: "모든 회원의 목록을 보여줍니다." },
@@ -76,7 +79,7 @@ function App() {
         },
         {
             id: 5,
-            icon: <ForumIcon sx={{ color: '#8b8c8dff' }} />, // 보라색
+            icon: <ForumIcon sx={{ color: '#8b8c8dff' }} />,
             label: "게시판",
             subs: [
                 { id: 51, label: "회원 목록", content: "모든 회원의 목록을 보여줍니다." },
@@ -85,7 +88,7 @@ function App() {
         },
         {
             id: 6,
-            icon: <AttachMoneyIcon sx={{ color: '#8b8c8dff' }} />, // 초록색
+            icon: <AttachMoneyIcon sx={{ color: '#8b8c8dff' }} />,
             label: "급여관리",
             subs: [
                 { id: 61, label: "회원 목록", content: "모든 회원의 목록을 보여줍니다." },
@@ -94,7 +97,7 @@ function App() {
         },
         {
             id: 7,
-            icon: <AccessTimeIcon sx={{ color: '#8b8c8dff' }} />, // 하늘색
+            icon: <AccessTimeIcon sx={{ color: '#8b8c8dff' }} />,
             label: "근태",
             subs: [
                 { id: 71, label: "회원 목록", content: "모든 회원의 목록을 보여줍니다." },
@@ -103,7 +106,7 @@ function App() {
         },
         {
             id: 8,
-            icon: <BeachAccessIcon sx={{ color: '#8b8c8dff' }} />, // 청록색
+            icon: <BeachAccessIcon sx={{ color: '#8b8c8dff' }} />,
             label: "휴가",
             subs: [
                 { id: 81, label: "회원 목록", content: "모든 회원의 목록을 보여줍니다." },
@@ -112,7 +115,7 @@ function App() {
         },
         {
             id: 9,
-            icon: <LogoutIcon sx={{ color: '#8b8c8dff' }} />, // 회색
+            icon: <LogoutIcon sx={{ color: '#8b8c8dff' }} />,
             label: "로그아웃",
             subs: [
                 { id: 91, label: "회원 목록", content: "모든 회원의 목록을 보여줍니다." },
@@ -121,197 +124,169 @@ function App() {
         },
     ];
 
+    const headerHeight = 56; // Navbar 기본 높이
+    const footerHeight = 60; // Footer 높이
+    const mainHeight = windowHeight - headerHeight - footerHeight - 32; // margin 포함
+
     return (
-        <div
-            className="d-flex flex-column"
-            style={{ height: "100vh", overflow: "hidden" }} // ✅ 전체 화면 딱 맞게
-        >
-
-            {/* Header */}
-            <Navbar
-                bg="dark"
-                variant="dark"
-                expand="lg"
-                style={{ minHeight: "60px" }}
-            >
-                <Container fluid>
-                    {/* Brand */}
-                    <Navbar.Brand
-                        href="/"
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "0.25rem",
-                            flexShrink: 0, // 줄어들지 않게 고정
-                        }}
-                    >
-                        HR Management System
-                    </Navbar.Brand>
-
-                    {/* 반응형 토글 */}
-                    <Navbar.Toggle aria-controls="navbar-nav" />
-
-                    <Navbar.Collapse id="navbar-nav">
-                        {/* 오른쪽 메뉴 */}
-                        <Nav className="ms-auto" style={{ alignItems: "center" }}>
-                            <Nav.Link href="/">Home</Nav.Link>
-                            <Nav.Link href="/">About</Nav.Link>
-                        </Nav>
-                    </Navbar.Collapse>
-                </Container>
-            </Navbar>
-
-            {/* Main (자동으로 남은 공간 차지) */}
-            <Container
-                fluid
-                // className="flex-grow-1 p-0 d-flex"
-                // style={{ minHeight: 0 }} // ✅ flex 컨테이너 내부 overflow 방지
-
-                className="flex-grow-1 p-0 d-flex"
-                style={{
-                    minHeight: 0,
-                    overflow: "hidden", // 전체 컨테이너는 숨기고
-                }}
-            >
-                {/* 왼쪽 메뉴 */}
-                <Box
-                    sx={{
-                        width: 240,
-                        height: "100%",
-                        bgcolor: "background.paper",
-                        borderRight: "1px solid #ddd",
-                        display: "flex",
-                        flexDirection: "column",
-                        // justifyContent: "center", // ✅ 세로 가운데 정렬
-                    }}
-                >
-                    <List sx={{
-                        //flexGrow: 1,
-                        overflowY: "auto",
-                        //display: "flex",
-                        //flexDirection: "column",
-                        alignItems: "center", // ✅ 버튼을 가로 가운데 정렬
-                        padding: 1,
-                    }}>
-                        {categories.map((cat, index) => (
-                            <ListItemButton
-                                key={index}
-                                selected={selectedCategory?.id === cat.id}
-                                onClick={() => handleCategoryClick(cat)}
+        <div style={{ backgroundColor: "#f0f0f0" }}>
+            <div style={{ width: "90%", maxWidth: "1400px", margin: "0 auto", display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+                {/* Header */}
+                <Navbar bg="dark" variant="dark" expand="lg" style={{ paddingTop: "0.25rem", paddingBottom: "0.25rem" }}>
+                    <Container>
+                        <Navbar.Brand>HR Management</Navbar.Brand>
+                        <Nav className="ms-auto">
+                            <Button
+                                variant="text" // 또는 "contained", "text"
+                                startIcon={<LogoutIcon />}
+                                onClick={() => console.log("로그아웃 클릭!")}
                                 sx={{
-                                    mb: 1, // ✅ 버튼 사이 아래 간격 1
-                                    // border: "1px solid #ccc", // 기본 테두리
-                                    borderRadius: 1, // 모서리 둥글게 (옵션)
-                                    "&.Mui-selected": {
-                                        backgroundColor: "#cac8c8ff", //선택된 버튼의 배경색
-                                        color: "white", //선택된 버튼의 텍스트 색
-                                        "& .MuiListItemIcon-root": {
-                                            color: "white",
-                                        },
-                                        border: "2px solid #afaeaeff", // 선택 시 테두리 강조
-                                        "& .MuiListItemIcon-root": {
-                                            color: "white",
-                                        },
-                                        "&:hover": {
-                                            backgroundColor: "#e7e5e5ff", // 선택 시 hover도 같은 색
-                                        },
-                                    },
-                                    "&:hover": {
-                                        backgroundColor: selectedCategory?.id === cat.id ? "#eb1818ff" : "rgba(212, 212, 212, 0.1)",
-                                        borderColor: selectedCategory?.id === cat.id ? "#dad8d8ff" : "#1976d2",
+                                    color: "#8b8c8dff",
+                                    '&:hover': {
+                                        color: '#e53935',              // 마우스 올렸을 때 글자색
+                                        backgroundColor: 'rgba(229,57,53,0.1)', // 살짝 붉은 배경
                                     },
                                 }}
                             >
-                                <ListItemIcon sx={{ minWidth: 40 }}>
-                                    {React.cloneElement(cat.icon, {
-                                        sx: {
-                                            fontSize: 24,
-                                            color: selectedCategory?.id === cat.id ? "white" : "#8b8c8dff",
+                                로그아웃
+                            </Button>
+                        </Nav>
+                    </Container>
+                </Navbar>
+
+                {/* Main Content */}
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexGrow: 1,
+                        minHeight: mainHeight,
+                        marginTop: 0.2,
+                        marginBottom: 0.2,
+                        border: "1px solid #ddd"
+                    }}
+                >
+                    {/* 왼쪽 메뉴 */}
+                    <Box sx={{ width: 200, bgcolor: "background.paper", borderRight: "1px solid #ddd", marginTop: 0 }}>
+                        <List sx={{ flexGrow: 1, overflowY: "auto", padding: 1 }}>
+                            {categories.map((cat) => (
+                                <ListItemButton
+                                    key={cat.id}
+                                    selected={selectedCategory?.id === cat.id}
+                                    onClick={() => handleCategoryClick(cat)}
+                                    sx={{
+                                        mb: 1,
+                                        borderRadius: 1,
+                                        "&.Mui-selected": {
+                                            backgroundColor: "#cac8c8ff",
+                                            color: "white",
+                                            border: "2px solid #afaeaeff",
+                                            "& .MuiListItemIcon-root": { color: "white" },
+                                            "&:hover": { backgroundColor: "#e7e5e5ff" },
                                         },
-                                    })}
-                                </ListItemIcon>
-                                <ListItemText primary={cat.label} sx={{
-                                    "& .MuiTypography-root": { fontSize: '0.85rem' } // 폰트 작게
-                                }} />
+                                        "&:hover": {
+                                            backgroundColor: selectedCategory?.id === cat.id ? "#eb1818ff" : "rgba(212, 212, 212, 0.1)",
+                                        },
+                                    }}
+                                >
+                                    <ListItemIcon sx={{ minWidth: 40 }}>
+                                        {React.cloneElement(cat.icon, { sx: { fontSize: 24, color: selectedCategory?.id === cat.id ? "white" : "#8b8c8dff" } })}
+                                    </ListItemIcon>
+                                    <ListItemText primary={cat.label} sx={{ "& .MuiTypography-root": { fontSize: "0.85rem" } }} />
+                                </ListItemButton>
+                            ))}
+                        </List>
+                    </Box>
 
-                            </ListItemButton>
-                        ))}
-                    </List>
-                </Box>
-
-                {/* 오른쪽 컨텐츠 */}
-                <Row className="flex-grow-1 w-100 m-0" style={{ overflow: "hidden" }}>
-                    <Col
-
-                        className="p-2"
-                        style={{
-                            overflowY: "auto", // 여기서만 스크롤
-                            height: "calc(100vh - 120px)", // Header + Footer 높이만큼 빼기
-                            backgroundColor: "#fafafa",
+                    {/* 오른쪽 컨텐츠 */}
+                    <Box
+                        sx={{
+                            flexGrow: 1,
+                            paddingLeft: 1,
+                            paddingRight: 1,
+                            paddingTop: 1,
+                            bgcolor: "background.paper",
+                            display: "flex",
+                            flexDirection: "column",
                         }}
                     >
-                        {selectedCategory && (
+                        {/* 카테고리 선택이 있을 때만 메뉴 */}
+                        {selectedCategory && selectedCategory.subs.length > 0 && (
                             <>
-                                {/* <h5 className="mb-3">{selectedCategory.label}의 중분류</h5> */}
+                                <Box
+                                    sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1, cursor: "pointer" }}
+                                    onClick={handleToggleAll}
+                                >
+                                    <IconButton sx={{ width: 24, height: 24, p: 0 }}>
+                                        {expandedAll ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+                                    </IconButton>
+                                    <Typography variant="body2">{expandedAll ? "모두 닫기" : "모두 열기"}</Typography>
+                                </Box>
+
                                 <Box
                                     sx={{
                                         display: "grid",
                                         gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-                                        gap: 2, // 카드 간격
-                                        width: "100%",
-                                        padding: 0, // ✅ 기존 padding 제거
-                                        marginTop: 0, // 필요시 margin 제거
+                                        gap: 1,
+                                        mb: 2,
                                     }}
                                 >
                                     {selectedCategory.subs.map((sub) => (
                                         <Facebook
                                             key={sub.id}
                                             data={sub}
-                                            selected={selected?.id === sub.id} // 선택된 카드
+                                            selected={selected?.id === sub.id}
                                             onSelect={handleSelect}
-
+                                            expanded={expandedAll}
                                         />
                                     ))}
                                 </Box>
                             </>
                         )}
 
-                        {selected && (
-                            <div>
-                                <Button
-                                    variant="secondary"
-                                    size="small"
-                                    className="mb-3"
-                                >
-                                    ← 중분류 목록으로
-                                </Button>
-                                <Card className="h-100 w-100">
-                                    <Card.Body
-                                        style={{
-                                            display: "flex",
-                                            flexDirection: "column",
-                                            padding: 0,
-                                            height: "100%",
-                                        }}
-                                    >
+                        {/* Card 영역: 항상 푸터 바로 위까지 채움 */}
+                        <Card
+                            className="w-100"
+                            style={{
+                                flexGrow: 1,
+                                display: "flex",
+                                flexDirection: "column",
+                                overflow: "hidden",
+                                marginTop: "0px",   // 위쪽 마진
+                                marginBottom: "0px", // 아래쪽 마진
+                                marginLeft: "0px",   // 좌우 마진 필요 시
+                                marginRight: "0px",
+                                borderRadius: 0, // ← 여기가 포인트
+                            }}
+                        >
+                            <Card.Body
+                                style={{
+                                    flexGrow: 1,
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    overflow: "auto",
+                                    padding: 0,
+                                }}
+                            >
+                                <ApprovalRequestPage />
+                                <div id="approval-page"></div>
+                            </Card.Body>
+                        </Card>
+                    </Box>
+                </Box>
 
-                                        <ApprovalRequestPage />
-                                        <div id="approval-page"></div>
-                                    </Card.Body>
-                                </Card>
-                            </div>
-                        )}
-                    </Col>
-                </Row>
-            </Container>
-
-            {/* Footer */}
-            <footer
-                className="bg-dark text-white py-3 text-center"
-                style={{ flex: "0 0 auto" }}
-            >
-                <small>© 2025 MyApp. All rights reserved.</small>
-            </footer>
+                {/* Footer */}
+                <footer
+                    style={{
+                        backgroundColor: "#333",
+                        color: "white",
+                        padding: "1rem 0",
+                        textAlign: "center",
+                        height: footerHeight,
+                    }}
+                >
+                    <small>© 2025 HR Management. All rights reserved.</small>
+                </footer>
+            </div>
         </div>
     );
 }
