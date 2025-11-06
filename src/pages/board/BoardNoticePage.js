@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Container, Row, Col, Table, Button, Form, InputGroup, Pagination } from "react-bootstrap";
+import { Container, Row, Col, Table, Button, Form, InputGroup, Pagination, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { API_BASE_URL } from "../config/config";
+import axios from "../../api/api";
 
 const PER_PAGE = 10;
 
@@ -58,18 +57,13 @@ const styles = {
 function fmtDate(iso) {
   if (!iso) return "-";
   const d = new Date(iso);
-  const now = new Date();
-  if (d.toDateString() === now.toDateString()) {
-    const hh = String(d.getHours()).padStart(2, "0");
-    const mm = String(d.getMinutes()).padStart(2, "0");
-    return `${hh}:${mm}`;
-  }
-  const MM = String(d.getMonth() + 1).toString().padStart(2, "0");
-  const DD = String(d.getDate()).toString().padStart(2, "0");
-  return `${MM}-${DD}`;
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
-export default function FreeBoard() {
+export default function  NoticeBoard() {
   const navigate = useNavigate();
 
   const [rows, setRows] = useState([]);
@@ -79,6 +73,10 @@ export default function FreeBoard() {
   const [field, setField] = useState("title+content");
   const [q, setQ] = useState("");
 
+  const [showLikesModal, setShowLikesModal] = useState(false);
+  const [likedUsers, setLikedUsers] = useState([]);
+  
+
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -87,19 +85,19 @@ export default function FreeBoard() {
   async function load() {
     try {
       const params = {
-        page,
+        page: page - 1,
         size: PER_PAGE,
         sort: "createDate,desc",
-        category: "자유게시판",
+        category: "공지사항",
       };
       if (q.trim()) params.q = q.trim();
-      const res = await axios.get(`${API_BASE_URL}/api/posts`, { params });
+      const res = await axios.get(`/api/posts`, { params });
       const list = res?.data?.content || [];
       setRows(list);
       setTotal(res?.data?.totalElements ?? list.length);
     } catch (e) {
       console.error(e);
-      alert("자유게시판을 불러오지 못했습니다.");
+      alert("게시글을 불러오지 못했습니다.");
     }
   }
 
@@ -120,13 +118,24 @@ export default function FreeBoard() {
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
   const goWrite = () => {
-    navigate("/board/write", { state: { category: "자유게시판" } }); // 글쓰기 페이지로 카테고리 넘기기
+    navigate("/board/write", { state: { category: "공지사항" } }); // 글쓰기 페이지로 카테고리 넘기기
   };
 
+  async function handleLikesClick(postId) {
+    try {
+          const res = await axios.get(`/api/posts/${postId}/likes`);
+          setLikedUsers(res.data);
+          setShowLikesModal(true); // 모달 열기
+        } catch (err) {
+          console.error("좋아요 목록 불러오기 실패:", err);
+          alert("좋아요 목록을 불러오지 못했습니다.");
+        }
+  }
+  
   return (
     <Container style={styles.wrap}>
       {/* 상단 */}
-      <h2 className="m-0 mb-4">자유게시판</h2>
+      <h2 className="m-0 mb-4">📢 공지사항</h2>
       <Row className="align-items-center" style={styles.topBar}>
         <Col>
           <button style={styles.writeLink} onClick={goWrite}>
@@ -134,58 +143,9 @@ export default function FreeBoard() {
           </button>
         </Col>
       </Row>
-
-      {/* 목록 */}
-      <Table bordered hover responsive>
-        <thead>
-          <tr>
-            <th style={{ ...styles.th, ...styles.no }}>번호</th>
-            <th style={styles.th}>제목</th>
-            <th style={{ ...styles.th, ...styles.author }}>작성자</th>
-            <th style={{ ...styles.th, ...styles.date }}>작성일</th>
-            <th style={{ ...styles.th, ...styles.views }}>조회</th>
-            <th style={{ ...styles.th, ...styles.likes }}>좋아요</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.length === 0 ? (
-            <tr>
-              <td colSpan={6} style={styles.td} className="text-center text-muted">
-                게시글이 없습니다.
-              </td>
-            </tr>
-          ) : (
-            data.map((p, idx) => (
-              <tr key={p.id}>
-                <td style={{ ...styles.td, ...styles.no }}>
-                  {total - (page - 1) * PER_PAGE - idx}
-                </td>
-                <td style={{ ...styles.td, ...styles.titleCell }}>
-                  <button
-                    style={styles.titleBtn}
-                    onClick={() => navigate(`/board/detail/${p.id}`)}
-                    title={p.title}
-                  >
-                    <span style={styles.titleText}>{p.title}</span>
-                    {p.hasAttachment && <span className="ms-2" title="첨부">📎</span>}
-                    {typeof p.commentCount === "number" && (
-                      <span className="ms-1 text-muted">[{p.commentCount}]</span>
-                    )}
-                  </button>
-                </td>
-                <td style={{ ...styles.td, ...styles.author }}>{p.createId || "-"}</td>
-                <td style={{ ...styles.td, ...styles.date }}>{fmtDate(p.createDate)}</td>
-                <td style={{ ...styles.td, ...styles.views }}>{p.views ?? 0}</td>
-                <td style={{ ...styles.td, ...styles.likes }}>{p.likes ?? 0}</td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </Table>
-
-      {/* 하단: 검색 + 페이지네이션 */}
-      <Row className="gy-2 align-items-center" style={styles.bottomRow}>
-        <Col xs="auto">
+      <Row className="align-items-center" style={styles.topBar}>
+      {/*: 검색 칸 */}
+      <Col xs="auto">
           <Form.Select
             size="sm"
             style={styles.select}
@@ -226,8 +186,64 @@ export default function FreeBoard() {
             </Button>
           </InputGroup>
         </Col>
+      </Row>
 
-        <Col className="text-end">
+      {/* 목록 */}
+      <Table bordered hover responsive>
+        <thead>
+          <tr>
+            <th style={{ ...styles.th, ...styles.no }}>번호</th>
+            <th style={styles.th}>제목</th>
+            <th style={{ ...styles.th, ...styles.author }}>작성자</th>
+            <th style={{ ...styles.th, ...styles.date }}>작성일</th>
+            <th style={{ ...styles.th, ...styles.views }}>조회</th>
+            <th style={{ ...styles.th, ...styles.likes }}>좋아요</th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.length === 0 ? (
+            <tr>
+              <td colSpan={6} style={styles.td} className="text-center text-muted">
+                게시글이 없습니다.
+              </td>
+            </tr>
+          ) : (
+            data.map((p, idx) => (
+              <tr key={p.id}>
+                <td style={{ ...styles.td, ...styles.no }}>
+                  {total - (page - 1) * PER_PAGE - idx}
+                </td>
+                <td style={{ ...styles.td, ...styles.titleCell }}>
+                  <button
+                    style={styles.titleBtn}
+                    onClick={() => navigate(`/board/detail/${p.id}`)}
+                    title={p.title}
+                  >
+                    <span style={styles.titleText}>
+                      {p.title}
+                      {p.commentCount > 0 && (
+                        <span style={{ color: "#111", fontSize: "14px" }}> ({p.commentCount})</span>
+                      )}
+                    </span>
+                  </button>
+                </td>
+                <td style={{ ...styles.td, ...styles.author }}>{p.memberName || "-"}</td>
+                <td style={{ ...styles.td, ...styles.date }}>{fmtDate(p.createDate)}</td>
+                <td style={{ ...styles.td, ...styles.views }}>{p.views ?? 0}</td>
+                <td style={{ ...styles.td, ...styles.likes, cursor: "pointer", color: "#000000ff" }}
+                    onClick={() => handleLikesClick(p.id)}
+                >
+                  {p.likes ?? 0}
+                </td>
+              </tr>
+            ))
+          )}
+        </tbody>
+      </Table>
+
+      {/*하단 : 페이지네이션 */}
+      <Row className="gy-2 align-items-center" style={styles.bottomRow}>
+        <Col className="d-flex justify-content-center">
           <Pagination className="mb-0">
             <Pagination.First onClick={() => setPage(1)} disabled={page === 1} />
             <Pagination.Prev
@@ -246,6 +262,40 @@ export default function FreeBoard() {
           </Pagination>
         </Col>
       </Row>
+
+      <Modal
+        show={showLikesModal}
+        onHide={()=>setShowLikesModal(false)}
+        centerd
+        backdrop={false}
+        style={{
+          backdropFilter: "none"
+        }}
+        >
+        <Modal.Header closeButton>
+          <Modal.Title>❤️ 좋아요를 누른사람 </Modal.Title>
+        </Modal.Header>
+          <Modal.Body>
+            {likedUsers.length === 0 ? (
+              <p className="text-muted" style={{ margin: 0, fontSize: "14px" }}>
+                좋아요 목록이 없습니다.
+              </p>
+            ) : (
+              <ul style={{ margin: "6px 0", paddingLeft: "18px" }}>
+                {likedUsers.map((user, idx) => (
+                  <li key={idx} style={{ fontSize: "14px" }}>
+                    {user}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="outline-secondary" size="sm" onClick={() => setShowLikesModal(false)}>
+              닫기
+            </Button>
+          </Modal.Footer>
+      </Modal>  
     </Container>
   );
 }

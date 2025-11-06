@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from "react-bootstrap";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import axios from "axios";
-import { API_BASE_URL } from "../config/config";
+import axios from "../../api/api";
 
 export default function PostWrite() {
   const navigate = useNavigate();
@@ -13,7 +12,6 @@ export default function PostWrite() {
 
   const [form, setForm] = useState({
     title: "",
-    createId: "",
     content: "",
     category: categoryFromState,
   });
@@ -21,13 +19,13 @@ export default function PostWrite() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-  // useEffect(() => {
-  //   // state가 변경될 때마다 카테고리 업데이트
-  //   setForm((prev) => ({
-  //     ...prev,
-  //     category: categoryFromState,
-  //   }));
-  // }, [categoryFromState]);
+useEffect(() => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) {
+    alert("로그인이 필요합니다.");
+    navigate("/login");
+  }
+}, [navigate]);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -36,9 +34,7 @@ export default function PostWrite() {
 
   const validate = () => {
     if (!form.title.trim()) return "제목을 입력하세요.";
-    if (!form.createId.trim()) return "작성자 ID를 입력하세요.";
     if (!form.content.trim()) return "내용을 입력하세요.";
-    if (!form.category) return "카테고리를 선택하세요.";
     return "";
   };
 
@@ -50,8 +46,9 @@ export default function PostWrite() {
     setSubmitting(true);
 
     try {
-      await axios.post(`${API_BASE_URL}/api/posts`, form, {
-        headers: { "Content-Type": "application/json" },
+      await axios.post(`/api/posts`, form, {
+      headers: { "Content-Type": "application/json" },
+      withCredentials: true,  // ✅ 쿠키 포함해서 보내기
       });
       // 글쓰기 후, 해당 카테고리 페이지로 이동
       navigate(`/board/${form.category === "공지사항" ? "notice" : "free"}`);
@@ -69,7 +66,7 @@ export default function PostWrite() {
   return (
     <Container className="py-4">
       <Row className="mb-3">
-        <Col><h2>글쓰기</h2></Col>
+        <Col><h2>✏️ 글쓰기</h2></Col>
         <Col className="text-end">
           {/* 목록으로 돌아갈 때, 해당 카테고리 페이지로 이동 */}
           <Link to={`/board/${form.category === "공지사항" ? "notice" : "free"}`} className="btn btn-outline-secondary">목록으로</Link>
@@ -84,8 +81,8 @@ export default function PostWrite() {
             <Form.Group className="mb-3">
               <Form.Label>게시판 종류</Form.Label>
               <Form.Select name="category" value={form.category} onChange={onChange}>
-                <option value="공지사항">공지사항</option>
-                <option value="자유게시판">자유게시판</option>
+                <option value="공지사항">📢 공지사항</option>
+                <option value="자유게시판">💬 자유게시판</option>
               </Form.Select>
             </Form.Group>
 
@@ -97,17 +94,6 @@ export default function PostWrite() {
                 onChange={onChange}
                 placeholder="제목을 입력하세요"
                 maxLength={200}
-                required
-              />
-            </Form.Group>
-
-            <Form.Group className="mb-3">
-              <Form.Label>작성자 ID</Form.Label>
-              <Form.Control
-                name="createId"
-                value={form.createId}
-                onChange={onChange}
-                placeholder="작성자 ID (members.member_id)"
                 required
               />
             </Form.Group>
@@ -125,7 +111,7 @@ export default function PostWrite() {
               />
             </Form.Group>
 
-            <div className="d-flex gap-2">
+            <div className="d-flex justify-content-end gap-2">
               <Button type="submit" variant="primary" disabled={submitting}>
                 {submitting ? (<><Spinner size="sm" className="me-2" /> 저장 중...</>) : "등록"}
               </Button>
