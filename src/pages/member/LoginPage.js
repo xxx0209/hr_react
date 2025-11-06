@@ -54,7 +54,7 @@ const LoginPage = () => {
                 localStorage.setItem('accessToken', token);
                 const res = await getCurrentUser();
                 setUser(res.data);
-                alert("회원가입이 완료되었습니다!");
+                // alert("회원가입이 완료되었습니다!");
                 navigate('/');
             }
         } catch (error) {

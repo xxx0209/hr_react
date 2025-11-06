@@ -1,5 +1,5 @@
-import React from 'react';
-import { Navigate, Route, Routes } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/member/LoginPage";
 
@@ -39,11 +39,22 @@ import PendingSalaryList from '../pages/PendingSalaryList';
 import BaseSalaryPage from '../pages/BaseSalaryPage';
 import TestPage from '../sample/TestPage';
 
-
-
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
 // 이러한 파일을 네트워크에서는 routing table이라고 합니다.
 function AppRoutes() {
+
+    const navigate = useNavigate();
+
+    function NotFound() {
+
+        useEffect(() => {
+            sessionStorage.clear();
+            alert("존재하지 않는 페이지입니다. 홈으로 이동합니다.");
+            navigate("/home", { replace: true });
+        }, []);
+
+        return null;
+    }
 
     return (
         <Routes>
@@ -55,6 +66,8 @@ function AppRoutes() {
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/test" element={<TestPage />} />
             </Route>
+
+            <Route path="*" element={<NotFound />} /> {/* 모든 미정의 경로 처리 */}
 
             {/* 공통 Layout + PrivateRoute 그룹 */}
             <Route element={<PrivateLayoutRoute />}>
