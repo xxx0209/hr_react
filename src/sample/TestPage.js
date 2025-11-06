@@ -146,10 +146,6 @@ function App() {
                         }}
                     >
                         HR Management System
-
-                        <ListItemIcon sx={{ minWidth: 40 }}>
-                            <HomeIcon sx={{ color: 'white' }} >33333</HomeIcon>
-                        </ListItemIcon>
                     </Navbar.Brand>
 
                     {/* 반응형 토글 */}
