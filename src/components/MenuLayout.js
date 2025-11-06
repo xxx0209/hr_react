@@ -6,6 +6,7 @@ import MemberSubMenu from "../ui/MemberSubMenu";
 import BoardSubMenu from "../ui/BoardSubMenu";
 
 import ApprovalSubMenu from "../ui/ApprovalSubMenu";
+import AttendanceSubMenu from "../ui/AttendanceSubMenu"
 // 하위 메뉴 컴포넌트 import
 // import ApprovalSubMenu from "./ApprovalSubMenu";
 // import BoardSubMenu from "./BoardSubMenu";
@@ -67,12 +68,22 @@ export default function MenuItems() {
                     >
                         💰 급여관리
                     </Nav.Link>
+
+                    <Nav.Link
+                        onClick={() => handleSelect("attendance", "/attendance/attendance")}
+                        active={location.pathname.startsWith("/attendance")}
+                    >
+                        🧑‍💼 출퇴근 기능
+                    </Nav.Link>
+
+
                 </Nav>
             </Col>
 
             {/* 오른쪽: 소분류 */}
             <Col md={7} className="ps-3">
                 {activeMenu === "member" && <MemberSubMenu />}
+                {activeMenu === "attendance" && <AttendanceSubMenu />}
                 {activeMenu === "board" && <BoardSubMenu />}
                 {activeMenu === "approval" && <ApprovalSubMenu />}
                 {activeMenu === "salary" && <SalarySubMenu />}

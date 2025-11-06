@@ -66,9 +66,8 @@ function AppRoutes() {
                 <Route path="/member/schedule" element={<SchedulePage />} />
                 <Route path="/member/category" element={<CategoryPage />} />
                 <Route path="/home" element={<HomePage />} />
-
-                <Route path="/attendance" element={<AttendanceTracker />} />
-                <Route path="/leave" element={<LeaveStatus />} />
+                <Route path="/attendance/attendance" element={<AttendanceTracker />} />
+                <Route path="/attendance/leave" element={<LeaveStatus />} />
 
 
 
