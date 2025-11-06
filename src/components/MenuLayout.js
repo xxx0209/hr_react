@@ -56,7 +56,7 @@ export default function MenuItems() {
                     </Nav.Link>
 
                     <Nav.Link
-                        onClick={() => handleSelect("board", "/board")}
+                        onClick={() => handleSelect("board", "/board/notice")}
                         active={location.pathname.startsWith("/board")}
                     >
                         🗂 게시판
