@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { Container, Row, Col, Card, Form, Button, Modal, Badge, ButtonGroup } from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Modal, Badge } from "react-bootstrap";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import ko from "date-fns/locale/ko";
@@ -8,7 +8,9 @@ import { formatInTimeZone } from "date-fns-tz";
 import axios from "../../api/api";
 import { AuthContext } from "../../context/AuthContext";
 import SelectCombo from "../../sample/SelectCombo";
-// import styled from "styled-components";
+import { ButtonGroup, IconButton, Tooltip, Button } from "@mui/material";
+import { ArrowBackIos, ArrowBackIosNew, ArrowForwardIos, Today } from "@mui/icons-material"
+import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 
 import "react-datepicker/dist/react-datepicker.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -28,8 +30,6 @@ export default function SchedulePage() {
     const { user } = useContext(AuthContext);
 
     const [events, setEvents] = useState([]);
-
-    // 출근/퇴근 이벤트만 별도
     const [checkEvents, setCheckEvents] = useState([
         {
             scheduleId: "checkIn",
@@ -68,7 +68,6 @@ export default function SchedulePage() {
         if (user.role === "ROLE_ADMIN") {
             setSelectedMember(user.memberId);
             axios.get(`/member/list`).then(res => setMembers(res.data));
-            //setSelectedMember(null);
         } else {
             setSelectedMember(user.memberId);
         }
@@ -77,7 +76,6 @@ export default function SchedulePage() {
     // ✅ 일정 조회
     useEffect(() => {
         if (!selectedMember) return;
-        console.log("선택된 회원:", selectedMember);
         axios.get(`/schedule/member/${selectedMember}`)
             .then(res => {
                 const mapped = res.data.map(e => ({
@@ -97,14 +95,12 @@ export default function SchedulePage() {
         setTitle("");
         setCategory(categories[0]?.categoryId || "");
         setContent("");
-        if (!selectedMember) {
-            return alert("일정을 추가하려면 회원을 선택하세요.");
-        }
+        if (!selectedMember) return alert("일정을 추가하려면 회원을 선택하세요.");
         setShowSlotModal(true);
     };
 
     const handleAddSlotEvent = async () => {
-        if (!title || !slotStart || !slotEnd || !content) return alert("제목과 시간 그리고 내용을 입력하세요");
+        if (!title || !slotStart || !slotEnd || !content) return alert("제목과 시간, 내용을 입력하세요");
 
         const catObj = categories.find(c => c.categoryId === category);
         const body = {
@@ -118,7 +114,6 @@ export default function SchedulePage() {
 
         const res = await axios.post(`/schedule`, body);
 
-        // 🔹 등록 직후 KST 기준으로 Date 변환
         setEvents([...events, {
             scheduleId: res.data.scheduleId,
             title: "[" + categories.find(c => c.categoryId === category)?.name + "] " + title,
@@ -135,7 +130,7 @@ export default function SchedulePage() {
         setCategory(categories[0]?.categoryId || "");
         setSlotStart(null);
         setSlotEnd(null);
-        setContent(""); // 초기화
+        setContent("");
         setShowSlotModal(false);
     };
 
@@ -173,7 +168,7 @@ export default function SchedulePage() {
                 border: "none",
                 borderRadius: "6px",
                 padding: "3px",
-                position: "relative",
+                //position: "relative",
                 left: `${index * 10}%`, // ✅ 좌우 분리 (10%씩 밀기)
                 width: `${100 - index * 10}%`, // ✅ 남은 폭 계산
                 zIndex: 10 - index, // ✅ 겹칠 때 순서 보정
@@ -183,91 +178,308 @@ export default function SchedulePage() {
         };
     };
 
-    const CustomToolbar = ({ label, onView, onNavigate, view }) => {
+    const CustomToolbar = ({ date, onView, onNavigate, view }) => {
         const views = ["month", "week", "day"];
+
+        // date는 현재 캘린더의 기준 날짜
+        const labelText = format(date, "yyyy-MM"); // YYYY-MM 형식
 
         return (
             <>
-                <div className="d-flex justify-content-between align-items-center mb-3">
-                    {/* 이전 / 오늘 / 다음 버튼 */}
-                    <div>
-                        <Button variant="outline-secondary" size="sm" className="me-2" onClick={() => onNavigate("PREV")}>◀</Button>
-                        <Button variant="outline-secondary" size="sm" className="me-2" onClick={() => onNavigate("TODAY")}>오늘</Button>
-                        <Button variant="outline-secondary" size="sm" onClick={() => onNavigate("NEXT")}>▶</Button>
-                    </div>
+                <Row className="align-items-center mb-3 gx-2 gy-1">
+                    {/* 왼쪽: 캘린더 라벨 */}
+                    <Col className="d-flex align-items-center">
+                        <div
+                            style={{
+                                fontWeight: "bold",
+                                fontSize: "1.4rem",
+                                padding: "6px 14px",
+                                borderRadius: "12px",
+                                backgroundColor: "#f0f4f8",
+                                color: "#1e88e5",
+                                display: "inline-block",
+                                minWidth: "100px",
+                                textAlign: "center",
+                            }}
+                        >
+                            {labelText}
+                        </div>
+                    </Col>
 
-                    {/* 현재 월/연도 표시 */}
-                    <div style={{ fontWeight: "bold", fontSize: "1.3rem" }}>
-                        {label}
-                        {/* {format(new Date(label), "yyyy년 MM월", { locale: ko })} */}
-                    </div>
+                    {/* 오른쪽: 회원 선택, 네비 버튼, 뷰 버튼 */}
+                    <Col className="d-flex align-items-center justify-content-end">
+                        {user.role === "ROLE_ADMIN" && (
+                            <div style={{ minWidth: "150px", marginRight: "12px" }}>
+                                <Form.Select
+                                    size="sm"
+                                    value={selectedMember || ""}
+                                    onChange={e => setSelectedMember(e.target.value)}
+                                    style={{ height: "34px" }} // 버튼과 동일 높이
+                                >
+                                    <option value="">회원 선택</option>
+                                    {members.map(m => (
+                                        <option key={m.id} value={m.id}>{m.name}</option>
+                                    ))}
+                                </Form.Select>
+                            </div>
+                        )}
+                        {/* 네비게이션 버튼 */}
+                        <ButtonGroup
+                            sx={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
+                                backgroundColor: "#f9fafb",
+                                padding: "4px 8px",
+                                borderRadius: "50px",
+                                // boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                            }}
+                        >
+                            <Tooltip title="이전">
+                                <IconButton
+                                    size="small"
+                                    onClick={() => onNavigate("PREV")}
+                                    sx={{
+                                        backgroundColor: "#fff",
+                                        border: "1px solid #e0e0e0",
+                                        color: "#555",
+                                        width: 36,
+                                        height: 36,
+                                        "&:hover": {
+                                            backgroundColor: "#e3f2fd",
+                                            color: "#1976d2",
+                                            transform: "scale(1.05)",
+                                        },
+                                    }}
+                                >
+                                    <ArrowBackIosNew fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
 
-                    {/* 뷰 선택 버튼 */}
-                    <ButtonGroup>
-                        {views.map(v => (
-                            <Button
-                                key={v}
-                                size="sm"
-                                variant={view === v ? "primary" : "outline-primary"} // 클릭된 뷰 색상 표시
-                                onClick={() => onView(v)}
+                            <Tooltip title="오늘로 이동">
+                                <IconButton
+                                    size="small"
+                                    onClick={() => onNavigate("TODAY")}
+                                    sx={{
+                                        background: "linear-gradient(135deg, #42a5f5, #1e88e5)",
+                                        color: "white",
+                                        width: 38,
+                                        height: 38,
+                                        "&:hover": {
+                                            background: "linear-gradient(135deg, #2196f3, #1976d2)",
+                                            transform: "scale(1.08)",
+                                        },
+                                    }}
+                                >
+                                    <Today fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
+
+                            <Tooltip title="다음">
+                                <IconButton
+                                    size="small"
+                                    onClick={() => onNavigate("NEXT")}
+                                    sx={{
+                                        backgroundColor: "#fff",
+                                        border: "1px solid #e0e0e0",
+                                        color: "#555",
+                                        width: 36,
+                                        height: 36,
+                                        "&:hover": {
+                                            backgroundColor: "#e3f2fd",
+                                            color: "#1976d2",
+                                            transform: "scale(1.05)",
+                                        },
+                                    }}
+                                >
+                                    <ArrowForwardIos fontSize="small" />
+                                </IconButton>
+                            </Tooltip>
+                        </ButtonGroup>
+
+                        {/* 뷰 선택 버튼 */}
+                        <ToggleButtonGroup
+                            value={view}
+                            exclusive
+                            onChange={(e, newView) => {
+                                if (newView) onView(newView);
+                            }}
+                            sx={{
+                                backgroundColor: "#f9fafb",
+                                borderRadius: "50px",
+                                // boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                                p: "4px",
+                            }}
+                        >
+                            <ToggleButton
+                                value="month"
+                                sx={{
+                                    px: 2.5,
+                                    py: 0.8,
+                                    borderRadius: "50px",
+                                    fontSize: "0.9rem",
+                                    textTransform: "none",
+                                    fontWeight: 500,
+                                    whiteSpace: "nowrap",
+                                    "&.Mui-selected": {
+                                        background: "linear-gradient(135deg, #42a5f5, #1e88e5)",
+                                        color: "white",
+                                        "&:hover": {
+                                            background: "linear-gradient(135deg, #2196f3, #1976d2)",
+                                        },
+                                    },
+                                }}
                             >
-                                {v === "month" ? "월간" : v === "week" ? "주간" : "일간"}
-                            </Button>
-                        ))}
-                    </ButtonGroup>
-                </div>
-                {user.role === "ROLE_ADMIN" &&
-                    <div className="mb-3">
-                        <Form.Select value={selectedMember || ""} onChange={e => setSelectedMember(e.target.value)}>
-                            <option value="">회원 선택</option>
-                            {members.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                        </Form.Select>
-                    </div>
-                }
-            </>
+                                월간
+                            </ToggleButton>
 
+                            <ToggleButton
+                                value="week"
+                                sx={{
+                                    px: 2.5,
+                                    py: 0.8,
+                                    borderRadius: "50px",
+                                    fontSize: "0.9rem",
+                                    textTransform: "none",
+                                    fontWeight: 500,
+                                    whiteSpace: "nowrap",
+                                    "&.Mui-selected": {
+                                        background: "linear-gradient(135deg, #42a5f5, #1e88e5)",
+                                        color: "white",
+                                        "&:hover": {
+                                            background: "linear-gradient(135deg, #2196f3, #1976d2)",
+                                        },
+                                    },
+                                }}
+                            >
+                                주간
+                            </ToggleButton>
+
+                            <ToggleButton
+                                value="day"
+                                sx={{
+                                    px: 2.5,
+                                    py: 0.8,
+                                    borderRadius: "50px",
+                                    fontSize: "0.9rem",
+                                    textTransform: "none",
+                                    fontWeight: 500,
+                                    whiteSpace: "nowrap",
+                                    "&.Mui-selected": {
+                                        background: "linear-gradient(135deg, #42a5f5, #1e88e5)",
+                                        color: "white",
+                                        "&:hover": {
+                                            background: "linear-gradient(135deg, #2196f3, #1976d2)",
+                                        },
+                                    },
+                                }}
+                            >
+                                일간
+                            </ToggleButton>
+                        </ToggleButtonGroup>
+                    </Col>
+                </Row >
+            </>
         );
     };
 
+    const dayPropGetter = (date) => {
+        const day = date.getDay();
+        if (day === 0) { // 일요일
+            return { style: { color: "#ff4d4f" } }; // 빨간색
+        } else if (day === 6) { // 토요일
+            return { style: { color: "#1890ff" } }; // 파란색
+        }
+        return {};
+    };
+
     return (
-        <Container fluid className="p- bg-light min-vh-100">
-            {/* 페이지 전용 CSS */}
+        <Container className="py-4">
             <style>
                 {`
-                .rbc-event-content,
-                .rbc-event-label {
-                flex: 1;
-                font-size: 14px;
-                font-family: 'Inter', sans-serif;
-                font-variant-numeric: tabular-nums;  
-                line-height: 1;           /* 세로 균일 */ 
-                margin: 0;
-              }
-            `}
-            </style>
-            {/* {user.role === "ROLE_ADMIN" &&
-                <Row className="mb-3">
-                    <Col md={3}>
-                        <Form.Select value={selectedMember || ""} onChange={e => setSelectedMember(e.target.value)}>
-                            <option value="">회원 선택</option>
-                            {members.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                        </Form.Select>
-                    </Col>
-                </Row>
-            } */}
+                    .rbc-event-content,
+                    .rbc-event-label {
+                        flex: 1;
+                        font-size: 11px;
+                        font-family: 'Inter', sans-serif;
+                        font-variant-numeric: tabular-nums;
+                        line-height: 1;
+                        margin: 0;
+                    }
+                    /* 시간 컬럼 글꼴, 크기 변경 */
+                    .rbc-time-gutter .rbc-label {
+                        font-family: 'Inter', sans-serif;
+                        font-size: 11px;
+                        color: #555; /* 원하는 색상 */
+                    }
 
-            <Row className="justify-content-center">
-                <Col md={10}>
-                    <Card className="shadow rounded-4 p-3">
-                        <Card.Title className="text-center mb-3 fs-5 fw-bold">
+                    /* 타임 슬롯 안 글꼴, 크기 변경 */
+                    .rbc-timeslot-group {
+                        font-family: 'Inter', sans-serif;
+                        font-size: 11px;
+                        color: #333;
+                    }
+
+                    /* 이벤트 제목 글꼴, 크기 변경 */
+                    .rbc-event-content {
+                        font-family: 'Inter', sans-serif;
+                        font-size: 11px;
+                        font-weight: 500;
+                    }
+
+                    /* 이벤트 시간 표시 (선택사항) */
+                    .rbc-event-label {
+                        font-family: 'Inter', sans-serif;
+                        font-size: 12px;
+                        color: #fff;
+                    }
+                    /* 월간 뷰 요일 글자색 */
+                    .rbc-header {
+                        font-family: 'Inter', sans-serif;
+                        font-size: 12px;
+                        font-weight: 600;
+                    }
+
+                    /* 일요일 빨강 */
+                    .rbc-header:nth-child(1) {
+                        color: #dc3545;
+                    }
+
+                    /* 토요일 파랑 */
+                    .rbc-header:nth-child(7) {
+                        color: #0d6efd;
+                    }
+                    
+                `}
+            </style>
+
+            {/* 헤더 영역 */}
+            <Row className="mb-3">
+                <Col>
+                    <h2>📆 스케줄 일정 관리</h2>
+                </Col>
+                <Col className="text-end">
+                    {/* <Button
+                        variant="outline-secondary"
+                    //onClick={() => navigate(-1)}
+                    >
+                        목록으로
+                    </Button> */}
+                </Col>
+            </Row>
+
+            <Row className="justify-content-center m-0">
+                <Col md={12} className="p-1">
+                    <Card className="rounded-4 p-1 border-0"> {/* 그림자 제거 */}
+                        {/* <Card.Title className="text-center mb-3 fs-5 fw-bold">
                             📆 스케줄 일정 관리
-                        </Card.Title>
+                        </Card.Title> */}
                         <Calendar
                             localizer={localizer}
                             events={[...events, ...checkEvents]}
                             startAccessor="start"
                             endAccessor="end"
-                            style={{ height: 750 }}
+                            style={{ height: '100vh' }}
                             step={15}
                             timeslots={4}
                             views={["month", "week", "day"]}
@@ -276,6 +488,7 @@ export default function SchedulePage() {
                             popup
                             culture="ko"
                             eventPropGetter={eventPropGetter}
+                            dayPropGetter={dayPropGetter}
                             onSelectEvent={handleSelectEvent}
                             onSelectSlot={handleSelectSlot}
                             dayLayoutAlgorithm="no-overlap"
@@ -326,7 +539,7 @@ export default function SchedulePage() {
                                         let color = "inherit";
                                         if (day === 0) color = "#dc3545";
                                         if (day === 6) color = "#0d6efd";
-                                        return <div style={{ color, textAlign: "center", fontWeight: "bold" }}>{date.getDate()}</div>
+                                        return <div style={{ color, textAlign: "center", fontSize: "12px", fontWeight: "bold" }}>{date.getDate()}</div>
                                     }
                                 },
                                 week: {
@@ -335,7 +548,7 @@ export default function SchedulePage() {
                                         let color = "inherit";
                                         if (day === 0) color = "#dc3545";
                                         if (day === 6) color = "#0d6efd";
-                                        return <div style={{ color, textAlign: "center", fontWeight: "bold" }}>{label}</div>
+                                        return <div style={{ color, textAlign: "center", fontSize: "12px", fontWeight: "bold" }}>{label}</div>
                                     }
                                 }
                             }}
@@ -353,7 +566,7 @@ export default function SchedulePage() {
                                 일정 상세보기 <Badge bg="secondary">{selectedEvent.category}</Badge>
                             </Modal.Title>
                         </Modal.Header>
-                        <Modal.Body >
+                        <Modal.Body>
                             <p><strong>제목:</strong> {selectedEvent.title}</p>
                             {ETC_SCHEDULE_LIST.includes(selectedEvent.scheduleId) && (
                                 <p><strong>근태 :</strong> {new Date(selectedEvent.end).toLocaleString()}</p>
@@ -364,15 +577,14 @@ export default function SchedulePage() {
                                     <p><strong>시작:</strong> {new Date(selectedEvent.start).toLocaleString()}</p>
                                     <p><strong>종료:</strong> {new Date(selectedEvent.end).toLocaleString()}</p>
                                     <p><strong>내용:</strong></p>
-                                    {/* 스크롤 영역: 내용 */}
                                     <div style={{
-                                        maxHeight: "200px",   // 높이 제한
-                                        overflowY: "auto",    // 세로 스크롤
+                                        maxHeight: "200px",
+                                        overflowY: "auto",
                                         padding: "5px",
                                         border: "1px solid #dee2e6",
                                         borderRadius: "4px",
-                                        whiteSpace: "pre-wrap" // 엔터키 줄바꿈 적용
-                                    }} >
+                                        whiteSpace: "pre-wrap"
+                                    }}>
                                         <p>{selectedEvent.content}</p>
                                     </div>
                                 </>
@@ -410,9 +622,6 @@ export default function SchedulePage() {
                                 searchable={false}
                                 required={true}
                             />
-                            {/* <Form.Select value={category} onChange={e => setCategory(e.target.value)}>
-                                {categories.map(c => <option key={c.categoryId} value={c.name}>{c.name}</option>)}
-                            </Form.Select> */}
                         </Form.Group>
                         <Form.Group className="mb-3">
                             <Form.Label>시작 시간</Form.Label>
@@ -455,6 +664,6 @@ export default function SchedulePage() {
                     <Button variant="secondary" onClick={() => setShowSlotModal(false)}>닫기</Button>
                 </Modal.Footer>
             </Modal>
-        </Container >
+        </Container>
     );
 }

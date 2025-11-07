@@ -12,6 +12,7 @@ import {
   FaCalendarCheck,
 } from "react-icons/fa";
 import api from "../api/api";
+import ScheduleDashBoardPage from "./member/ScheduleDashBoardPage";
 
 export default function Homepage() {
   const navigate = useNavigate();
@@ -92,7 +93,7 @@ export default function Homepage() {
 
   .dashboard-grid:nth-of-type(3) .dashboard-card {
     flex: 1 1 100%;
-    max-width: 100%;
+    max-width: calc(100% - 24px);
   }
 
   /* 반응형 대응 (태블릿 이하) */
@@ -159,9 +160,9 @@ export default function Homepage() {
             </Button>
           </Card.Body>
         </Card>
-        </div>
+      </div>
 
-          <div className="dashboard-grid mt-4">
+      <div className="dashboard-grid mt-4">
         {/* 2행 1열: 공지사항 */}
         <Card className="dashboard-card text-center">
           <Card.Body className="d-flex flex-column align-items-center justify-content-center">
@@ -179,7 +180,7 @@ export default function Homepage() {
         </Card>
 
         {/* 2행 2열: 캘린더 */}
-         {/* 2행 3열: 휴가 관리 */}
+        {/* 2행 3열: 휴가 관리 */}
         <Card className="dashboard-card text-center">
           <Card.Body className="d-flex flex-column align-items-center justify-content-center">
             <FaFileSignature size={50} className="text-danger mb-3" />
@@ -194,24 +195,11 @@ export default function Homepage() {
             </Button>
           </Card.Body>
         </Card>
-        </div>
+      </div>
 
-<div className="dashboard-grid mt-4">
-    {/* 2행 2열: 캘린더 */}
-        <Card className="dashboard-card text-center">
-          <Card.Body className="d-flex flex-column align-items-center justify-content-center">
-            <FaCalendarCheck size={50} className="text-secondary mb-3" />
-            <h5>캘린더</h5>
-            <p className="text-muted small mb-2">일정 관리 및 회의 일정 확인</p>
-            <Button
-              variant="outline-secondary"
-              size="sm"
-              onClick={() => navigate("/calendar")}
-            >
-              바로가기
-            </Button>
-          </Card.Body>
-        </Card>
+      <div className="dashboard-grid mt-4">
+        {/* 2행 2열: 캘린더 */}
+        <ScheduleDashBoardPage />
       </div>
     </Container>
   );
