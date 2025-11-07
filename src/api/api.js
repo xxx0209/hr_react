@@ -8,6 +8,11 @@ const api = axios.create({
 });
 
 //서버 응답을 가로채서 전처리/후처리하는 로직
+
+ 
+
+
+
 //로그인 세션 자동 연장 기능
 api.interceptors.response.use(
   response => response,

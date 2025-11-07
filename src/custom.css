@@ -1,0 +1,134 @@
+/* ==============================
+   전역 테마 스타일 (custom.css)
+   ============================== */
+
+/* ✅ 기본 전역 폰트, 배경 */
+body {
+  background-color: #f8fafc;
+  font-family: "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+  color: #212529;
+  line-height: 1.6;
+}
+
+/* ✅ 기본 컨테이너 */
+.container,
+.container-fluid {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+/* ✅ 버튼 */
+.btn {
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary {
+  background-color: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb !important;
+}
+
+.btn-outline-primary {
+  color: #3b82f6 !important;
+  border-color: #3b82f6 !important;
+}
+
+.btn-outline-primary:hover {
+  background-color: #3b82f6 !important;
+  color: #fff !important;
+}
+
+/* ✅ 카드 */
+.card {
+  border: none !important;
+  border-radius: 15px !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* ✅ 입력 폼 */
+.form-control {
+  border-radius: 10px !important;
+  border: 1px solid #dee2e6 !important;
+  box-shadow: none !important;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.form-control:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
+}
+
+/* ✅ 네비게이션 바 */
+.navbar {
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  background-color: #ffffff !important;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  color: #3b82f6 !important;
+}
+
+.nav-link {
+  color: #374151 !important;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: #3b82f6 !important;
+}
+
+/* ✅ 테이블 */
+.table {
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.table thead {
+  background-color: #e0e7ff;
+  color: #1e3a8a;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+/* ✅ 알림(Toast, Alert) */
+.alert {
+  border-radius: 10px !important;
+  font-weight: 500;
+}
+
+/* ✅ 카드 타이틀, 섹션 헤더 */
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+/* ✅ 링크 스타일 */
+a {
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #2563eb;
+  text-decoration: underline;
+}
