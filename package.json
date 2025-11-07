@@ -8,13 +8,8 @@
     "@fullcalendar/daygrid": "^6.1.19",
     "@fullcalendar/interaction": "^6.1.19",
     "@fullcalendar/react": "^6.1.19",
-<<<<<<< HEAD
-    "@mui/icons-material": "^7.3.5",
-    "@mui/material": "^7.3.5",
-=======
     "@mui/icons-material": "^7.3.4",
     "@mui/material": "^7.3.4",
->>>>>>> master
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
@@ -38,7 +33,6 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "test:custom": "jest",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -58,16 +52,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@babel/preset-env": "^7.28.5",
-    "@babel/preset-react": "^7.28.5",
-    "@babel/preset-typescript": "^7.28.5",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
-    "babel-jest": "^30.2.0",
-    "identity-obj-proxy": "^3.0.0",
-    "jest": "^27.5.1",
-    "typescript": "^5.9.3"
   }
 }

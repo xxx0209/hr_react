@@ -16,11 +16,11 @@ const attendance =
             subs: [
                 {
                     no: 1,
-                    label: "글쓰기",
-                    to: "/board/create",
+                    label: "출퇴근",
+                    to: "/attendance/attendance",
                     icon: ManageAccountsIcon,
                     isAdminMenu: false,
-                    content: "글쓰기 메뉴 입니다."
+                    content: "출퇴근 관리 화면 입니다."
                 },
                 {
                     no: 2,

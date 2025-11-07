@@ -1,5 +1,5 @@
-import React from 'react';
-import { Navigate, Route, Routes } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/member/LoginPage";
 
@@ -10,11 +10,13 @@ import LeaveStatus from "../pages/LeaveStatus";
 import ApprovalRequestPage from "../pages/ApprovalRequestPage";
 import ApprovalTempPage from "../pages/ApprovalTempPage";
 import ApprovalDetail from '../pages/ApprovalDetail'; //경로는 실제 위치에 맞게 조정.
-import BoardPage from "../pages/BoardPage";
-import BoardWrite from "../pages/BoardWrite";
-import BoardNoticePage from "../pages/BoardNoticePage";
-import BoardFreePage from "../pages/BoardFreePage";
-import BoardDetail from '../pages/BoardDetail';
+
+// import BoardPage from "../pages/BoardPage";
+import BoardWrite from "../pages/board/BoardWrite";
+import BoardNoticePage from "../pages/board/BoardNoticePage";
+import BoardFreePage from "../pages/board/BoardFreePage";
+import BoardDetail from "../pages/board/BoardDetail";
+import BoardEdit from "../pages/board/BoardEdit";
 import SamplePage from "../sample/SamplePage"
 import PositionPage from "../pages/member/PositionPage";
 import PrivateLayoutRoute from "./PrivateLayoutRoute";
@@ -30,16 +32,37 @@ import PositionHistoryForm from "../pages/member/PositionHistoryForm";
 import PositionHistoryPage from "../pages/member/PositionHistoryPage";
 import CategoryPage from '../pages/member/CategoryPage';
 
-import SalaryPage from '../pages/SalaryPage';
-import SalaryAllList from '../pages/SalaryAllList';
+import MySalaryHistory from '../pages/MySalaryHistory';
+import CompletedSalaries from '../pages/CompletedSalaries';
 import SalaryForm from '../pages/SalaryForm';
-import BaseSalaryForm from '../pages/BaseSalaryForm';
-import SalaryDetailPage from '../pages/SalaryDetailPage';
+import SalaryDetailPage from '../pages/SalaryDetailCard';
+// import SalaryEditPage from '../pages/SalaryEditpage';
+// import PendingSalaryList from '../pages/PendingSalaryList';
+// import BaseSalaryPage from '../pages/BaseSalaryPage';
+import TestPage from '../sample/TestPage';
+
+import SalarySettingPage from '../pages/SalarySettingPage';
+
 
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
 // 이러한 파일을 네트워크에서는 routing table이라고 합니다.
+function AppRoutes() {
 
-const AppRoutes: React.FC = () => {
+    const navigate = useNavigate();
+
+    function NotFound() {
+        useEffect(() => {
+            sessionStorage.removeItem("storedCategory");
+
+            // 다시 저장
+            sessionStorage.setItem("storedCategory", JSON.stringify({ id: 'home', no: 1 }));
+            alert("존재하지 않는 페이지입니다. 홈으로 이동합니다.");
+            navigate("/home", { replace: true });
+        }, []);
+
+        return null;
+    }
+
     return (
         <Routes>
             {/* Layout 없이 전체 화면 */}
@@ -48,7 +71,10 @@ const AppRoutes: React.FC = () => {
             <Route element={<AuthRedirectRoute />}>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
+                <Route path="/test" element={<TestPage />} />
             </Route>
+
+            <Route path="*" element={<NotFound />} /> {/* 모든 미정의 경로 처리 */}
 
             {/* 공통 Layout + PrivateRoute 그룹 */}
             <Route element={<PrivateLayoutRoute />}>
@@ -68,14 +94,21 @@ const AppRoutes: React.FC = () => {
                 <Route path="/attendance/leave" element={<LeaveStatus />} />
 
 
-                {/* 급여 관련 페이지 */}
-                <Route path="/salary" element={<Navigate to="/salary/manage" />} />
-                <Route path="/salary/manage" element={<SalaryPage />} />
-                <Route path="/salary/admin" element={<SalaryAllList />} />
-                <Route path="/salary/admin/create" element={<SalaryForm />} />
-                <Route path="/salary/base-salary" element={<BaseSalaryForm />} />
-                <Route path="/salary/detail/:id" element={<SalaryDetailPage />} />
 
+
+                {/* 급여 관련 페이지 */}
+                <Route path="/salary/salary" element={<Navigate to="/salary/my-salaries" />} />
+                {/* 나의 급여 내역 */}
+                <Route path="/salary/my-salaries" element={<MySalaryHistory />} />
+                {/* 전체 급여 목록 (관리자) */}
+                <Route path="/salary/salaries/completed" element={<CompletedSalaries />} />
+                {/* 급여 생성 */}
+                <Route path="/salary/salaries/new" element={<SalaryForm />} />
+                {/* 급여 상세 조회 */}
+                <Route path="/salary/salaries/:salaryId" element={<SalaryDetailPage />} />
+
+                {/* 기본급 설정 */}
+                <Route path="/salary/salary-settings" element={<SalarySettingPage />} />
 
 
                 {/* 전자결재 페이지 */}
@@ -87,20 +120,18 @@ const AppRoutes: React.FC = () => {
                 <Route path="/approval/detail/:id" element={<ApprovalDetail />} />
                 <Route path="/approval" element={<ApprovalPage />} />
 
-                {/* 급여 관련 페이지 */}
-                <Route path="/salary" element={<SalaryPage />} />
-
                 {/* 게시판 */}
-                <Route path="/board" element={<BoardPage />} />
+                {/* <Route path="/board" element={<BoardPage />} /> */}
                 <Route path="/board/write" element={<BoardWrite />} />
                 <Route path="/board/notice" element={<BoardNoticePage />} />
                 <Route path="/board/free" element={<BoardFreePage />} />
                 <Route path="/board/detail/:id" element={<BoardDetail />} />
+                <Route path="/board/edit/:id" element={<BoardEdit />} />
                 {/* 다른 페이지 추가 */}
 
             </Route>
         </Routes>
     );
-};
+}
 
 export default AppRoutes;
