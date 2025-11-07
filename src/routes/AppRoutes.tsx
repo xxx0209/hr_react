@@ -38,8 +38,8 @@ import SalaryDetailPage from '../pages/SalaryDetailPage';
 
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
 // 이러한 파일을 네트워크에서는 routing table이라고 합니다.
-function AppRoutes() {
 
+const AppRoutes: React.FC = () => {
     return (
         <Routes>
             {/* Layout 없이 전체 화면 */}
@@ -101,6 +101,6 @@ function AppRoutes() {
             </Route>
         </Routes>
     );
-}
+};
 
 export default AppRoutes;
