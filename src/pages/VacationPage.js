@@ -20,6 +20,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
+import { ArrowUpRight } from "react-bootstrap-icons";
 import api from "../api/api";
 
 export default function VacationPage() {
@@ -76,6 +77,9 @@ export default function VacationPage() {
   const past = filteredVacations.filter((v) => new Date(v.startDate) < today);
 
   // 월별 통계
+  const limitedUpcoming = upcoming.slice(0, 3);
+  const limitedPast = past.slice(0, 3);
+
   const getMonthKey = (date) => {
     const d = new Date(date);
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
@@ -103,7 +107,6 @@ export default function VacationPage() {
     };
   });
 
-  // 필터
   const handleFilter = () => {
     const filtered = vacations.filter(
       (v) => new Date(v.startDate).getFullYear() === Number(selectedYear)
