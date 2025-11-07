@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Container, Table, Row, Col, Card, Button } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import api from "../api/api";
 
 export default function VacationHistoryPage() {
@@ -8,7 +9,23 @@ export default function VacationHistoryPage() {
   const [monthlyData, setMonthlyData] = useState([]);
   const TOTAL_VACATION_DAYS = 15; // 기본 연차 기준
 
-  // ✅ 유저 + 승인된 휴가 불러오기
+  const location = useLocation();
+
+  useEffect(() => {
+    // 휴가내역 탭 자동 활성화
+    if (location.pathname.includes("/vacation/history")) {
+      // 🔹 전역 메뉴 상태가 있다면 여기에 반영
+      const sidebarEvent = new CustomEvent("updateActiveMenu", {
+        detail: {
+          activeMenu: "vacation",
+          activeSub: "휴가내역",
+        },
+      });
+      window.dispatchEvent(sidebarEvent); // 전역으로 신호 보냄
+    }
+  }, [location]);
+
+  // 유저 + 승인된 휴가 불러오기
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -30,7 +47,7 @@ export default function VacationHistoryPage() {
     fetchData();
   }, []);
 
-  // ✅ 월별 통계 계산
+  // 월별 통계 계산
   useEffect(() => {
     if (vacations.length === 0) return;
 
@@ -75,7 +92,7 @@ export default function VacationHistoryPage() {
     setMonthlyData(monthlyArr);
   }, [vacations]);
 
-  // ✅ 엑셀 다운로드 (옵션)
+  // 엑셀 다운로드
   const exportToCSV = () => {
     const header = ["연월,전연차,사용연차,총연차,발생연차"];
     const rows = monthlyData.map(
