@@ -7,6 +7,7 @@ import ApprovalPage from "../pages/ApprovalPage";
 import AttendanceTracker from "../pages/AttendanceTracker";
 import LeaveStatus from "../pages/LeaveStatus";
 
+{/* 전자결재 */}
 import ApprovalRequestPage from "../pages/ApprovalRequestPage";
 import ApprovalTempPage from "../pages/ApprovalTempPage";
 import ApprovalDetail from '../pages/ApprovalDetail'; //경로는 실제 위치에 맞게 조정.
@@ -43,6 +44,9 @@ import TestPage from '../sample/TestPage';
 
 import SalarySettingPage from '../pages/SalarySettingPage';
 
+{/* 휴가 */}
+import VacationPage from '../pages/VacationPage';
+import VacationHistoryPage from '../pages/VacationHistoryPage';
 
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
 // 이러한 파일을 네트워크에서는 routing table이라고 합니다.
@@ -111,7 +115,7 @@ function AppRoutes() {
                 <Route path="/salary/salary-settings" element={<SalarySettingPage />} />
 
 
-                {/* 전자결재 페이지 */}
+                {/* 전자결재 */}
                 <Route path="/approval" element={<Navigate to="/approval/status" />} />
                 <Route path="/approval/request" element={<ApprovalRequestPage />} />
                 <Route path="/approval/status" element={<ApprovalPage />} />
@@ -127,6 +131,10 @@ function AppRoutes() {
                 <Route path="/board/free" element={<BoardFreePage />} />
                 <Route path="/board/detail/:id" element={<BoardDetail />} />
                 <Route path="/board/edit/:id" element={<BoardEdit />} />
+
+                {/* 휴가 */}
+                <Route path="/vacation/list" element={<VacationPage />} />
+                <Route path="/vacation/history" element={<VacationHistoryPage />} />
                 {/* 다른 페이지 추가 */}
 
             </Route>

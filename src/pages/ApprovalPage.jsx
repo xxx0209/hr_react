@@ -124,7 +124,14 @@ export default function ApprovalPage() {
     return data.filter((r) => {
       const matchWriter = appliedFilters.writer && r.memberName?.includes(appliedFilters.writer);
       const matchApprover = appliedFilters.approver && r.approverName?.includes(appliedFilters.approver);
-      const matchType = appliedFilters.type && r.requestType === appliedFilters.type;
+      const matchType =
+      appliedFilters.type &&
+      (
+       (appliedFilters.type === "휴가" &&
+       ["연차", "반차", "병가", "공가", "기타"].includes(r.requestType))
+       || r.requestType === appliedFilters.type
+      );
+
 
       const matchStart =
         appliedFilters.startDate && new Date(r.dateTime) >= new Date(appliedFilters.startDate);
@@ -235,8 +242,7 @@ const renderFilterBar = () => (
             onChange={(e) => setFilters({ ...filters, type: e.target.value })}
           >
             <option value="">전체</option>
-            <option value="연차">연차</option>
-            <option value="반차">반차</option>
+            <option value="휴가">휴가</option>  
             <option value="출장">출장</option>
             <option value="지출품의서">지출품의서</option>
           </Form.Select>
@@ -402,58 +408,87 @@ const renderFilterBar = () => (
       </Tabs>
 
       {/* 상세보기 모달 */}
-      <Modal show={showDetail} onHide={() => setShowDetail(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>문서 상세보기</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {selectedDoc ? (
-            <>
-              <p><strong>작성자:</strong> {selectedDoc.memberName}</p>
-              <p><strong>결재자:</strong> {selectedDoc.approverName || "-"}</p>
-              <p><strong>종류:</strong> {selectedDoc.requestType}</p>
-              <p><strong>내용:</strong></p>
-              <p className="border rounded p-2 bg-light">{selectedDoc.content || "내용 없음"}</p>
-              <p><strong>작성일자:</strong> {new Date(selectedDoc.dateTime).toLocaleDateString()}</p>
-              <p><strong>상태:</strong> {selectedDoc.status}</p>
-            </>
-          ) : (
-            <p>선택된 문서가 없습니다.</p>
-          )}
-        </Modal.Body>
-      </Modal>
+<Modal show={showDetail} onHide={() => setShowDetail(false)} centered size="lg">
+  <Modal.Header closeButton>
+    <Modal.Title>문서 상세보기</Modal.Title>
+  </Modal.Header>
+  <Modal.Body style={{ maxHeight: "75vh", overflowY: "auto" }}>
+    {selectedDoc ? (
+      <>
+        <p><strong>작성자:</strong> {selectedDoc.memberName}</p>
+        <p><strong>결재자:</strong> {selectedDoc.approverName || "-"}</p>
+        <p><strong>종류:</strong> {selectedDoc.requestType}</p>
 
-      {/* 승인/반려 모달 */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>{approvalType} 사유 입력</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group>
-              <Form.Label>{approvalType} 사유</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder={`${approvalType} 사유를 입력하세요`}
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={() => setShowModal(false)}>
-            취소
-          </Button>
-          <Button
-            variant={approvalType === "승인" ? "success" : "danger"}
-            onClick={handleApproval}
+        <p><strong>내용:</strong></p>
+        <div
+          className="border rounded p-3 bg-light mb-3"
+          style={{
+            whiteSpace: "pre-wrap",
+            lineHeight: "1.6",
+            fontSize: "0.95rem",
+            maxHeight: "60vh",
+            overflowY: "auto",
+          }}
+        >
+          {selectedDoc.content || "내용 없음"}
+        </div>
+
+        <p><strong>작성일자:</strong> {new Date(selectedDoc.dateTime).toLocaleDateString()}</p>
+        <p>
+          <strong>상태:</strong>{" "}
+          <Badge
+            bg={
+              selectedDoc.status === "승인"
+                ? "success"
+                : selectedDoc.status === "반려"
+                ? "danger"
+                : selectedDoc.status === "결재요청"
+                ? "warning"
+                : "secondary"
+            }
           >
-            {approvalType} 완료
-          </Button>
-        </Modal.Footer>
-      </Modal>
+            {selectedDoc.status}
+          </Badge>
+        </p>
+      </>
+    ) : (
+      <p>선택된 문서가 없습니다.</p>
+    )}
+  </Modal.Body>
+</Modal>
+
+{/* 승인/반려 모달 */}
+<Modal show={showModal} onHide={() => setShowModal(false)} centered size="md">
+  <Modal.Header closeButton>
+    <Modal.Title>{approvalType} 사유 입력</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form>
+      <Form.Group>
+        <Form.Label>{approvalType} 사유</Form.Label>
+        <Form.Control
+          as="textarea"
+          rows={5} // 🔹 더 넉넉하게
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder={`${approvalType} 사유를 입력하세요`}
+        />
+      </Form.Group>
+    </Form>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowModal(false)}>
+      취소
+    </Button>
+    <Button
+      variant={approvalType === "승인" ? "success" : "danger"}
+      onClick={handleApproval}
+    >
+      {approvalType} 완료
+    </Button>
+  </Modal.Footer>
+</Modal>
+
     </Container>
   );
 }
