@@ -5,13 +5,15 @@ import { Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Typo
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import CardCategory from "./CardCategory";
+import AttendanceMenu from "../ui/AttendanceMenu";
+
 
 //메뉴 경로 불러오기
 import { useNavigate } from "react-router-dom";
 import { MemberMenu } from "../ui/MemberMenu";
 import { BoardMenu } from "../ui/BoardMenu";
 import { ApprovalMenu } from "../ui/ApprovalMenu";
-import { AttendanceMenu } from "../ui/AttendanceMenu";
+// import { AttendanceMenu } from "../ui/AttendanceMenu";
 import { SalaryMenu } from "../ui/SalaryMenu";
 import { HomeMenu } from "../ui/HomeMenu";
 import { CalendarMenu } from "../ui/CalendarMenu";

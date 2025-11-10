@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import LeaveRequestForm from "./LeaveRequestForm";
+import LeaveRequestForm from "../LeaveRequestForm";
 
 
 function LeaveStatus() {

@@ -3,10 +3,8 @@ import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/member/LoginPage";
 
-import ApprovalPage from "../pages/ApprovalPage";
-import AttendanceTracker from "../pages/AttendanceTracker";
-import LeaveStatus from "../pages/LeaveStatus";
 
+import ApprovalPage from "../pages/ApprovalPage";
 import ApprovalRequestPage from "../pages/ApprovalRequestPage";
 import ApprovalTempPage from "../pages/ApprovalTempPage";
 import ApprovalDetail from '../pages/ApprovalDetail'; //경로는 실제 위치에 맞게 조정.
@@ -42,6 +40,11 @@ import SalaryDetailPage from '../pages/SalaryDetailCard';
 import TestPage from '../sample/TestPage';
 
 import SalarySettingPage from '../pages/SalarySettingPage';
+
+
+import AttendancePage from "../pages/attendance/AttendancePage"; //출퇴근 기능
+import LeaveStatus from "../pages/attendance/LeaveStatus"; //휴가 현황
+import AttendanceTracker from "../pages/attendance/AttendanceTracker"; //출퇴근 기록
 
 
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
@@ -90,8 +93,6 @@ function AppRoutes() {
                 <Route path="/member/schedule" element={<SchedulePage />} />
                 <Route path="/member/category" element={<CategoryPage />} />
                 <Route path="/home" element={<HomePage />} />
-                <Route path="/attendance/attendance" element={<AttendanceTracker />} />
-                <Route path="/attendance/leave" element={<LeaveStatus />} />
 
 
 
@@ -127,6 +128,15 @@ function AppRoutes() {
                 <Route path="/board/free" element={<BoardFreePage />} />
                 <Route path="/board/detail/:id" element={<BoardDetail />} />
                 <Route path="/board/edit/:id" element={<BoardEdit />} />
+
+
+
+                {/* 근태 관련 */}
+                <Route path="/attendance/tracker" element={<AttendanceTracker />} />
+                <Route path="/attendance/leave" element={<LeaveStatus />} />
+                <Route path="/attendance" element={<AttendancePage />} />
+
+
                 {/* 다른 페이지 추가 */}
 
             </Route>
