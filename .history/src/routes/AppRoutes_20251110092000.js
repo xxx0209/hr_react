@@ -35,13 +35,13 @@ import CategoryPage from '../pages/member/CategoryPage';
 
 import MySalaryHistory from '../pages/salary/MySalaryHistory';
 import CompletedSalaries from '../pages/salary/CompletedSalaries';
-import SalaryForm from '../pages/salary/SalaryForm';
-import SalaryDetailPage from '../pages/salary/SalaryDetailCard';
+import SalaryForm from '../pages/SalaryForm';
+import SalaryDetailPage from '../pages/SalaryDetailCard';
 
 
 import TestPage from '../sample/TestPage';
 
-import SalarySettingPage from '../pages/salary/SalarySettingPage';
+import SalarySettingPage from '../pages/SalarySettingPage';
 
 // {/* 휴가 */}
 import VacationPage from '../pages/VacationPage';
