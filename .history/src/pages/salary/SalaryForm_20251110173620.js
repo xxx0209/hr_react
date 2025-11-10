@@ -97,8 +97,8 @@ export default function SalaryManager() {
         const availableSalaries = Array.isArray(res.data.content)
           ? res.data.content
           : Array.isArray(res.data)
-            ? res.data
-            : [res.data];
+          ? res.data
+          : [res.data];
 
         setForm((prev) => ({
           ...prev,
@@ -198,8 +198,8 @@ export default function SalaryManager() {
         availablePositionSalaries = Array.isArray(res.data.content)
           ? res.data.content
           : Array.isArray(res.data)
-            ? res.data
-            : [res.data];
+          ? res.data
+          : [res.data];
       } catch (err) {
         console.error("직급 급여 불러오기 실패", err);
       }
@@ -264,8 +264,8 @@ export default function SalaryManager() {
                   {s.salaryType === "POSITION"
                     ? `직급 기준급 (${s.title || "-"})`
                     : s.salaryType === "MEMBER"
-                      ? "개인 급여"
-                      : "-"}
+                    ? "개인 급여"
+                    : "-"}
                 </td>
                 <td>{formatNumber(s.baseSalary)}원</td>
                 <td>{formatNumber(s.hourlyRate)}원</td>
