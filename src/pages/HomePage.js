@@ -12,6 +12,8 @@ import {
   FaCalendarCheck,
 } from "react-icons/fa";
 import api from "../api/api";
+import MemberDashBoardPage from "./member/MemberDashBoardPage";
+import ScheduleDashBoardPage from "./member/ScheduleDashBoardPage";
 
 export default function Homepage() {
   const navigate = useNavigate();
@@ -92,7 +94,7 @@ export default function Homepage() {
 
   .dashboard-grid:nth-of-type(3) .dashboard-card {
     flex: 1 1 100%;
-    max-width: 100%;
+    max-width: calc(100% - 24px);
   }
 
   /* 반응형 대응 (태블릿 이하) */
@@ -114,18 +116,7 @@ export default function Homepage() {
 
       <div className="dashboard-grid">
         {/* 1행 1열: 프로필 */}
-        <Card className="dashboard-card text-center">
-          <Card.Body className="d-flex flex-column align-items-center justify-content-center">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/219/219983.png"
-              alt="프로필"
-              className="rounded-circle mb-3"
-              style={{ width: 100, height: 100, objectFit: "cover" }}
-            />
-            <h5>관리자</h5>
-            <p className="text-muted small mb-1">개발팀 / 과장</p>
-          </Card.Body>
-        </Card>
+        <MemberDashBoardPage />
 
         {/* 1행 2열: 전자결재 */}
         <Card
@@ -159,9 +150,9 @@ export default function Homepage() {
             </Button>
           </Card.Body>
         </Card>
-        </div>
+      </div>
 
-          <div className="dashboard-grid mt-4">
+      <div className="dashboard-grid mt-4">
         {/* 2행 1열: 공지사항 */}
         <Card className="dashboard-card text-center">
           <Card.Body className="d-flex flex-column align-items-center justify-content-center">
@@ -171,14 +162,13 @@ export default function Homepage() {
             <Button
               variant="outline-warning"
               size="sm"
-              onClick={() => navigate("/board")}
+              onClick={() => navigate("/board/notice")}
             >
               바로가기
             </Button>
           </Card.Body>
         </Card>
 
-        {/* 2행 2열: 캘린더 */}
          {/* 2행 3열: 휴가 관리 */}
         <Card className="dashboard-card text-center">
           <Card.Body className="d-flex flex-column align-items-center justify-content-center">
@@ -186,32 +176,29 @@ export default function Homepage() {
             <h5>휴가 관리</h5>
             <p className="text-muted small mb-2">연차 / 반차 / 휴가 신청 및 확인</p>
             <Button
-              variant="outline-danger"
-              size="sm"
-              onClick={() => navigate("/vacation")}
-            >
-              바로가기
-            </Button>
-          </Card.Body>
-        </Card>
-        </div>
+        variant="outline-danger"
+        size="sm"
+        onClick={() => {
+        // 탭 상태 저장
+       sessionStorage.setItem(
+       "storedCategory",
+       JSON.stringify({ id: "vacation", no: 0 })
+      );
 
-<div className="dashboard-grid mt-4">
-    {/* 2행 2열: 캘린더 */}
-        <Card className="dashboard-card text-center">
-          <Card.Body className="d-flex flex-column align-items-center justify-content-center">
-            <FaCalendarCheck size={50} className="text-secondary mb-3" />
-            <h5>캘린더</h5>
-            <p className="text-muted small mb-2">일정 관리 및 회의 일정 확인</p>
-            <Button
-              variant="outline-secondary"
-              size="sm"
-              onClick={() => navigate("/calendar")}
-            >
-              바로가기
-            </Button>
+     // 페이지 이동
+     navigate("/vacation/list");
+  }}
+>
+  바로가기
+</Button>
+
           </Card.Body>
         </Card>
+      </div>
+
+      <div className="dashboard-grid mt-4">
+        {/* 2행 2열: 캘린더 */}
+        <ScheduleDashBoardPage />
       </div>
     </Container>
   );

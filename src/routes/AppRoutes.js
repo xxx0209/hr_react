@@ -1,75 +1,74 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+
+// 기본 페이지
 import HomePage from "../pages/HomePage";
 import LoginPage from "../pages/member/LoginPage";
 
-
+// 전자결재
 import ApprovalPage from "../pages/ApprovalPage";
 import ApprovalRequestPage from "../pages/ApprovalRequestPage";
 import ApprovalTempPage from "../pages/ApprovalTempPage";
-import ApprovalDetail from '../pages/ApprovalDetail'; //경로는 실제 위치에 맞게 조정.
+import ApprovalDetail from "../pages/ApprovalDetail";
 
-// import BoardPage from "../pages/BoardPage";
+// 근태 및 휴가
+import AttendanceTracker from "../pages/attendance/AttendanceTracker"; //출퇴근 기록
+import AttendancePage from "../pages/attendance/AttendancePage"; //출퇴근 기능
+import LeaveStatus from "../pages/attendance/LeaveStatus"; //휴가 현황
+import VacationPage from "../pages/VacationPage";
+import VacationHistoryPage from "../pages/VacationHistoryPage";
+
+// 게시판
 import BoardWrite from "../pages/board/BoardWrite";
 import BoardNoticePage from "../pages/board/BoardNoticePage";
 import BoardFreePage from "../pages/board/BoardFreePage";
 import BoardDetail from "../pages/board/BoardDetail";
 import BoardEdit from "../pages/board/BoardEdit";
-import SamplePage from "../sample/SamplePage"
-import PositionPage from "../pages/member/PositionPage";
-import PrivateLayoutRoute from "./PrivateLayoutRoute";
-import AuthRedirectRoute from "./AuthRedirectRoute";
 
 // 회원관리
 import SchedulePage from "../pages/member/SchedulePage";
 import SignupPage from "../pages/member/SignupPage";
+import PositionPage from "../pages/member/PositionPage";
 import PositionListPage from "../pages/member/PositionListPage";
 import PositionDetailPage from "../pages/member/PositionDetailPage";
+import PositionHistoryPage from "../pages/member/PositionHistoryPage";
 import PositionHistoryList from "../pages/member/PositionHistoryList";
 import PositionHistoryForm from "../pages/member/PositionHistoryForm";
-import PositionHistoryPage from "../pages/member/PositionHistoryPage";
 import CategoryPage from '../pages/member/CategoryPage';
+import MemberEditPage from '../pages/member/MemberEditPage';
 
-import MySalaryHistory from '../pages/MySalaryHistory';
-import CompletedSalaries from '../pages/CompletedSalaries';
-import SalaryForm from '../pages/SalaryForm';
-import SalaryDetailPage from '../pages/SalaryDetailCard';
-// import SalaryEditPage from '../pages/SalaryEditpage';
-// import PendingSalaryList from '../pages/PendingSalaryList';
-// import BaseSalaryPage from '../pages/BaseSalaryPage';
-import TestPage from '../sample/TestPage';
+import MySalaryHistory from '../pages/salary/MySalaryHistory';
+import CompletedSalaries from '../pages/salary/CompletedSalaries';
+import SalaryForm from '../pages/salary/SalaryForm';
+import SalaryDetailPage from '../pages/salary/SalaryDetailCard';
+import SalarySettingPage from '../pages/salary/SalarySettingPage';
 
-import SalarySettingPage from '../pages/SalarySettingPage';
+// 샘플 페이지
+import SamplePage from "../sample/SamplePage";
+import TestPage from "../sample/TestPage";
 
-
-import AttendancePage from "../pages/attendance/AttendancePage"; //출퇴근 기능
-import LeaveStatus from "../pages/attendance/LeaveStatus"; //휴가 현황
-import AttendanceTracker from "../pages/attendance/AttendanceTracker"; //출퇴근 기록
-
+// 라우트 보호
+import PrivateLayoutRoute from "./PrivateLayoutRoute";
+import AuthRedirectRoute from "./AuthRedirectRoute";
 
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
 // 이러한 파일을 네트워크에서는 routing table이라고 합니다.
 function AppRoutes() {
-
     const navigate = useNavigate();
 
     function NotFound() {
         useEffect(() => {
             sessionStorage.removeItem("storedCategory");
-
-            // 다시 저장
-            sessionStorage.setItem("storedCategory", JSON.stringify({ id: 'home', no: 1 }));
+            sessionStorage.setItem("storedCategory", JSON.stringify({ id: "home", no: 1 }));
             alert("존재하지 않는 페이지입니다. 홈으로 이동합니다.");
             navigate("/home", { replace: true });
-        }, []);
+        }, [navigate]);
 
         return null;
     }
 
     return (
         <Routes>
-            {/* Layout 없이 전체 화면 */}
-
             {/* 로그인/회원가입페이지 */}
             <Route element={<AuthRedirectRoute />}>
                 <Route path="/login" element={<LoginPage />} />
@@ -77,10 +76,14 @@ function AppRoutes() {
                 <Route path="/test" element={<TestPage />} />
             </Route>
 
-            <Route path="*" element={<NotFound />} /> {/* 모든 미정의 경로 처리 */}
+            <Route path="*" element={<NotFound />} />
 
             {/* 공통 Layout + PrivateRoute 그룹 */}
             <Route element={<PrivateLayoutRoute />}>
+                <Route path="/" element={<Navigate to="/home" replace />} />
+                <Route path="/home" element={<HomePage />} />
+
+                {/* 회원 관련 */}
                 <Route path="/" element={<Navigate to="/home" replace />} />
                 <Route path="/member/samplePage" element={<SamplePage />} />
                 <Route path="/member/position" element={<PositionPage />} />
@@ -92,34 +95,23 @@ function AppRoutes() {
                 <Route path="/member/position/history/save" element={<PositionHistoryForm />} />
                 <Route path="/member/schedule" element={<SchedulePage />} />
                 <Route path="/member/category" element={<CategoryPage />} />
-                <Route path="/home" element={<HomePage />} />
+                <Route path="/member/update" element={<MemberEditPage />} />
 
-
-
-
-                {/* 급여 관련 페이지 */}
+                {/* 급여 관련 */}
                 <Route path="/salary/salary" element={<Navigate to="/salary/my-salaries" />} />
-                {/* 나의 급여 내역 */}
                 <Route path="/salary/my-salaries" element={<MySalaryHistory />} />
-                {/* 전체 급여 목록 (관리자) */}
                 <Route path="/salary/salaries/completed" element={<CompletedSalaries />} />
-                {/* 급여 생성 */}
                 <Route path="/salary/salaries/new" element={<SalaryForm />} />
-                {/* 급여 상세 조회 */}
                 <Route path="/salary/salaries/:salaryId" element={<SalaryDetailPage />} />
-
-                {/* 기본급 설정 */}
                 <Route path="/salary/salary-settings" element={<SalarySettingPage />} />
 
-
-                {/* 전자결재 페이지 */}
+                {/* 전자결재 */}
                 <Route path="/approval" element={<Navigate to="/approval/status" />} />
                 <Route path="/approval/request" element={<ApprovalRequestPage />} />
                 <Route path="/approval/status" element={<ApprovalPage />} />
                 <Route path="/approval/temp" element={<ApprovalTempPage />} />
-                <Route path="/test-approval" element={<ApprovalDetail />} />
                 <Route path="/approval/detail/:id" element={<ApprovalDetail />} />
-                <Route path="/approval" element={<ApprovalPage />} />
+                <Route path="/test-approval" element={<ApprovalDetail />} />
 
                 {/* 게시판 */}
                 {/* <Route path="/board" element={<BoardPage />} /> */}
@@ -129,12 +121,14 @@ function AppRoutes() {
                 <Route path="/board/detail/:id" element={<BoardDetail />} />
                 <Route path="/board/edit/:id" element={<BoardEdit />} />
 
-
-
                 {/* 근태 관련 */}
                 <Route path="/attendance/tracker" element={<AttendanceTracker />} />
                 <Route path="/attendance/leave" element={<LeaveStatus />} />
                 <Route path="/attendance" element={<AttendancePage />} />
+
+                {/* 근태/휴가 */}
+                <Route path="/vacation/list" element={<VacationPage />} />
+                <Route path="/vacation/history" element={<VacationHistoryPage />} />
 
 
                 {/* 다른 페이지 추가 */}
@@ -142,6 +136,7 @@ function AppRoutes() {
             </Route>
         </Routes>
     );
+
 }
 
 export default AppRoutes;
