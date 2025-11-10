@@ -171,7 +171,7 @@ export default function Homepage() {
             <Button
               variant="outline-warning"
               size="sm"
-              onClick={() => navigate("/board")}
+              onClick={() => navigate("/board/notice")}
             >
               바로가기
             </Button>

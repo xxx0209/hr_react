@@ -19,13 +19,13 @@ export default function PostWrite() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
-useEffect(() => {
-  const token = localStorage.getItem("accessToken");
-  if (!token) {
-    alert("로그인이 필요합니다.");
-    navigate("/login");
-  }
-}, [navigate]);
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      alert("로그인이 필요합니다.");
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const onChange = (e) => {
     const { name, value } = e.target;
@@ -47,9 +47,10 @@ useEffect(() => {
 
     try {
       await axios.post(`/api/posts`, form, {
-      headers: { "Content-Type": "application/json" },
-      withCredentials: true,  // ✅ 쿠키 포함해서 보내기
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true, // ✅ 쿠키 포함해서 보내기
       });
+
       // 글쓰기 후, 해당 카테고리 페이지로 이동
       navigate(`/board/${form.category === "공지사항" ? "notice" : "free"}`);
     } catch (err) {
@@ -66,10 +67,17 @@ useEffect(() => {
   return (
     <Container className="py-4">
       <Row className="mb-3">
-        <Col><h2>✏️ 글쓰기</h2></Col>
+        <Col>
+          <h2>✏️ 글쓰기</h2>
+        </Col>
         <Col className="text-end">
           {/* 목록으로 돌아갈 때, 해당 카테고리 페이지로 이동 */}
-          <Link to={`/board/${form.category === "공지사항" ? "notice" : "free"}`} className="btn btn-outline-secondary">목록으로</Link>
+          <Link
+            to={`/board/${form.category === "공지사항" ? "notice" : "free"}`}
+            className="btn btn-outline-secondary"
+          >
+            목록으로
+          </Link>
         </Col>
       </Row>
 
@@ -113,9 +121,21 @@ useEffect(() => {
 
             <div className="d-flex justify-content-end gap-2">
               <Button type="submit" variant="primary" disabled={submitting}>
-                {submitting ? (<><Spinner size="sm" className="me-2" /> 저장 중...</>) : "등록"}
+                {submitting ? (
+                  <>
+                    <Spinner size="sm" className="me-2" /> 저장 중...
+                  </>
+                ) : (
+                  "등록"
+                )}
               </Button>
-              <Link to={`/board/${form.category === "공지사항" ? "notice" : "free"}`} className="btn btn-outline-secondary">취소</Link>
+
+              <Link
+                to={`/board/${form.category === "공지사항" ? "notice" : "free"}`}
+                className="btn btn-outline-secondary"
+              >
+                취소
+              </Link>
             </div>
           </Form>
         </Card.Body>

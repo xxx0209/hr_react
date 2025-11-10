@@ -63,6 +63,7 @@ function fmtDate(iso) {
   return `${year}-${month}-${day}`;
 }
 
+
 export default function  NoticeBoard() {
   const navigate = useNavigate();
 
@@ -92,6 +93,7 @@ export default function  NoticeBoard() {
       };
       if (q.trim()) params.q = q.trim();
       const res = await axios.get(`/api/posts`, { params });
+      console.log(res?.data);
       const list = res?.data?.content || [];
       setRows(list);
       setTotal(res?.data?.totalElements ?? list.length);
@@ -144,7 +146,7 @@ export default function  NoticeBoard() {
         </Col>
       </Row>
       <Row className="align-items-center" style={styles.topBar}>
-      {/*: 검색 칸 */}
+      {/* 검색 칸 */}
       <Col xs="auto">
           <Form.Select
             size="sm"
@@ -175,15 +177,6 @@ export default function  NoticeBoard() {
                 }
               }}
             />
-            <Button
-              variant="outline-secondary"
-              onClick={() => {
-                setPage(1);
-                load();
-              }}
-            >
-              검색
-            </Button>
           </InputGroup>
         </Col>
       </Row>
@@ -209,29 +202,39 @@ export default function  NoticeBoard() {
             </tr>
           ) : (
             data.map((p, idx) => (
-              <tr key={p.id}>
+              <tr
+                key={p.id}
+                onClick={() => navigate(`/board/detail/${p.id}`)} // ✅ 행 전체 클릭 시 이동
+                style={{ cursor: "pointer" }} // ✅ 마우스 포인터 표시
+              >
                 <td style={{ ...styles.td, ...styles.no }}>
                   {total - (page - 1) * PER_PAGE - idx}
                 </td>
                 <td style={{ ...styles.td, ...styles.titleCell }}>
-                  <button
-                    style={styles.titleBtn}
-                    onClick={() => navigate(`/board/detail/${p.id}`)}
-                    title={p.title}
-                  >
-                    <span style={styles.titleText}>
-                      {p.title}
-                      {p.commentCount > 0 && (
-                        <span style={{ color: "#111", fontSize: "14px" }}> ({p.commentCount})</span>
-                      )}
-                    </span>
-                  </button>
+                  <span style={styles.titleText}>
+                    {p.title}
+                    {p.commentCount > 0 && (
+                      <span style={{ color: "#111", fontSize: "14px" }}>
+                        {" "}
+                        ({p.commentCount})
+                      </span>
+                    )}
+                  </span>
                 </td>
                 <td style={{ ...styles.td, ...styles.author }}>{p.memberName || "-"}</td>
                 <td style={{ ...styles.td, ...styles.date }}>{fmtDate(p.createDate)}</td>
                 <td style={{ ...styles.td, ...styles.views }}>{p.views ?? 0}</td>
-                <td style={{ ...styles.td, ...styles.likes, cursor: "pointer", color: "#000000ff" }}
-                    onClick={() => handleLikesClick(p.id)}
+                <td
+                  style={{
+                    ...styles.td,
+                    ...styles.likes,
+                    cursor: "pointer",
+                    color: "#000000ff",
+                  }}
+                  onClick={(e) => {
+                    e.stopPropagation(); // ✅ 좋아요 클릭 시 상세 이동 방지
+                    handleLikesClick(p.id);
+                  }}
                 >
                   {p.likes ?? 0}
                 </td>
