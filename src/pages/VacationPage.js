@@ -23,7 +23,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { ArrowUpRight } from "react-bootstrap-icons"; // ✅ 아이콘 추가
+import { ArrowUpRight } from "react-bootstrap-icons"; 
 import api from "../api/api";
 
 export default function VacationPage() {
