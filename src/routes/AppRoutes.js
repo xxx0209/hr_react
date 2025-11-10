@@ -7,6 +7,7 @@ import LoginPage from "../pages/member/LoginPage";
 
 // 전자결재
 import ApprovalPage from "../pages/ApprovalPage";
+
 import ApprovalRequestPage from "../pages/ApprovalRequestPage";
 import ApprovalTempPage from "../pages/ApprovalTempPage";
 import ApprovalDetail from "../pages/ApprovalDetail";
@@ -33,7 +34,8 @@ import PositionDetailPage from "../pages/member/PositionDetailPage";
 import PositionHistoryPage from "../pages/member/PositionHistoryPage";
 import PositionHistoryList from "../pages/member/PositionHistoryList";
 import PositionHistoryForm from "../pages/member/PositionHistoryForm";
-import CategoryPage from "../pages/member/CategoryPage";
+import CategoryPage from '../pages/member/CategoryPage';
+import MemberEditPage from '../pages/member/MemberEditPage';
 
 // 급여 관련
 import MySalaryHistory from "../pages/MySalaryHistory";
@@ -49,6 +51,9 @@ import TestPage from "../sample/TestPage";
 // 라우트 보호
 import PrivateLayoutRoute from "./PrivateLayoutRoute";
 import AuthRedirectRoute from "./AuthRedirectRoute";
+//휴가
+import VacationPage from '../pages/VacationPage';
+import VacationHistoryPage from '../pages/VacationHistoryPage';
 
 // -------------------------------
 // AppRoutes 메인 컴포넌트
@@ -84,6 +89,7 @@ function AppRoutes() {
         <Route path="/home" element={<HomePage />} />
 
         {/* 회원 관련 */}
+        <Route path="/" element={<Navigate to="/home" replace />} />
         <Route path="/member/samplePage" element={<SamplePage />} />
         <Route path="/member/position" element={<PositionPage />} />
         <Route path="/member/position/list" element={<PositionListPage />} />
@@ -94,13 +100,14 @@ function AppRoutes() {
         <Route path="/member/position/history/save" element={<PositionHistoryForm />} />
         <Route path="/member/schedule" element={<SchedulePage />} />
         <Route path="/member/category" element={<CategoryPage />} />
+        <Route path="/member/update" element={<MemberEditPage />} />
 
         {/* 근태/휴가 */}
         <Route path="/attendance/attendance" element={<AttendanceTracker />} />
         <Route path="/attendance/leave" element={<LeaveStatus />} />
         <Route path="/vacation/list" element={<VacationPage />} />
         <Route path="/vacation/history" element={<VacationHistoryPage />} />
-
+            
         {/* 급여 관련 */}
         <Route path="/salary/salary" element={<Navigate to="/salary/my-salaries" />} />
         <Route path="/salary/my-salaries" element={<MySalaryHistory />} />
