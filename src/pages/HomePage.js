@@ -169,20 +169,29 @@ export default function Homepage() {
           </Card.Body>
         </Card>
 
-        {/* 2행 2열: 캘린더 */}
-        {/* 2행 3열: 휴가 관리 */}
+         {/* 2행 3열: 휴가 관리 */}
         <Card className="dashboard-card text-center">
           <Card.Body className="d-flex flex-column align-items-center justify-content-center">
             <FaFileSignature size={50} className="text-danger mb-3" />
             <h5>휴가 관리</h5>
             <p className="text-muted small mb-2">연차 / 반차 / 휴가 신청 및 확인</p>
             <Button
-              variant="outline-danger"
-              size="sm"
-              onClick={() => navigate("/vacation")}
-            >
-              바로가기
-            </Button>
+        variant="outline-danger"
+        size="sm"
+        onClick={() => {
+        // 탭 상태 저장
+       sessionStorage.setItem(
+       "storedCategory",
+       JSON.stringify({ id: "vacation", no: 0 })
+      );
+
+     // 페이지 이동
+     navigate("/vacation/list");
+  }}
+>
+  바로가기
+</Button>
+
           </Card.Body>
         </Card>
       </div>
