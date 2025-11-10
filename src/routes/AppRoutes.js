@@ -51,9 +51,7 @@ import TestPage from "../sample/TestPage";
 // 라우트 보호
 import PrivateLayoutRoute from "./PrivateLayoutRoute";
 import AuthRedirectRoute from "./AuthRedirectRoute";
-//휴가
-import VacationPage from '../pages/VacationPage';
-import VacationHistoryPage from '../pages/VacationHistoryPage';
+
 
 // -------------------------------
 // AppRoutes 메인 컴포넌트
