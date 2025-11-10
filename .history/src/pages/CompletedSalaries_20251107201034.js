@@ -1,62 +1,81 @@
 import React, { useEffect, useState } from "react";
-import { Table, Form } from "react-bootstrap";
+import { Table, Form, Button } from "react-bootstrap";
 import axios from "../api/api";
 import SelectCombo from "../sample/SelectCombo";
 
 function CompletedSalaries() {
   const [salaries, setSalaries] = useState([]);
   const [members, setMembers] = useState([]);
-  const [filters, setFilters] = useState({ memberId: "", month: "" });
+  const [filters, setFilters] = useState({
+    memberId: "",
+    month: "",
+  });
 
-  // 데이터 조회
+  // 데이터 가져오기
   const fetchData = async () => {
     try {
-      const salaryRes = await axios.get("/api/salaries/completed", {
-        params: {
-          memberId: filters.memberId || undefined,
-          salaryMonth: filters.month || undefined,
-        },
-      });
+      const [salaryRes, memberRes] = await Promise.all([
+        axios.get("/api/salaries/completed", {
+          params: {
+            memberId: filters.memberId || undefined,
+            month: filters.month || undefined,
+          },
+        }),
+        axios.get("/member/list"),
+      ]);
 
-      const memberRes = await axios.get("/member/list");
+      const salaryData = Array.isArray(salaryRes.data)
+        ? salaryRes.data
+        : salaryRes.data?.content || [];
 
-      setSalaries(Array.isArray(salaryRes.data) ? salaryRes.data : []);
-      setMembers(Array.isArray(memberRes.data) ? memberRes.data : []);
-    } catch (err) {
-      console.error("데이터 로드 오류:", err);
+      setSalaries(salaryData || []);
+      setMembers(memberRes.data || []);
+    } catch (error) {
+      console.error("데이터 로드 오류:", error);
       alert("데이터를 불러오는 중 오류가 발생했습니다.");
     }
   };
 
-  // 필터 변경 시 자동 조회
+  // 필터 변경 시 자동 검색
   useEffect(() => {
     fetchData();
   }, [filters.memberId, filters.month]);
 
-  const formatNumber = (num) =>
-    num != null ? num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "";
+  // 숫자 포맷
+  const formatNumber = (num) => {
+    if (!num && num !== 0) return "";
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
 
   return (
     <div className="container mt-4">
       <h3>승인 완료 급여 내역</h3>
 
-      {/* 필터 영역 */}
+      {/* 필터 */}
       <div className="d-flex gap-3 mb-3 align-items-center">
-        {/* 회원 필터 */}
         <SelectCombo
-          options={members.map((m) => ({ value: m.id, label: m.name }))}
+          options={members.map((m) => ({
+            value: m.id || m.memberId,
+            label: m.name || m.memberName,
+          }))}
           value={filters.memberId}
           onChange={(v) => setFilters({ ...filters, memberId: v })}
           placeholder="회원 선택"
         />
 
-        {/* 월별 필터 */}
         <Form.Control
           type="month"
           value={filters.month}
           onChange={(e) => setFilters({ ...filters, month: e.target.value })}
           style={{ width: "200px" }}
         />
+
+        <Button
+          variant="secondary"
+          onClick={() => setFilters({ memberId: "", month: "" })}
+        >
+          초기화
+        </Button>
       </div>
 
       {/* 테이블 */}
@@ -88,8 +107,8 @@ function CompletedSalaries() {
                   {s.salaryType === "POSITION"
                     ? "직급 기준급"
                     : s.salaryType === "MEMBER"
-                      ? "개인 급여"
-                      : "-"}
+                    ? "개인 급여"
+                    : "-"}
                 </td>
                 <td>{formatNumber(s.baseSalary)}원</td>
                 <td>{formatNumber(s.hourlyRate)}원</td>

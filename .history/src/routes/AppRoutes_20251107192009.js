@@ -43,7 +43,7 @@ import TestPage from '../sample/TestPage';
 
 import SalarySettingPage from '../pages/SalarySettingPage';
 
-// {/* 휴가 */}
+{/* 휴가 */}
 import VacationPage from '../pages/VacationPage';
 import VacationHistoryPage from '../pages/VacationHistoryPage';
 

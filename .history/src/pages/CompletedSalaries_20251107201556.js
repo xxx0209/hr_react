@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table, Form } from "react-bootstrap";
+import { Table, Form, Button } from "react-bootstrap";
 import axios from "../api/api";
 import SelectCombo from "../sample/SelectCombo";
 
@@ -8,7 +8,7 @@ function CompletedSalaries() {
   const [members, setMembers] = useState([]);
   const [filters, setFilters] = useState({ memberId: "", month: "" });
 
-  // 데이터 조회
+  // 데이터를 백엔드에서 가져오는 함수
   const fetchData = async () => {
     try {
       const salaryRes = await axios.get("/api/salaries/completed", {
@@ -57,6 +57,14 @@ function CompletedSalaries() {
           onChange={(e) => setFilters({ ...filters, month: e.target.value })}
           style={{ width: "200px" }}
         />
+
+        {/* 초기화 버튼 */}
+        <Button
+          variant="secondary"
+          onClick={() => setFilters({ memberId: "", month: "" })}
+        >
+          초기화
+        </Button>
       </div>
 
       {/* 테이블 */}
@@ -88,8 +96,8 @@ function CompletedSalaries() {
                   {s.salaryType === "POSITION"
                     ? "직급 기준급"
                     : s.salaryType === "MEMBER"
-                      ? "개인 급여"
-                      : "-"}
+                    ? "개인 급여"
+                    : "-"}
                 </td>
                 <td>{formatNumber(s.baseSalary)}원</td>
                 <td>{formatNumber(s.hourlyRate)}원</td>

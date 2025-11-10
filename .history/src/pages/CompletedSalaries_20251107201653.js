@@ -88,8 +88,8 @@ function CompletedSalaries() {
                   {s.salaryType === "POSITION"
                     ? "직급 기준급"
                     : s.salaryType === "MEMBER"
-                      ? "개인 급여"
-                      : "-"}
+                    ? "개인 급여"
+                    : "-"}
                 </td>
                 <td>{formatNumber(s.baseSalary)}원</td>
                 <td>{formatNumber(s.hourlyRate)}원</td>
