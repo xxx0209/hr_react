@@ -6,6 +6,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import CardCategory from "./CardCategory";
 
+
 //메뉴 경로 불러오기
 import { useNavigate } from "react-router-dom";
 import { MemberMenu } from "../ui/MemberMenu";
@@ -194,15 +195,20 @@ export default function Contents({ children }) {
                                 mb: 2,
                             }}
                         >
-                            {selectedCategory.subs.map((sub) => (
-                                <CardCategory
-                                    key={sub.no}
-                                    data={sub}
-                                    selected={selected?.no === sub.no}
-                                    onSelect={handleSelect}
-                                    expanded={expandedAll}
-                                />
-                            ))}
+                            {selectedCategory.subs
+                                .filter(sub => {
+                                    if (user.role === "ROLE_ADMIN") return true; // 관리자면 모두 표시
+                                    return sub.isAdminMenu === false; // 일반 유저는 isAdminMenu false만
+                                })
+                                .map(sub => (
+                                    <CardCategory
+                                        key={sub.no}
+                                        data={sub}
+                                        selected={selected?.no === sub.no}
+                                        onSelect={handleSelect}
+                                        expanded={expandedAll}
+                                    />
+                                ))}
                         </Box>
                     </>
                 )}
