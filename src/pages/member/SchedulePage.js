@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Container, Row, Col, Card, Form, Modal, Badge } from "react-bootstrap";
 import { Calendar, dateFnsLocalizer, Views } from "react-big-calendar";
-import { format, parse, startOfWeek, getDay, addDays } from "date-fns";
+import { format, parse, startOfWeek, endOfWeek, getDay, addDays, addMonths } from "date-fns";
 import ko from "date-fns/locale/ko";
 import DatePicker from "react-datepicker";
 import { formatInTimeZone } from "date-fns-tz";
@@ -177,14 +177,37 @@ export default function SchedulePage() {
     const CustomToolbar = ({ date, onView, onNavigate, view }) => {
         const views = ["month", "week", "day"];
 
-        // date는 현재 캘린더의 기준 날짜
-        const labelText = format(date, "yyyy-MM"); // YYYY-MM 형식
+        const labelText = (() => {
+            if (view === "month") {
+                // 📅 월간 뷰 → "2025년 11월"
+                return format(date, "yyyy년 MM월", { locale: ko });
+            } else if (view === "week") {
+                // 📆 주간 뷰 → "2025.11.03 ~ 2025.11.09"
+                const start = startOfWeek(date, { weekStartsOn: 0 }); // 월요일 시작
+                const end = endOfWeek(date, { weekStartsOn: 0 });
+                return `${format(start, "yyyy.MM.dd")} ~ ${format(end, "MM.dd")}`;
+            } else if (view === "day") {
+                // 🗓️ 일간 뷰 → "2025.11.11 (화)"
+                return format(date, "yyyy.MM.dd (EEE)", { locale: ko });
+            } else {
+                return format(date, "yyyy-MM-dd"); // 기본값
+            }
+        })();
 
         const handleNavigate = (action) => {
             let newDate = new Date(date);
-            if (action === "TODAY") newDate = new Date();
-            if (action === "PREV") newDate = addDays(newDate, -30);
-            if (action === "NEXT") newDate = addDays(newDate, 30);
+
+            if (action === "TODAY") {
+                newDate = new Date();
+            } else if (action === "PREV") {
+                if (view === "month") newDate = addMonths(newDate, -1);   // 월 단위
+                else if (view === "week") newDate = addDays(newDate, -7); // 주 단위
+                else if (view === "day") newDate = addDays(newDate, -1);  // 일 단위
+            } else if (action === "NEXT") {
+                if (view === "month") newDate = addMonths(newDate, 1);
+                else if (view === "week") newDate = addDays(newDate, 7);
+                else if (view === "day") newDate = addDays(newDate, 1);
+            }
 
             onNavigate(action);
             setCurrentDate(newDate); // ✅ 여기 추가
