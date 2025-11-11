@@ -78,9 +78,7 @@ export default function SalaryManager() {
       return;
     }
 
-    const memberSalary = memberSalaries.find(
-      (ms) => String(ms.memberId) === String(memberId)
-    );
+    const memberSalary = memberSalaries.find((ms) => ms.memberId === memberId);
     if (memberSalary) {
       setForm((prev) => ({
         ...prev,
@@ -97,8 +95,8 @@ export default function SalaryManager() {
         const availableSalaries = Array.isArray(res.data.content)
           ? res.data.content
           : Array.isArray(res.data)
-            ? res.data
-            : [res.data];
+          ? res.data
+          : [res.data];
 
         setForm((prev) => ({
           ...prev,
@@ -106,7 +104,7 @@ export default function SalaryManager() {
           salaryType: "POSITION",
           baseSalary: "",
           hourlyRate: "",
-          positionSalaryId: availableSalaries[0]?.id || "",
+          positionSalaryId: "",
           availablePositionSalaries: availableSalaries,
         }));
       } catch (err) {
@@ -133,7 +131,7 @@ export default function SalaryManager() {
       return;
     }
 
-    const numId = Number(id);
+    const numId = Number(id); // 문자열 → 숫자
     const ps = form.availablePositionSalaries.find((p) => p.id === numId);
     if (ps) {
       setForm((prev) => ({
@@ -160,22 +158,12 @@ export default function SalaryManager() {
       return;
     }
 
-    const payload = {
-      salaryId: form.salaryId,
-      memberId: form.memberId,
-      salaryType: form.salaryType,
-      positionSalaryId: form.positionSalaryId,
-      baseSalary: form.baseSalary?.toString().replace(/,/g, ""),
-      hourlyRate: form.hourlyRate?.toString().replace(/,/g, ""),
-      salaryMonth: form.salaryMonth,
-    };
-
     try {
       if (form.salaryId) {
-        await axios.put(`/api/salaries/${form.salaryId}`, payload);
+        await axios.put(`/api/salaries/${form.salaryId}`, form);
         alert("급여 수정 완료!");
       } else {
-        await axios.post("/api/salaries", payload);
+        await axios.post("/api/salaries", form);
         alert("급여 등록 완료!");
       }
       fetchData();
@@ -198,18 +186,14 @@ export default function SalaryManager() {
         availablePositionSalaries = Array.isArray(res.data.content)
           ? res.data.content
           : Array.isArray(res.data)
-            ? res.data
-            : [res.data];
+          ? res.data
+          : [res.data];
       } catch (err) {
         console.error("직급 급여 불러오기 실패", err);
       }
     }
 
-    setForm({
-      ...s,
-      availablePositionSalaries,
-      positionSalaryId: s.positionSalaryId || (availablePositionSalaries[0]?.id || ""),
-    });
+    setForm({ ...s, availablePositionSalaries, positionSalaryId: s.positionSalaryId || "" });
     setShow(true);
   };
 
@@ -264,8 +248,8 @@ export default function SalaryManager() {
                   {s.salaryType === "POSITION"
                     ? `직급 기준급 (${s.title || "-"})`
                     : s.salaryType === "MEMBER"
-                      ? "개인 급여"
-                      : "-"}
+                    ? "개인 급여"
+                    : "-"}
                 </td>
                 <td>{formatNumber(s.baseSalary)}원</td>
                 <td>{formatNumber(s.hourlyRate)}원</td>
@@ -361,9 +345,7 @@ export default function SalaryManager() {
                   <Form.Control
                     value={formatNumber(form.baseSalary)}
                     readOnly={form.salaryType === "MEMBER" || form.status === "COMPLETED"}
-                    onChange={(e) =>
-                      setForm({ ...form, baseSalary: e.target.value.replace(/,/g, "") })
-                    }
+                    onChange={(e) => setForm({ ...form, baseSalary: e.target.value })}
                   />
                 </Form.Group>
               </Col>
@@ -373,9 +355,7 @@ export default function SalaryManager() {
                   <Form.Control
                     value={formatNumber(form.hourlyRate)}
                     readOnly={form.salaryType === "MEMBER" || form.status === "COMPLETED"}
-                    onChange={(e) =>
-                      setForm({ ...form, hourlyRate: e.target.value.replace(/,/g, "") })
-                    }
+                    onChange={(e) => setForm({ ...form, hourlyRate: e.target.value })}
                   />
                 </Form.Group>
               </Col>
