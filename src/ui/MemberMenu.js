@@ -20,31 +20,23 @@ const member =
                     to: "/member/update",
                     icon: ManageAccountsIcon,
                     isAdminMenu: false,
-                    content: "회원의 기본 정보를 수정할수 있는 메뉴 입니다.\r\n  아이디, 비밀번호, 이메일, 프로필 사진 등을 변경할 수 있습니다."
+                    content: "회원의 기본 정보를 수정할수 있는 메뉴 입니다.\r\n이름, 비밀번호, 이메일, 프로필 사진 등을 변경할 수 있습니다."
                 },
                 {
                     no: 2,
-                    label: "직급 관리",
+                    label: "직급등록 관리",
                     to: "/member/position/list",
                     icon: Diversity3Icon,
                     isAdminMenu: true,
-                    content: "회사의 직급체계를 관리합니다.\r\n  관리자는 직급을 추가, 수정, 삭제할 수 있습니다."
+                    content: "회사의 직급체계를 관리합니다.\r\n직급을 추가, 수정, 삭제할 수 있습니다."
                 },
                 {
                     no: 3,
-                    label: "직급내역 관리",
+                    label: "직급 진급관리",
                     to: "/member/position/history/list",
                     icon: EditDocumentIcon,
                     isAdminMenu: true,
-                    content: "직급의 변경 내역을 확인합니다.\r\n 관리자는 직급을 추가, 수정, 삭제할 수 있습니다."
-                },
-                {
-                    no: 4,
-                    label: "카테고리 등록",
-                    to: "/member/category",
-                    icon: EditDocumentIcon,
-                    isAdminMenu: true,
-                    content: "카테고리를 등록합니다."
+                    content: "직급의 진급 내역을 확인합니다.\r\n 직원의 직급을 변경할 수 있습니다."
                 },
             ]
         }
