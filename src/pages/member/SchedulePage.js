@@ -30,24 +30,7 @@ export default function SchedulePage() {
     const { user } = useContext(AuthContext);
 
     const [events, setEvents] = useState([]);
-    const [checkEvents, setCheckEvents] = useState([
-        {
-            scheduleId: "checkIn",
-            title: "출근",
-            start: new Date("2025-10-30T09:05:00"),
-            end: new Date("2025-10-30T09:05:00"),
-            color: "#0d6efd",
-            isCheck: true
-        },
-        {
-            scheduleId: "checkOut",
-            title: "퇴근",
-            start: new Date("2025-10-30T17:25:00"),
-            end: new Date("2025-10-30T17:25:00"),
-            color: "#dc3545",
-            isCheck: true
-        }
-    ]);
+    const [checkEvents, setCheckEvents] = useState([]);
 
     const [categories, setCategories] = useState([]);
     const [members, setMembers] = useState([]);
@@ -60,6 +43,8 @@ export default function SchedulePage() {
     const [title, setTitle] = useState("");
     const [category, setCategory] = useState("");
     const [content, setContent] = useState("");
+
+    const [currentDate, setCurrentDate] = useState(new Date()); //현재 달
 
     // ✅ 카테고리 + 회원 목록
     useEffect(() => {
@@ -75,17 +60,28 @@ export default function SchedulePage() {
 
     // ✅ 일정 조회
     useEffect(() => {
-        if (!selectedMember) return;
-        axios.get(`/schedule/member/${selectedMember}`)
+        if (!selectedMember || !currentDate) return;
+
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+
+        axios.get(`/schedule/member/${selectedMember}?month=${year}-${month}`)
             .then(res => {
-                const mapped = res.data.map(e => ({
+                const sMapped = res.data.scheduleDtoList.map(e => ({
                     ...e,
                     start: new Date(e.start),
                     end: new Date(e.end),
                 }));
-                setEvents(mapped);
+                setEvents(sMapped);
+                const rMapped = res.data.requestDtoList.map(e => ({
+                    ...e,
+                    start: new Date(e.start),
+                    end: new Date(e.end),
+                    color: '#dc3545' // 휴가의 컬러색 고정
+                }));
+                setCheckEvents(rMapped);
             });
-    }, [selectedMember]);
+    }, [selectedMember, currentDate]);
 
     const handleSelectEvent = (event) => setSelectedEvent(event);
 
@@ -184,6 +180,16 @@ export default function SchedulePage() {
         // date는 현재 캘린더의 기준 날짜
         const labelText = format(date, "yyyy-MM"); // YYYY-MM 형식
 
+        const handleNavigate = (action) => {
+            let newDate = new Date(date);
+            if (action === "TODAY") newDate = new Date();
+            if (action === "PREV") newDate = addDays(newDate, -30);
+            if (action === "NEXT") newDate = addDays(newDate, 30);
+
+            onNavigate(action);
+            setCurrentDate(newDate); // ✅ 여기 추가
+        };
+
         return (
             <>
                 <Row className="align-items-center mb-3 gx-2 gy-1">
@@ -238,7 +244,7 @@ export default function SchedulePage() {
                             <Tooltip title="이전">
                                 <IconButton
                                     size="small"
-                                    onClick={() => onNavigate("PREV")}
+                                    onClick={() => handleNavigate("PREV")}
                                     sx={{
                                         backgroundColor: "#fff",
                                         border: "1px solid #e0e0e0",
@@ -259,7 +265,7 @@ export default function SchedulePage() {
                             <Tooltip title="오늘로 이동">
                                 <IconButton
                                     size="small"
-                                    onClick={() => onNavigate("TODAY")}
+                                    onClick={() => handleNavigate("TODAY")}
                                     sx={{
                                         background: "linear-gradient(135deg, #42a5f5, #1e88e5)",
                                         color: "white",
@@ -278,7 +284,7 @@ export default function SchedulePage() {
                             <Tooltip title="다음">
                                 <IconButton
                                     size="small"
-                                    onClick={() => onNavigate("NEXT")}
+                                    onClick={() => handleNavigate("NEXT")}
                                     sx={{
                                         backgroundColor: "#fff",
                                         border: "1px solid #e0e0e0",
@@ -487,6 +493,8 @@ export default function SchedulePage() {
                             📆 스케줄 일정 관리
                         </Card.Title> */}
                         <Calendar
+                            date={currentDate} // ✅ 현재 달 유지
+                            onNavigate={(newDate) => setCurrentDate(newDate)} // ✅ react-big-calendar 기본 네비게이션도 반영
                             localizer={localizer}
                             events={[...events, ...checkEvents]}
                             startAccessor="start"
@@ -600,7 +608,7 @@ export default function SchedulePage() {
                             )}
                         </Modal.Body>
                         <Modal.Footer>
-                            {!ETC_SCHEDULE_LIST.includes(selectedEvent.scheduleId) && (
+                            {selectedEvent?.scheduleId && (
                                 <Button variant="danger" onClick={handleDeleteEvent}>삭제</Button>
                             )}
                             <Button variant="secondary" onClick={() => setSelectedEvent(null)}>닫기</Button>
