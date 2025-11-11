@@ -113,6 +113,7 @@ export default function Homepage() {
   }
 `}</style>
 
+
       <div className="dashboard-grid">
         {/* 1행 1열: 프로필 */}
         <MemberDashBoardPage />
@@ -120,7 +121,7 @@ export default function Homepage() {
         {/* 1행 2열: 전자결재 */}
         <Card
           className="dashboard-card text-center"
-          onClick={() => navigate("/approval/status")}
+          onClick={() => navigate("/approval/")}
           style={{ cursor: "pointer" }}
         >
           {approvalSummary.waiting > 0 && (
@@ -168,28 +169,28 @@ export default function Homepage() {
           </Card.Body>
         </Card>
 
-        {/* 2행 3열: 휴가 관리 */}
+         {/* 2행 3열: 휴가 관리 */}
         <Card className="dashboard-card text-center">
           <Card.Body className="d-flex flex-column align-items-center justify-content-center">
             <FaFileSignature size={50} className="text-danger mb-3" />
             <h5>휴가 관리</h5>
             <p className="text-muted small mb-2">연차 / 반차 / 휴가 신청 및 확인</p>
             <Button
-              variant="outline-danger"
-              size="sm"
-              onClick={() => {
-                // 탭 상태 저장
-                sessionStorage.setItem(
-                  "storedCategory",
-                  JSON.stringify({ id: "vacation", no: 0 })
-                );
+        variant="outline-danger"
+        size="sm"
+        onClick={() => {
+        // 탭 상태 저장
+       sessionStorage.setItem(
+       "storedCategory",
+       JSON.stringify({ id: "vacation", no: 0 })
+      );
 
-                // 페이지 이동
-                navigate("/vacation/list");
-              }}
-            >
-              바로가기
-            </Button>
+     // 페이지 이동
+     navigate("/vacation/list");
+  }}
+>
+  바로가기
+</Button>
 
           </Card.Body>
         </Card>

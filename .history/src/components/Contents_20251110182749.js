@@ -59,17 +59,17 @@ export default function Contents({ children }) {
         }
     };
 
-    // const updateSessionStorageItem = (key, updates) => {
-    //     // 1️⃣ 기존 데이터 가져오기
-    //     const existing = sessionStorage.getItem(key);
-    //     const parsed = existing ? JSON.parse(existing) : {};
+    const updateSessionStorageItem = (key, updates) => {
+        // 1️⃣ 기존 데이터 가져오기
+        const existing = sessionStorage.getItem(key);
+        const parsed = existing ? JSON.parse(existing) : {};
 
-    //     // 2️⃣ 기존 데이터에 새 값 덮어쓰기
-    //     const updated = { ...parsed, ...updates };
+        // 2️⃣ 기존 데이터에 새 값 덮어쓰기
+        const updated = { ...parsed, ...updates };
 
-    //     // 3️⃣ 다시 저장
-    //     sessionStorage.setItem(key, JSON.stringify(updated));
-    // }
+        // 3️⃣ 다시 저장
+        sessionStorage.setItem(key, JSON.stringify(updated));
+    }
 
     const handleSelect = ((item) => {
         if (item?.no === selected?.no) {
@@ -81,7 +81,7 @@ export default function Contents({ children }) {
         }
         setSelected(item);
         navigate(item.to);
-        //updateSessionStorageItem(storedKey, { no: item.no });
+        updateSessionStorageItem(storedKey, { no: item.no });
         // 스크롤 이동 기능 임시
         if (categories.id !== 'home') {
             // const el = document.getElementById("approval-page");

@@ -113,6 +113,7 @@ export default function Homepage() {
   }
 `}</style>
 
+
       <div className="dashboard-grid">
         {/* 1행 1열: 프로필 */}
         <MemberDashBoardPage />

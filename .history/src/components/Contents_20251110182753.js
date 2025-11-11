@@ -81,7 +81,7 @@ export default function Contents({ children }) {
         }
         setSelected(item);
         navigate(item.to);
-        //updateSessionStorageItem(storedKey, { no: item.no });
+        updateSessionStorageItem(storedKey, { no: item.no });
         // 스크롤 이동 기능 임시
         if (categories.id !== 'home') {
             // const el = document.getElementById("approval-page");
