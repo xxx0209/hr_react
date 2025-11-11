@@ -1,6 +1,7 @@
 import {
     CalendarMonth as CalendarMonthIcon,
     ManageAccounts as ManageAccountsIcon,
+    EditDocument as EditDocumentIcon
 } from "@mui/icons-material";
 
 const calendar =
@@ -18,7 +19,15 @@ const calendar =
                     to: "/member/schedule",
                     icon: ManageAccountsIcon,
                     isAdminMenu: false,
-                    content: "개인 일정/출퇴근현황/휴가 일정을 확인할 수 있는 메뉴입니다."
+                    content: "개인 일정을 관리 합니다.\r\n 개인일정/출퇴근현황/휴가 일정을 확인할 수 있습니다."
+                },
+                {
+                    no: 2,
+                    label: "캘린더 카테고리 등록",
+                    to: "/member/category",
+                    icon: EditDocumentIcon,
+                    isAdminMenu: true,
+                    content: "캘린더의 카테고리를 등록합니다.\r\n 카테고리별 색상을 지정할수 있습니다."
                 },
             ]
 
