@@ -60,7 +60,8 @@ const LoginPage = () => {
         } catch (error) {
             if (error.response && error.response.data) {
                 // 서버에서 받은 오류 정보를 객체로 저장합니다.
-                setErrors(error.response.data);
+                setErrors((previous) => ({ ...previous, general: error.response.data }));
+
             } else { // 입력 값 이외에 발생하는 다른 오류와 관련됨.
                 setErrors((previous) => ({ ...previous, general: '로그인 오류가 발생하였습니다.' }));
             }

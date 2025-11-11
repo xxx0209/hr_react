@@ -8,7 +8,7 @@ import CardCategory from "./CardCategory";
 
 
 //메뉴 경로 불러오기
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { MemberMenu } from "../ui/MemberMenu";
 import { BoardMenu } from "../ui/BoardMenu";
 import { ApprovalMenu } from "../ui/ApprovalMenu";
@@ -38,6 +38,7 @@ export default function Contents({ children }) {
 
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
+    const location = useLocation();
 
     const storedKey = "storedCategory";
 
@@ -54,21 +55,21 @@ export default function Contents({ children }) {
 
             setSelected(findMenu);
             setSelectedCategory(cat);
-            updateSessionStorageItem(storedKey, { id: cat.id, no: cat.baseToNo });
+            //updateSessionStorageItem(storedKey, { id: cat.id, no: cat.baseToNo });
         }
     };
 
-    const updateSessionStorageItem = (key, updates) => {
-        // 1️⃣ 기존 데이터 가져오기
-        const existing = sessionStorage.getItem(key);
-        const parsed = existing ? JSON.parse(existing) : {};
+    // const updateSessionStorageItem = (key, updates) => {
+    //     // 1️⃣ 기존 데이터 가져오기
+    //     const existing = sessionStorage.getItem(key);
+    //     const parsed = existing ? JSON.parse(existing) : {};
 
-        // 2️⃣ 기존 데이터에 새 값 덮어쓰기
-        const updated = { ...parsed, ...updates };
+    //     // 2️⃣ 기존 데이터에 새 값 덮어쓰기
+    //     const updated = { ...parsed, ...updates };
 
-        // 3️⃣ 다시 저장
-        sessionStorage.setItem(key, JSON.stringify(updated));
-    }
+    //     // 3️⃣ 다시 저장
+    //     sessionStorage.setItem(key, JSON.stringify(updated));
+    // }
 
     const handleSelect = ((item) => {
         if (item?.no === selected?.no) {
@@ -80,7 +81,7 @@ export default function Contents({ children }) {
         }
         setSelected(item);
         navigate(item.to);
-        updateSessionStorageItem(storedKey, { no: item.no });
+        //updateSessionStorageItem(storedKey, { no: item.no });
         // 스크롤 이동 기능 임시
         if (categories.id !== 'home') {
             // const el = document.getElementById("approval-page");
@@ -91,34 +92,62 @@ export default function Contents({ children }) {
     const handleToggleAll = () => setExpandedAll((prev) => !prev);
 
     // 브라우저 창 크기 변경 시 높이 업데이트
+    // useEffect(() => {
+    //     const handleResize = () => setWindowHeight(window.innerHeight);
+    //     window.addEventListener("resize", handleResize);
+
+    //     if (selectedCategory === null && selected === null) {
+    //         // 현재 경로에 맞는 카테고리와 서브아이템 찾기
+    //         // 새로고침시 현재 경로에 맞는 카테고리와 서브아이템 설정
+    //         const storedCategory = sessionStorage.getItem(storedKey);
+    //         if (storedCategory) {
+    //             const { id, no } = JSON.parse(storedCategory);
+    //             const category = categories.find(cat => cat.id === id);
+    //             if (category) {
+    //                 setSelectedCategory(category);
+    //                 const findItem = category.subs.find(sub => sub.no === no);
+    //                 setSelected(findItem);
+    //                 handleSelect(findItem);
+    //             } else {
+
+    //             }
+    //         }
+    //     }
+    //     return () => window.removeEventListener("resize", handleResize);
+    // }, []);
+
     useEffect(() => {
         const handleResize = () => setWindowHeight(window.innerHeight);
         window.addEventListener("resize", handleResize);
 
-        if (selectedCategory === null && selected === null) {
-            // 현재 경로에 맞는 카테고리와 서브아이템 찾기
-            // 새로고침시 현재 경로에 맞는 카테고리와 서브아이템 설정
-            const storedCategory = sessionStorage.getItem(storedKey);
-            if (storedCategory) {
-                const { id, no } = JSON.parse(storedCategory);
-                const category = categories.find(cat => cat.id === id);
-                if (category) {
-                    setSelectedCategory(category);
-                    const findItem = category.subs.find(sub => sub.no === no);
-                    setSelected(findItem);
-                    handleSelect(findItem);
-                } else {
+        console.log(location.pathname);
+        const targetTo = location.pathname;
 
-                }
-            }
+        //if (selectedCategory === null && selected === null) {
+
+        // 1. categories 배열에서 subs.to와 일치하는 항목 찾기
+        const matchedCategory = categories.find(category =>
+            category.subs.some(sub => sub.to === targetTo)
+        );
+
+        if (matchedCategory) {
+            console.log(matchedCategory);
+            // 2. targetTo와 일치하는 subs 찾기
+            const foundSub = matchedCategory?.subs.find(sub => sub.to === targetTo);
+            console.log(foundSub);
+
+            setSelectedCategory(matchedCategory);
+            const findItem = matchedCategory.subs.find(sub => sub.no === matchedCategory.baseToNo);
+            setSelected(foundSub);
+            handleSelect(foundSub);
+        } else {
+
         }
+        //}
         return () => window.removeEventListener("resize", handleResize);
-    }, []);
-
-
+    }, [location.pathname]);
 
     return (
-
         <Box
             sx={{
                 display: "flex",

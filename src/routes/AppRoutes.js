@@ -30,7 +30,7 @@ import SignupPage from "../pages/member/SignupPage";
 import PositionPage from "../pages/member/PositionPage";
 import PositionListPage from "../pages/member/PositionListPage";
 import PositionDetailPage from "../pages/member/PositionDetailPage";
-import PositionHistoryPage from "../pages/member/PositionHistoryPage";
+// import PositionHistoryPage from "../pages/member/PositionHistoryPage";
 import PositionHistoryList from "../pages/member/PositionHistoryList";
 import PositionHistoryForm from "../pages/member/PositionHistoryForm";
 import CategoryPage from '../pages/member/CategoryPage';
@@ -59,8 +59,8 @@ function AppRoutes() {
 
   function NotFound() {
     useEffect(() => {
-      sessionStorage.removeItem("storedCategory");
-      sessionStorage.setItem("storedCategory", JSON.stringify({ id: "home", no: 1 }));
+      //sessionStorage.removeItem("storedCategory");
+      //sessionStorage.setItem("storedCategory", JSON.stringify({ id: "home", no: 1 }));
       alert("존재하지 않는 페이지입니다. 홈으로 이동합니다.");
       navigate("/home", { replace: true });
     }, [navigate]);
@@ -90,7 +90,7 @@ function AppRoutes() {
         <Route path="/member/position" element={<PositionPage />} />
         <Route path="/member/position/list" element={<PositionListPage />} />
         <Route path="/member/position/:id" element={<PositionDetailPage />} />
-        <Route path="/member/position/history/page" element={<PositionHistoryPage />} />
+        {/* <Route path="/member/position/history/page" element={<PositionHistoryPage />} /> */}
         <Route path="/member/position/history/list" element={<PositionHistoryList />} />
         <Route path="/member/position/history/:id" element={<PositionHistoryForm />} />
         <Route path="/member/position/history/save" element={<PositionHistoryForm />} />

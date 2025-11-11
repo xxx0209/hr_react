@@ -107,20 +107,20 @@ export default function CategoryPage() {
                         >
                             <thead className="table-light">
                                 <tr>
-                                    <th style={{ width: "60px" }}>ID</th>
-                                    <th>이름</th>
-                                    <th style={{ width: "80px" }}>색상</th>
-                                    <th style={{ width: "160px" }}>액션</th>
-                                    <th style={{ width: "90px" }}>활성</th>
+                                    <th style={{ width: "60px", textAlign: "center" }}>ID</th>
+                                    <th style={{ textAlign: "center" }}>이름</th>
+                                    <th style={{ width: "80px", textAlign: "center" }}>색상</th>
+                                    <th style={{ width: "90px", textAlign: "center" }}>활성</th>
+                                    <th style={{ width: "140px", textAlign: "center" }}>액션</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {categories.length > 0 ? (
                                     categories.map((cat) => (
                                         <tr key={cat.categoryId}>
-                                            <td className="text-muted">{cat.categoryId}</td>
-                                            <td>{cat.name}</td>
-                                            <td>
+                                            <td className="text-center">{cat.categoryId}</td>
+                                            <td className="text-center">{cat.name}</td>
+                                            <td className="text-center">
                                                 <span
                                                     style={{
                                                         display: "inline-block",
@@ -132,14 +132,14 @@ export default function CategoryPage() {
                                                     }}
                                                 ></span>
                                             </td>
-                                            <td>
-                                                <Button size="sm" className="me-2" onClick={() => handleEdit(cat)}>수정</Button>
-                                                <Button size="sm" variant="danger" onClick={() => handleDelete(cat.categoryId)}>삭제</Button>
-                                            </td>
-                                            <td>
+                                            <td className="text-center">
                                                 <span className={`badge ${cat.active ? "bg-success" : "bg-secondary"}`}>
                                                     {cat.active ? "Y" : "N"}
                                                 </span>
+                                            </td>
+                                            <td className="text-center">
+                                                <Button size="sm" className="me-2" onClick={() => handleEdit(cat)}>수정</Button>
+                                                <Button size="sm" variant="danger" onClick={() => handleDelete(cat.categoryId)}>삭제</Button>
                                             </td>
                                         </tr>
                                     ))
