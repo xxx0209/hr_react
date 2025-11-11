@@ -27,39 +27,35 @@ export default function SchedulePage() {
     const { user, setUser } = useContext(AuthContext);
 
     const [events, setEvents] = useState([]);
-    const [checkEvents] = useState([
-        {
-            scheduleId: "checkIn",
-            title: "출근",
-            start: new Date("2025-10-30T09:05:00"),
-            end: new Date("2025-10-30T09:05:00"),
-            color: "#0d6efd",
-            isCheck: true
-        },
-        {
-            scheduleId: "checkOut",
-            title: "퇴근",
-            start: new Date("2025-10-30T17:25:00"),
-            end: new Date("2025-10-30T17:25:00"),
-            color: "#dc3545",
-            isCheck: true
-        }
-    ]);
+    const [checkEvents, setCheckEvents] = useState([]);
+    //const [checkEvents] = useState([]);
 
     const [selectedEvent, setSelectedEvent] = useState(null);
+
+    const [currentDate, setCurrentDate] = useState(new Date()); //현재 달
 
     // ✅ 일정 조회
     useEffect(() => {
 
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+
         if (!user.memberId) return;
-        axios.get(`/schedule/member/${user.memberId}`)
+        axios.get(`/schedule/member/${user.memberId}?month=${year}-${month}`)
             .then(res => {
-                const mapped = res.data.map(e => ({
+                const sMapped = res.data.scheduleDtoList.map(e => ({
                     ...e,
                     start: new Date(e.start),
                     end: new Date(e.end),
                 }));
-                setEvents(mapped);
+                setEvents(sMapped);
+                const rMapped = res.data.requestDtoList.map(e => ({
+                    ...e,
+                    start: new Date(e.start),
+                    end: new Date(e.end),
+                    color: '#dc3545' // 휴가의 컬러색 고정
+                }));
+                setCheckEvents(rMapped);
             });
     }, [user]);
 
@@ -201,6 +197,8 @@ export default function SchedulePage() {
                             📆 스케줄 일정 관리
                         </Card.Title> */}
                         <Calendar
+                            date={currentDate} // ✅ 현재 달 유지
+                            onNavigate={(newDate) => setCurrentDate(newDate)} // ✅ react-big-calendar 기본 네비게이션도 반영
                             localizer={localizer}
                             events={[...events, ...checkEvents]}
                             startAccessor="start"
