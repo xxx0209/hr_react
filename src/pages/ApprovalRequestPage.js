@@ -217,24 +217,36 @@ export default function ApprovalRequestPage() {
   const handleSubmit = async (e, isTemp = false) => {
     e.preventDefault();
     try {
-    const adjustedEndDate = form.endDate
-      ? formatInTimeZone(form.endDate, "Asia/Seoul", "yyyy-MM-dd 23:59:59") //new Date(`${form.endDate}T23:59:59`)
-      : null;
+    let adjustedStartDate = null;
+    let adjustedEndDate = null;
 
+    // 반차 유형에 따른 시간대 자동 지정
+    if (form.vacationType === "오전반차") {
+      // 오전반차: 09:00 ~ 13:00
+      adjustedStartDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 09:00:00");
+      adjustedEndDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 13:00:00");
+    } else if (form.vacationType === "오후반차") {
+      // 오후반차: 14:00 ~ 18:00
+      adjustedStartDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 14:00:00");
+      adjustedEndDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 18:00:00");
+    } else {
+      // 일반 휴가 (연차, 병가, 공가 등)
+      adjustedStartDate = form.startDate
+        ? formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 00:00:00")
+        : null;
+      adjustedEndDate = form.endDate
+        ? formatInTimeZone(form.endDate, "Asia/Seoul", "yyyy-MM-dd 23:59:59")
+        : null;
+    }
 
-                  // start: formatInTimeZone(slotStart, "Asia/Seoul", "yyyy-MM-dd HH:mm:ss"),
-                  // end: formatInTimeZone(slotEnd, "Asia/Seoul", "yyyy-MM-dd HH:mm:ss"),
-
-    // 보정된 endDate를 submitData에 사용
     const submitData = {
       ...form,
-      startDate: form.startDate
-        ? formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd HH:mm:ss") //new Date(`${form.startDate}T00:00:00`)
-        : null, // 시작일은 00시로 고정
-      endDate: adjustedEndDate, 
+      startDate: adjustedStartDate,
+      endDate: adjustedEndDate,
       status: isTemp ? "임시저장" : "결재요청",
       memberName: user?.name || form.memberName,
     };
+
 
       if (!isTemp && !form.approverId) {
         alert("결재자를 선택하세요.");
@@ -512,10 +524,10 @@ const handleEdit = (r) => {
                 <Form.Select name="vacationType" value={form.vacationType || ""} onChange={handleChange}>
                   <option value="">선택하세요</option>
                   <option value="연차">연차</option>
-                  <option value="반차">반차</option>
+                  <option value="반차">오전반차</option>
+                  <option value="반차">오후반차</option>
                   <option value="병가">병가</option>
                   <option value="공가">공가</option>
-                  <option value="기타">기타</option>
                 </Form.Select>
               </Form.Group>
             )}
