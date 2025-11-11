@@ -19,6 +19,7 @@ const SignupPage = () => {
         confirmPassword: "",
         email: "",
         gender: enums?.Gender?.[0]?.value || [],
+        hiredate: "",
         address: ""
     });
 
@@ -79,7 +80,10 @@ const SignupPage = () => {
                     if (formData['password'] !== formData[key]) {
                         newErrors[key] = '비밀번호가 일치하지 않습니다.';
                     }
+                } else if (key === 'hiredate') {
+                    formData[key] = formData[key].replace(/-/g, "");
                 }
+
             }
         }
         setErrors(newErrors);
@@ -89,10 +93,10 @@ const SignupPage = () => {
             return;
         }
 
-        const url = '/member/signup';
-        const parameters = formData;
-
         try {
+
+            const url = '/member/signup';
+            const parameters = formData;
 
             const response = await axios.post(url, parameters);
 
@@ -112,8 +116,13 @@ const SignupPage = () => {
 
     return (
         <Container
-            className="d-flex justify-content-center align-items-center"
-            style={{ height: "100vh" }}
+            className="d-flex justify-content-center"
+            style={{
+                minHeight: "100vh",        // ✅ 최소 높이만 지정
+                alignItems: "flex-start",   // ✅ 위에서부터 시작
+                paddingTop: "20px",        // ✅ 상단 여백
+                paddingBottom: "50px",     // ✅ 하단 여백
+            }}
         >
             <Row
                 style={{
@@ -276,6 +285,17 @@ const SignupPage = () => {
                                     onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
                                 />
                             </div> */}
+                        </Form.Group>
+                        <Form.Group className="mb-3">
+                            <Form.Label>입사일</Form.Label>
+                            <Form.Control
+                                type="date"
+                                name="hiredate"
+                                value={formData.hiredate ? `${formData.hiredate.slice(0, 4)}-${formData.hiredate.slice(4, 6)}-${formData.hiredate.slice(6, 8)}` : ""}
+                                onChange={(e) => {
+                                    setFormData({ ...formData, hiredate: e.target.value.replace(/-/g, "") });
+                                }}
+                            />
                         </Form.Group>
 
                         {/* 주소 */}

@@ -71,12 +71,12 @@ export default function PositionRegisterPage() {
             {/* 헤더 영역 */}
             <Row className="mb-3">
                 <Col>
-                    <h2>💼 직급 등록</h2>
+                    <h2>💼 직급관리 등록</h2>
                 </Col>
                 <Col className="text-end">
                     <Button
                         variant="outline-secondary"
-                        onClick={() => navigate(-1)}
+                        onClick={() => navigate("/member/position/list")}
                     >
                         목록으로
                     </Button>
@@ -142,12 +142,6 @@ export default function PositionRegisterPage() {
                                 ) : (
                                     "등록"
                                 )}
-                            </Button>
-                            <Button
-                                variant="outline-secondary"
-                                onClick={() => navigate(-1)}
-                            >
-                                취소
                             </Button>
                         </div>
                     </Form>
