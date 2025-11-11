@@ -524,8 +524,8 @@ const handleEdit = (r) => {
                 <Form.Select name="vacationType" value={form.vacationType || ""} onChange={handleChange}>
                   <option value="">선택하세요</option>
                   <option value="연차">연차</option>
-                  <option value="반차">오전반차</option>
-                  <option value="반차">오후반차</option>
+                  <option value="오전반차">오전반차</option>
+                  <option value="오후반차">오후반차</option>
                   <option value="병가">병가</option>
                   <option value="공가">공가</option>
                 </Form.Select>
