@@ -35,7 +35,7 @@ const salary =
                     label: "급여 생성",
                     to: "/salary/salaries/new",
                     icon: EditDocumentIcon,
-                    isAdminMenu: true,
+                    isAdminMenu: false,
                     content: "급여 생성을 위한 메뉴입니다."
                 },
                 {
