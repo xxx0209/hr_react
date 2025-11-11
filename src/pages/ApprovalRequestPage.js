@@ -11,6 +11,7 @@ import {
   Pagination,
 } from "react-bootstrap";
 import api from "../api/api";
+import { formatInTimeZone } from "date-fns-tz";
 import { textTemplates } from "../templates/textTemplates";
 
 export default function ApprovalRequestPage() {
@@ -216,11 +217,24 @@ export default function ApprovalRequestPage() {
   const handleSubmit = async (e, isTemp = false) => {
     e.preventDefault();
     try {
-      const submitData = {
-        ...form,
-        status: isTemp ? "임시저장" : "결재요청",
-        memberName: user?.name || form.memberName,
-      };
+    const adjustedEndDate = form.endDate
+      ? formatInTimeZone(form.endDate, "Asia/Seoul", "yyyy-MM-dd 23:59:59") //new Date(`${form.endDate}T23:59:59`)
+      : null;
+
+
+                  // start: formatInTimeZone(slotStart, "Asia/Seoul", "yyyy-MM-dd HH:mm:ss"),
+                  // end: formatInTimeZone(slotEnd, "Asia/Seoul", "yyyy-MM-dd HH:mm:ss"),
+
+    // 보정된 endDate를 submitData에 사용
+    const submitData = {
+      ...form,
+      startDate: form.startDate
+        ? formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd HH:mm:ss") //new Date(`${form.startDate}T00:00:00`)
+        : null, // 시작일은 00시로 고정
+      endDate: adjustedEndDate, 
+      status: isTemp ? "임시저장" : "결재요청",
+      memberName: user?.name || form.memberName,
+    };
 
       if (!isTemp && !form.approverId) {
         alert("결재자를 선택하세요.");
