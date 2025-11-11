@@ -129,16 +129,20 @@ export default function Contents({ children }) {
         const matchedCategory = categories.find(category =>
             category.subs.some(sub => sub.to === targetTo)
         );
-        console.log(matchedCategory);
-        // 2. targetTo와 일치하는 subs 찾기
-        const foundSub = matchedCategory?.subs.find(sub => sub.to === targetTo);
-        console.log(foundSub);
 
-        setSelectedCategory(matchedCategory);
-        const findItem = matchedCategory.subs.find(sub => sub.no === matchedCategory.baseToNo);
-        setSelected(foundSub);
-        handleSelect(foundSub);
+        if (matchedCategory) {
+            console.log(matchedCategory);
+            // 2. targetTo와 일치하는 subs 찾기
+            const foundSub = matchedCategory?.subs.find(sub => sub.to === targetTo);
+            console.log(foundSub);
 
+            setSelectedCategory(matchedCategory);
+            const findItem = matchedCategory.subs.find(sub => sub.no === matchedCategory.baseToNo);
+            setSelected(foundSub);
+            handleSelect(foundSub);
+        } else {
+
+        }
         //}
         return () => window.removeEventListener("resize", handleResize);
     }, [location.pathname]);

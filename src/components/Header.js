@@ -14,7 +14,7 @@ function Header() {
 
     const handleLogout = async () => {
         await logout();
-        sessionStorage.clear();
+        //sessionStorage.clear();
         setUser(null);
         navigate("/login");
         return;
