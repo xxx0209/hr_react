@@ -45,7 +45,7 @@ export default function PositionListPage() {
             {/* 헤더 영역 */}
             <Row className="align-items-center mb-3">
                 <Col>
-                    <h2>💼 직급 목록</h2>
+                    <h2>💼 직급관리 목록</h2>
                 </Col>
                 <Col className="text-end">
                     <Button
@@ -76,23 +76,23 @@ export default function PositionListPage() {
                         >
                             <thead className="table-light">
                                 <tr>
-                                    <th style={{ width: "60px" }}>ID</th>
-                                    <th style={{ width: "150px" }}>코드</th>
-                                    <th style={{ width: "180px" }}>이름</th>
+                                    <th style={{ width: "60px", textAlign: "center" }}>ID</th>
+                                    <th style={{ width: "150px", textAlign: "center" }}>코드</th>
+                                    <th style={{ width: "100px", textAlign: "center" }}>직급</th>
                                     <th>설명</th>
-                                    <th style={{ width: "90px" }}>활성</th>
-                                    <th style={{ width: "140px" }}>상세/수정</th>
+                                    <th style={{ width: "90px", textAlign: "center" }}>활성</th>
+                                    <th style={{ width: "140px", textAlign: "center" }}>상세/수정</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {positions.length > 0 ? (
                                     positions.map((p) => (
                                         <tr key={p.positionId}>
-                                            <td className="text-muted">{p.positionId}</td>
-                                            <td className="fw-semibold text-primary">{p.positionCode}</td>
-                                            <td>{p.positionName}</td>
-                                            <td className="text-muted">{p.description || "-"}</td>
-                                            <td>
+                                            <td className="text-center">{p.positionId}</td>
+                                            <td className="fw-semibold text-primary  text-center">{p.positionCode}</td>
+                                            <td className="text-center">{p.positionName}</td>
+                                            <td className="">{p.description || "-"}</td>
+                                            <td className="text-center">
                                                 <span
                                                     className={`badge ${p.active ? "bg-success" : "bg-secondary"
                                                         }`}
@@ -100,7 +100,7 @@ export default function PositionListPage() {
                                                     {p.active ? "Y" : "N"}
                                                 </span>
                                             </td>
-                                            <td>
+                                            <td className="text-center">
                                                 <Button
                                                     size="sm"
                                                     variant="outline-primary"

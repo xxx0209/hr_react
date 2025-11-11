@@ -24,38 +24,22 @@ const member =
                 },
                 {
                     no: 2,
-                    label: "직급등록",
-                    to: "/member/position",
+                    label: "직급 관리",
+                    to: "/member/position/list",
                     icon: Diversity3Icon,
-                    isAdminMenu: false,
+                    isAdminMenu: true,
                     content: "회사의 직급체계를 관리합니다.\r\n  관리자는 직급을 추가, 수정, 삭제할 수 있습니다."
                 },
                 {
                     no: 3,
-                    label: "직급리스트",
-                    to: "/member/position/list",
-                    icon: Diversity3Icon,
-                    isAdminMenu: false,
-                    content: "직급 내역을 조회합니다."
-                },
-                {
-                    no: 4,
-                    label: "직급내역리스트",
+                    label: "직급내역 관리",
                     to: "/member/position/history/list",
                     icon: EditDocumentIcon,
-                    isAdminMenu: false,
+                    isAdminMenu: true,
                     content: "직급의 변경 내역을 확인합니다.\r\n 관리자는 직급을 추가, 수정, 삭제할 수 있습니다."
                 },
                 {
-                    no: 5,
-                    label: "직급내역 등록",
-                    to: "/member/position/history/save",
-                    icon: EditDocumentIcon,
-                    isAdminMenu: true,
-                    content: "직급의 변경 내역을 등록합니다."
-                },
-                {
-                    no: 6,
+                    no: 4,
                     label: "카테고리 등록",
                     to: "/member/category",
                     icon: EditDocumentIcon,

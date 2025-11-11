@@ -11,6 +11,7 @@ import { Button as BasicButton } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate } from "react-router-dom";
 
 const locales = { ko };
 const localizer = dateFnsLocalizer({
@@ -23,6 +24,9 @@ const localizer = dateFnsLocalizer({
 const ETC_SCHEDULE_LIST = ["checkIn", "checkOut"];
 
 export default function SchedulePage() {
+
+    const navigate = useNavigate();
+
     // eslint-disable-next-line no-unused-vars
     const { user, setUser } = useContext(AuthContext);
 
@@ -110,7 +114,7 @@ export default function SchedulePage() {
                         <h2>📆 스케줄 일정</h2>
                     </Col>
                     <Col className="d-flex justify-content-end px-0">
-                        <BasicButton variant="outline-danger" size="sm">
+                        <BasicButton variant="outline-danger" size="sm" onClick={() => navigate("/member/schedule")}>
                             바로가기
                         </BasicButton>
                     </Col>
