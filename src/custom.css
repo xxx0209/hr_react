@@ -1,134 +1,313 @@
-/* ==============================
-   전역 테마 스타일 (custom.css)
-   ============================== */
-
-/* ✅ 기본 전역 폰트, 배경 */
+/* 전역 기본 폰트 설정 */
 body {
-  background-color: #f8fafc;
-  font-family: "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
-  color: #212529;
-  line-height: 1.6;
+  /* font-family: 'Noto Sans KR', sans-serif; */
 }
 
-/* ✅ 기본 컨테이너 */
-.container,
-.container-fluid {
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
+/* Bootstrap, MUI 등 폰트 상속용 */
+* {
+  /* font-family: inherit; */
 }
 
-/* ✅ 버튼 */
-.btn {
-  border-radius: 10px !important;
+/* 전역적으로 모든 테이블 적용 */
+table,
+.table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  /* font-family: 'Noto Sans KR', sans-serif !important; */
+  font-size: 12px !important;
+}
+
+/* 헤더 */
+table thead th,
+.table thead th {
   font-weight: 600 !important;
-  transition: all 0.2s ease-in-out;
+  text-align: center !important;
+  height: 20px !important;
+  font-size: 12px !important;
+  padding: 10px !important;
+  background-color: #f5f6fa !important;
+  /* ✅ 헤더 배경색 */
+  color: #333 !important;
+  /* ✅ 글자색 (선택사항) */
 }
 
+/* 본문 */
+table tbody td,
+.table tbody td {
+  vertical-align: middle !important;
+  text-align: center !important;
+  height: 30px !important;
+  font-weight: 400 !important;
+  padding: 2px 5px 2px 5px !important;
+  font-size: 12px !important;
+  /* background-color: #ffffff !important; */
+}
+
+/* Card Body 글자 스타일 */
+.card-body {
+  font-size: 14px;
+  /* 글자 크기: 적당히 읽기 좋은 크기 */
+  font-weight: 500;
+  /* 살짝 볼드 느낌 */
+  line-height: 1.5;
+  /* 줄 간격 적당히 */
+  color: #333;
+  /* 기본 텍스트 색상 */
+}
+
+/* Card Body 글자 스타일 */
+.card-body {
+  font-size: 14px;
+  /* 본문 글자 크기 */
+  font-weight: 500;
+  /* 본문 살짝 볼드 */
+  line-height: 1.5;
+  color: #333;
+}
+
+/* Card Body 내부 h 태그 스타일 */
+.card-body h1,
+.card-body h2,
+.card-body h3,
+.card-body h4,
+.card-body h5,
+.card-body h6 {
+  font-weight: 600;
+  /* 제목은 좀 더 굵게 */
+  line-height: 1.3;
+  margin-bottom: 0.75rem;
+  color: #222;
+  /* 제목 색상 살짝 진하게 */
+}
+
+/* 필요하면 h 태그 크기 조정 */
+.card-body h1 {
+  font-size: 18px;
+}
+
+.card-body h2 {
+  font-size: 16px;
+}
+
+.card-body h3 {
+  font-size: 15px;
+}
+
+.card-body h4 {
+  font-size: 14px;
+}
+
+.card-body h5 {
+  font-size: 13px;
+}
+
+.card-body h6 {
+  font-size: 12px;
+}
+
+/* label 태그 볼드 처리 */
+label {
+  font-weight: 600;
+  /* 볼드 */
+  font-size: 12px;
+  /* 필요 시 글자 크기 조정 */
+  color: #333;
+}
+
+/* input placeholder 스타일 */
+input::placeholder,
+textarea::placeholder {
+  font-size: 12px;
+  /* 글자 크기 */
+  font-weight: 400;
+  /* 볼드 필요시 500~600 가능 */
+  color: #888;
+  /* 연한 회색 */
+  opacity: 1;
+  /* Firefox에서 기본적으로 낮은 opacity가 적용되어 있으므로 1로 맞춤 */
+}
+
+/* input, textarea 자체 글자 스타일 */
+input,
+textarea {
+  font-size: 9px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* 모든 selectbox 글자 크기와 볼드 적용 */
+select,
+.form-select {
+  font-size: 12px;
+  /* 글자 크기 */
+  font-weight: 500;
+  /* 볼드 */
+  color: #333;
+  /* 글자 색상 */
+  padding: 6px 12px;
+  /* 패딩 */
+}
+
+/* placeholder 같이 보이는 기본 option 스타일링 */
+select option {
+  font-size: 12px;
+}
+
+.form-select option {
+  font-size: 12px;
+  /* 옵션 글자 크기 */
+  font-weight: 500;
+  /* 볼드 적용 가능 */
+}
+
+/* form-control 내부 글자 크기와 볼드 */
+input.form-control,
+textarea.form-control {
+  font-size: 12px !important;
+  /* 입력 글자 크기 */
+  font-weight: 500;
+  /* 볼드 정도 */
+  color: #333;
+}
+
+/* placeholder */
+input.form-control::placeholder,
+textarea.form-control::placeholder {
+  font-size: 12px;
+  /* placeholder 글자 크기 */
+  font-weight: 400;
+  /* 약간 얇게 */
+  color: #888;
+  opacity: 1;
+}
+
+/* 일반 버튼 */
+button,
+.btn {
+  font-size: 12px;
+  /* 글자 크기 */
+  font-weight: 500;
+  /* 볼드 정도 */
+  /* color: #fff; */
+  /* 글자색 */
+  text-transform: none;
+  /* 대문자 강제 제거 */
+}
+
+/* outline 버튼 */
+.btn-outline-primary,
+.btn-outline-secondary,
+.btn-outline-danger {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: none;
+}
+
+/* 페이지네이션 전역 적용 */
+.page-link {
+  font-size: 0.65rem;
+  /* 글자 크기 */
+  /* padding: 0.25rem 0.5rem; 상하, 좌우 패딩 */
+}
+
+.page-item {
+  /* margin: 0 0.15rem; */
+  /* 페이지 버튼 간격 조정 (선택 사항) */
+}
+
+.badge {
+  font-size: 0.75rem !important;
+  /* 원하는 크기로 */
+  font-weight: 500;
+}
+
+
+
+/* ✅ inline 라디오 버튼 수평 정렬 및 크기 조정 */
+.form-check-inline .form-check-input {
+  width: 1.2em;
+  height: 1.2em;
+  margin-top: 0;
+  /* 🔥 Bootstrap 기본 여백 제거 */
+  margin-right: 0.4em;
+  /* 🔥 라벨과의 간격 */
+  vertical-align: middle;
+  /* 🔥 텍스트 기준으로 중앙 정렬 */
+}
+
+/* ✅ 모든 form-check 전역 스타일 */
+.form-check {
+  display: inline-flex;
+  align-items: center;
+  /* 수직 가운데 정렬 */
+  gap: 0.5em;
+  /* 체크박스와 라벨 간 간격 */
+  margin-right: 1em;
+  /* inline 여러 개일 때 간격 */
+}
+
+/* ✅ 모든 form-check-input (체크박스 + 라디오 공통) */
+.form-check-input {
+  width: 1.2em;
+  height: 1.2em;
+  margin-top: 0;
+  /* Bootstrap 기본 여백 제거 */
+  margin-right: 0.4em;
+  /* 라벨과 간격 */
+  vertical-align: middle;
+  /* 텍스트 기준 중앙 정렬 */
+  cursor: pointer;
+}
+
+/* ✅ 모든 form-check-label */
+.form-check-label {
+  line-height: 1.2em;
+  /* input 높이와 맞춤 */
+  vertical-align: middle;
+  user-select: none;
+  /* 글자 드래그 방지 (UX 향상) */
+}
+
+/* ✅ inline 모드( Form.Check inline ) 간격 통일 */
+.form-check-inline {
+  display: inline-flex !important;
+  align-items: center !important;
+  margin-right: 1em;
+  gap: 0.2em;
+}
+
+/* ✅ 라디오 버튼 미세 수직 보정 (OS별 차이용) */
+.form-check-input[type="radio"] {
+  position: relative;
+  top: -1px;
+}
+
+.nav-item {
+  font-size: 12px;
+  /* 글자 크기 */
+  font-weight: 600;
+  /* 글자 두께 (bold: 700) */
+}
+
+/* 기본 색상 변경 */
 .btn-primary {
-  background-color: #3b82f6 !important;
-  border-color: #3b82f6 !important;
+  background-color: #4caf50;  /* 원하는 배경색 */
+  border-color: #4caf50;      /* 테두리 색상 */
+  color: #fff;                /* 글자색 */
 }
 
 .btn-primary:hover {
-  background-color: #2563eb !important;
+  background-color: #45a049;
+  border-color: #45a049;
 }
 
-.btn-outline-primary {
-  color: #3b82f6 !important;
-  border-color: #3b82f6 !important;
+.btn-secondary {
+  background-color: #ff9800;
+  border-color: #ff9800;
+  color: #fff;
 }
 
-.btn-outline-primary:hover {
-  background-color: #3b82f6 !important;
-  color: #fff !important;
-}
-
-/* ✅ 카드 */
-.card {
-  border: none !important;
-  border-radius: 15px !important;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
-}
-
-/* ✅ 입력 폼 */
-.form-control {
-  border-radius: 10px !important;
-  border: 1px solid #dee2e6 !important;
-  box-shadow: none !important;
-  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.form-control:focus {
-  border-color: #3b82f6 !important;
-  box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25) !important;
-}
-
-/* ✅ 네비게이션 바 */
-.navbar {
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-  background-color: #ffffff !important;
-}
-
-.navbar-brand {
-  font-weight: 700;
-  color: #3b82f6 !important;
-}
-
-.nav-link {
-  color: #374151 !important;
-  font-weight: 500;
-}
-
-.nav-link:hover {
-  color: #3b82f6 !important;
-}
-
-/* ✅ 테이블 */
-.table {
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.table thead {
-  background-color: #e0e7ff;
-  color: #1e3a8a;
-}
-
-.table tbody tr:hover {
-  background-color: #f1f5f9;
-}
-
-/* ✅ 알림(Toast, Alert) */
-.alert {
-  border-radius: 10px !important;
-  font-weight: 500;
-}
-
-/* ✅ 카드 타이틀, 섹션 헤더 */
-h1,
-h2,
-h3,
-h4,
-h5 {
-  font-weight: 700;
-  color: #1e293b;
-}
-
-/* ✅ 링크 스타일 */
-a {
-  color: #3b82f6;
-  text-decoration: none;
-}
-
-a:hover {
-  color: #2563eb;
-  text-decoration: underline;
+.btn-secondary:hover {
+  background-color: #fb8c00;
+  border-color: #fb8c00;
 }

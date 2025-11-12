@@ -164,20 +164,20 @@ const handleSave = async () => {
     let adjustedStartDate = null;
     let adjustedEndDate = null;
 
-    if (mainType === "휴가" && subType === "오전반차") {
-      adjustedStartDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 09:00:00");
-      adjustedEndDate   = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 13:00:00");
-    } else if (mainType === "휴가" && subType === "오후반차") {
-      adjustedStartDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 14:00:00");
-      adjustedEndDate   = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 18:00:00");
-    } else {
-      adjustedStartDate = form.startDate
-        ? formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 00:00:00")
-        : null;
-      adjustedEndDate = form.endDate
-        ? formatInTimeZone(form.endDate, "Asia/Seoul", "yyyy-MM-dd 23:59:59")
-        : null;
-    }
+      if (mainType === "휴가" && subType === "오전반차") {
+        adjustedStartDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 09:00:00");
+        adjustedEndDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 13:00:00");
+      } else if (mainType === "휴가" && subType === "오후반차") {
+        adjustedStartDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 14:00:00");
+        adjustedEndDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 18:00:00");
+      } else {
+        adjustedStartDate = form.startDate
+          ? formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 00:00:00")
+          : null;
+        adjustedEndDate = form.endDate
+          ? formatInTimeZone(form.endDate, "Asia/Seoul", "yyyy-MM-dd 23:59:59")
+          : null;
+      }
 
     const fmt = (s) => (s ? s.slice(0, 19).replace("T", " ") : null);
     const clean = (v) => (v === "" || v === undefined ? null : v);

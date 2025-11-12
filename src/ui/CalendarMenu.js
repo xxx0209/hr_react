@@ -16,18 +16,18 @@ const calendar =
                 {
                     no: 1,
                     label: "캘린더",
-                    to: "/member/schedule",
+                    to: "/schedule/schedule",
                     icon: ManageAccountsIcon,
                     isAdminMenu: false,
-                    content: "개인 일정을 관리 합니다.\r\n 개인일정/출퇴근현황/휴가 일정을 확인할 수 있습니다."
+                    content: "개인 일정을 관리 합니다.\r\n개인일정/출퇴근현황/휴가 일정을 확인할 수 있습니다."
                 },
                 {
                     no: 2,
                     label: "캘린더 카테고리 등록",
-                    to: "/member/category",
+                    to: "/schedule/category",
                     icon: EditDocumentIcon,
                     isAdminMenu: true,
-                    content: "캘린더의 카테고리를 등록합니다.\r\n 카테고리별 색상을 지정할수 있습니다."
+                    content: "캘린더의 카테고리를 등록합니다.\r\n카테고리별 색상을 지정할수 있습니다."
                 },
             ]
 
