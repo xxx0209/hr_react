@@ -8,18 +8,24 @@ export default function SalaryManager() {
   const [list, setList] = useState([]);
   const [members, setMembers] = useState([]);
   const [memberSalaries, setMemberSalaries] = useState([]);
-  const [form, setForm] = useState({
-    salaryId: "",
-    memberId: "",
-    salaryType: "",
-    positionSalaryId: "",
-    baseSalary: "",
-    hourlyRate: "",
-    salaryMonth: "",
-    payDate: "",
-    status: "DRAFT",
-    availablePositionSalaries: [],
-  });
+  const [form, setForm] = useState(getInitialForm());
+
+  function getInitialForm() {
+    return {
+      salaryId: "",
+      memberId: "",
+      salaryType: "",
+      positionSalaryId: "",
+      baseSalary: "",
+      hourlyRate: "",
+      salaryMonth: "",
+      payDate: "",
+      status: "DRAFT",
+      title: "",
+      positionName: "", // ✅ 직급명 추가
+      availablePositionSalaries: [],
+    };
+  }
 
   const formatNumber = (num) =>
     num === null || num === undefined || num === ""
@@ -30,13 +36,12 @@ export default function SalaryManager() {
     fetchData();
   }, []);
 
-  // 전체 데이터 불러오기
   const fetchData = async () => {
     try {
       const [membersRes, memberSalaryRes, salariesRes] = await Promise.all([
         axios.get("/member/list"),
         axios.get("/api/member-salaries"),
-        axios.get("/api/salaries/drafts"), // 미승인 급여만 불러오기
+        axios.get("/api/salaries/drafts"),
       ]);
 
       setMembers(membersRes.data.content || membersRes.data);
@@ -47,39 +52,24 @@ export default function SalaryManager() {
     }
   };
 
-  const handleShow = () => setShow(true);
-  const handleClose = () => {
-    setShow(false);
-    setForm({
-      salaryId: "",
-      memberId: "",
-      salaryType: "",
-      positionSalaryId: "",
-      baseSalary: "",
-      hourlyRate: "",
-      salaryMonth: "",
-      payDate: "",
-      status: "DRAFT",
-      availablePositionSalaries: [],
-    });
+  const handleShow = () => {
+    setForm(getInitialForm());
+    setShow(true);
   };
 
-  /** 회원 선택 */
+  const handleClose = () => {
+    setShow(false);
+    setForm(getInitialForm());
+  };
+
   const handleMemberChange = async (memberId) => {
     if (!memberId) {
-      setForm({
-        ...form,
-        memberId: "",
-        salaryType: "",
-        baseSalary: "",
-        hourlyRate: "",
-        positionSalaryId: "",
-        availablePositionSalaries: [],
-      });
+      setForm(getInitialForm());
       return;
     }
 
     const memberSalary = memberSalaries.find((ms) => ms.memberId === memberId);
+
     if (memberSalary) {
       setForm({
         ...form,
@@ -87,39 +77,57 @@ export default function SalaryManager() {
         salaryType: "MEMBER",
         baseSalary: memberSalary.baseSalary,
         hourlyRate: memberSalary.hourlyRate,
+        title: memberSalary.title,
+        positionName: memberSalary.positionName, // ✅ 직급명 저장
         positionSalaryId: "",
         availablePositionSalaries: [],
       });
-    } else {
-      try {
-        const res = await axios.get(`/api/position-salaries/member/${memberId}`);
-        setForm({
-          ...form,
-          memberId,
-          salaryType: "POSITION",
-          baseSalary: "",
-          hourlyRate: "",
-          positionSalaryId: "",
-          availablePositionSalaries: res.data.content || res.data,
-        });
-      } catch (err) {
-        console.error("직급 급여 불러오기 실패", err);
-      }
+      return;
+    }
+
+    try {
+      const res = await axios.get(`/api/position-salaries/member/${memberId}`);
+      setForm({
+        ...form,
+        memberId,
+        salaryType: "POSITION",
+        baseSalary: "",
+        hourlyRate: "",
+        title: "",
+        positionName: "",
+        positionSalaryId: "",
+        availablePositionSalaries: res.data.content || res.data,
+      });
+    } catch (err) {
+      console.error("직급 급여 불러오기 실패", err);
     }
   };
 
-  /** POSITION 급여 선택 */
   const handlePositionSalaryChange = (id) => {
-    if (!id)
-      return setForm({ ...form, positionSalaryId: "", baseSalary: "", hourlyRate: "" });
-    const ps = form.availablePositionSalaries.find((p) => p.id === id);
-    if (ps)
+    if (!id) {
+      return setForm({
+        ...form,
+        positionSalaryId: "",
+        baseSalary: "",
+        hourlyRate: "",
+        title: "",
+        positionName: "",
+      });
+    }
+
+    const posId = Number(id);
+    const ps = form.availablePositionSalaries.find((p) => p.id === posId);
+
+    if (ps) {
       setForm({
         ...form,
-        positionSalaryId: id,
+        positionSalaryId: posId,
         baseSalary: ps.baseSalary,
         hourlyRate: ps.hourlyRate,
+        title: ps.title,
+        positionName: ps.positionName, // ✅ 직급명 저장
       });
+    }
   };
 
   const handleSalaryMonthChange = (e) => {
@@ -128,9 +136,12 @@ export default function SalaryManager() {
     setForm({ ...form, salaryMonth, payDate });
   };
 
-  /** 등록/수정 */
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (form.salaryType === "POSITION" && !form.positionSalaryId) {
+      return alert("직급 기준급을 선택해주세요.");
+    }
+
     try {
       if (form.salaryId) {
         await axios.put(`/api/salaries/${form.salaryId}`, form);
@@ -147,36 +158,34 @@ export default function SalaryManager() {
     }
   };
 
-  /** 급여 수정 */
   const handleEdit = async (s) => {
     if (s.status === "COMPLETED")
       return alert("승인된 급여는 수정할 수 없습니다.");
 
     let availablePositionSalaries = [];
     if (s.salaryType === "POSITION") {
-      try {
-        const res = await axios.get(`/api/position-salaries/member/${s.memberId}`);
-        availablePositionSalaries = res.data.content || res.data;
-      } catch (err) {
-        console.error("직급 급여 불러오기 실패", err);
-      }
+      const res = await axios.get(`/api/position-salaries/member/${s.memberId}`);
+      availablePositionSalaries = res.data.content || res.data;
     }
 
-    setForm({ ...s, availablePositionSalaries });
+    setForm({
+      ...s,
+      availablePositionSalaries,
+    });
+
     setShow(true);
   };
 
-  /** 급여 삭제 */
   const handleDelete = async (id, status) => {
-    if (status === "COMPLETED") return alert("승인된 급여는 삭제할 수 없습니다.");
+    if (status === "COMPLETED") return alert("승인된 급여는 삭제 불가");
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
+
     await axios.delete(`/api/salaries/${id}`);
     fetchData();
   };
 
-  /** 급여 승인 */
   const handleApprove = async (id) => {
-    if (!window.confirm("정말 급여를 승인하시겠습니까?")) return;
+    if (!window.confirm("정말 승인하시겠습니까?")) return;
     await axios.post(`/api/salaries/${id}/approve`);
     fetchData();
   };
@@ -184,9 +193,7 @@ export default function SalaryManager() {
   return (
     <div className="container mt-4">
       <h3 className="mb-3">💰 급여 관리</h3>
-      <Button variant="primary" onClick={handleShow}>
-        + 급여 등록
-      </Button>
+      <Button variant="primary" onClick={handleShow}>+ 급여 등록</Button>
 
       <Table striped bordered hover className="mt-3">
         <thead>
@@ -204,9 +211,7 @@ export default function SalaryManager() {
         <tbody>
           {list.length === 0 ? (
             <tr>
-              <td colSpan="8" className="text-center">
-                데이터가 없습니다
-              </td>
+              <td colSpan="8" className="text-center">데이터가 없습니다</td>
             </tr>
           ) : (
             list.map((s) => (
@@ -215,10 +220,11 @@ export default function SalaryManager() {
                 <td>{s.memberName}</td>
                 <td>
                   {s.salaryType === "POSITION"
-                    ? `직급 기준급 (${s.title || "-"})`
+                    ? `직급 (${s.title || "-"})`
                     : s.salaryType === "MEMBER"
                       ? "개인 급여"
-                      : "-"}
+                      : "-"
+                  }
                 </td>
                 <td>{formatNumber(s.baseSalary)}원</td>
                 <td>{formatNumber(s.hourlyRate)}원</td>
@@ -227,32 +233,21 @@ export default function SalaryManager() {
                 <td>
                   {s.salaryType === "POSITION" && (
                     <>
-                      <Button
-                        size="sm"
-                        variant="warning"
+                      <Button size="sm" variant="warning" className="me-1"
                         onClick={() => handleEdit(s)}
-                        className="me-1"
-                        disabled={s.status === "COMPLETED"}
-                      >
+                        disabled={s.status === "COMPLETED"}>
                         수정
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="danger"
+                      <Button size="sm" variant="danger" className="me-1"
                         onClick={() => handleDelete(s.salaryId, s.status)}
-                        className="me-1"
-                        disabled={s.status === "COMPLETED"}
-                      >
+                        disabled={s.status === "COMPLETED"}>
                         삭제
                       </Button>
                     </>
                   )}
-                  <Button
-                    size="sm"
-                    variant="success"
+                  <Button size="sm" variant="success"
                     onClick={() => handleApprove(s.salaryId)}
-                    disabled={s.status === "COMPLETED"}
-                  >
+                    disabled={s.status === "COMPLETED"}>
                     승인
                   </Button>
                 </td>
@@ -262,11 +257,11 @@ export default function SalaryManager() {
         </tbody>
       </Table>
 
-      {/* 등록/수정 모달 */}
       <Modal show={show} onHide={handleClose} size="lg">
         <Modal.Header closeButton>
           <Modal.Title>{form.salaryId ? "급여 수정" : "급여 등록"}</Modal.Title>
         </Modal.Header>
+
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
             <Row className="mb-3">
@@ -278,33 +273,27 @@ export default function SalaryManager() {
                     value={form.memberId}
                     onChange={handleMemberChange}
                     placeholder="회원 선택"
-                    disabled={!!form.salaryId || form.status === "COMPLETED"}
+                    disabled={!!form.salaryId}
                     searchable
                     required
                   />
                 </Form.Group>
               </Col>
+
               <Col md={6}>
                 <Form.Group>
                   <Form.Label>직급 급여 선택</Form.Label>
                   <SelectCombo
-                    options={form.availablePositionSalaries?.map((p) => ({
-                      label: `${p.title} (${formatNumber(p.baseSalary)}원, 시급 ${formatNumber(
-                        p.hourlyRate
-                      )}원)`,
+                    options={form.availablePositionSalaries.map((p) => ({
+                      label: `${p.positionName} (${p.title}) (${formatNumber(p.baseSalary)}원 / 시급 ${formatNumber(p.hourlyRate)}원)`,
                       value: p.id,
                     }))}
                     value={form.positionSalaryId}
                     onChange={handlePositionSalaryChange}
                     placeholder="직급 선택"
-                    disabled={form.salaryType === "MEMBER" || form.status === "COMPLETED"}
+                    disabled={form.salaryType === "MEMBER"}
                     searchable
                   />
-                  {form.salaryType === "MEMBER" && (
-                    <Form.Text className="text-muted">
-                      개인 기준 급여가 등록된 회원입니다. (수정 불가)
-                    </Form.Text>
-                  )}
                 </Form.Group>
               </Col>
             </Row>
@@ -315,18 +304,17 @@ export default function SalaryManager() {
                   <Form.Label>기본급</Form.Label>
                   <Form.Control
                     value={formatNumber(form.baseSalary)}
-                    readOnly={form.salaryType === "MEMBER" || form.status === "COMPLETED"}
-                    onChange={(e) => setForm({ ...form, baseSalary: e.target.value })}
+                    readOnly={form.salaryType === "MEMBER"}
                   />
                 </Form.Group>
               </Col>
+
               <Col md={6}>
                 <Form.Group>
                   <Form.Label>시급</Form.Label>
                   <Form.Control
                     value={formatNumber(form.hourlyRate)}
-                    readOnly={form.salaryType === "MEMBER" || form.status === "COMPLETED"}
-                    onChange={(e) => setForm({ ...form, hourlyRate: e.target.value })}
+                    readOnly={form.salaryType === "MEMBER"}
                   />
                 </Form.Group>
               </Col>
@@ -338,28 +326,22 @@ export default function SalaryManager() {
                   <Form.Label>급여월</Form.Label>
                   <Form.Control
                     type="month"
-                    name="salaryMonth"
                     value={form.salaryMonth || ""}
                     onChange={handleSalaryMonthChange}
                     required
-                    disabled={form.status === "COMPLETED"}
                   />
                 </Form.Group>
               </Col>
+
               <Col md={6}>
                 <Form.Group>
                   <Form.Label>지급일</Form.Label>
-                  <Form.Control type="text" value="20일" readOnly />
-                  <Form.Text className="text-muted">지급일은 20일로 고정입니다.</Form.Text>
+                  <Form.Control value="20일" readOnly />
                 </Form.Group>
               </Col>
             </Row>
 
-            <Button
-              variant="primary"
-              type="submit"
-              disabled={form.status === "COMPLETED"}
-            >
+            <Button type="submit" variant="primary">
               {form.salaryId ? "수정" : "등록"}
             </Button>
           </Form>
