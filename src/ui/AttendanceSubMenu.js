@@ -24,7 +24,7 @@ export default function BoardSubMenu() {
             <Nav className="flex-column">
                 <Nav.Link
                     onClick={() => navigate('/attendance/attendance')}
-                    active={location.pathname === '/attendance/attendance'}
+                    active={location.pathname.includes('/attendance')}
                 >
                     출퇴근 기능 테스트
                 </Nav.Link>

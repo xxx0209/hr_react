@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import LeaveRequestForm from "../LeaveRequestForm";
 
 
-function LeaveStatus() {
+export default function LeaveStatus() {
     const [leaveBalance] = useState({
         annual: 4.5,
         half: 2,
@@ -80,6 +80,4 @@ function LeaveStatus() {
             </div>
         </div>
     );
-}
-
-export default LeaveStatus;
+};

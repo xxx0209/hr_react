@@ -12,6 +12,7 @@ import ApprovalTempPage from "../pages/ApprovalTempPage";
 import ApprovalDetail from "../pages/ApprovalDetail";
 
 // 근태 및 휴가
+import AttendanceDashboard from "../pages/attendance/AttendanceDashboard";
 import AttendanceTracker from "../pages/attendance/AttendanceTracker"; //출퇴근 기록
 import AttendancePage from "../pages/attendance/AttendancePage"; //출퇴근 기능
 import LeaveStatus from "../pages/attendance/LeaveStatus"; //휴가 현황
@@ -122,6 +123,7 @@ function AppRoutes() {
                 <Route path="/board/edit/:id" element={<BoardEdit />} />
 
                 {/* 근태 관련 */}
+                <Route path="/attendance/dashboard" element={<AttendanceDashboard />} />
                 <Route path="/attendance/tracker" element={<AttendanceTracker />} />
                 <Route path="/attendance/leave" element={<LeaveStatus />} />
                 <Route path="/attendance" element={<AttendancePage />} />

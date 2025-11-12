@@ -1,8 +1,11 @@
 import React from 'react';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from "./context/AuthContext";
 import { EnumProvider } from "./context/EnumContext"
 import AppRoutes from './routes/AppRoutes';
+// import AttendanceMenuList from './pages/AttendanceMenuList';
+// import AttendanceDashboardList from './pages/AttendanceDashboardList';
+import AttendanceDashboard from './pages/attendance/AttendanceDashboard'; //우리가 만든 컴포넌트
 
 function App() {
     return (
@@ -13,6 +16,11 @@ function App() {
                 {/* 상수(enum) 데이터나 공용 코드 목록 등을 앱 전역에서 공유하기 위한 Context Provider */}
                 <EnumProvider>
                     {/* 실제 라우팅 설정을 정의한 컴포넌트  */}
+                    <Routes>
+                        {/* <Route path="/dashboard-list" element={<AttendanceDashboardList />} />
+                        <Route path="/menu-list" element={<AttendanceMenuList />} /> */}
+                        <Route path="/attendance" element={<AttendanceDashboard />} />
+                    </Routes>
                     <AppRoutes />
                 </EnumProvider>
             </AuthProvider>

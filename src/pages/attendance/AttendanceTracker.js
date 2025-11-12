@@ -9,18 +9,18 @@ import {
     IconButton,
     Checkbox,
     Button,
+    TextField,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-function AttendanceTracker() {
+export default function AttendanceTracker() {
     const [records, setRecords] = useState([]);
     const [showSelectedOnly, setShowSelectedOnly] = useState(false);
-
-    const [status, setStatus] = useState('checkedOut');
+    const [searchTerm, setSearchTerm] = useState('');
 
     //기록 불러오기
     useEffect(() => {
-        const storedRecords = JSON.parse(localStorage.getItem("attendance")) || [];
+        const storedRecords = JSON.parse(localStorage.getItem('attendance')) || [];
         setRecords(storedRecords);
     }, []);
 
@@ -28,7 +28,7 @@ function AttendanceTracker() {
     const saveRecord = (record) => {
         const updatedRecords = [...records, record];
         setRecords(updatedRecords);
-        localStorage.setItem("attendance", JSON.stringify(updatedRecords));
+        localStorage.setItem('attendance', JSON.stringify(updatedRecords));
     };
 
     //출근/퇴근 기록 추가
@@ -60,13 +60,24 @@ function AttendanceTracker() {
         localStorage.setItem('attendance', JSON.stringify(updatedRecords));
     };
 
+    //검색 필터 적용
+    const filteredRecords = records.filter((record) =>
+        record.type.includes(searchTerm) ||
+        record.time.includes(searchTerm) ||
+        record.date.includes(searchTerm)
+    );
+
+    //선택 필터 적용
+    const visibleRecords = showSelectedOnly
+        ? filteredRecords.filter((r) => r.selected)
+        : filteredRecords;
+
     //날짜별 그룹화
-    const groupedRecords = (showSelectedOnly ? records.filter((r) => r.selected) : records)
-        .reduce((acc, record) => {
-            if (!acc[record.date]) acc[record.date] = [];
-            acc[record.date].push(record);
-            return acc;
-        }, {});
+    const groupedRecords = visibleRecords.reduce((acc, record) => {
+        if (!acc[record.date]) acc[record.date] = [];
+        acc[record.date].push(record);
+        return acc;
+    }, {});
 
     return (
         <Box sx={{ padding: '20px' }}>
@@ -74,11 +85,11 @@ function AttendanceTracker() {
                 출퇴근 기록
             </Typography>
 
-            <Box sx={{ marginBottom: '16px' }}>
-                <Button variant="contained" onClick={() => handleRecord('출근')} sx={{ marginRight: '8px' }}>
+            <Box sx={{ marginBottom: '16px', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <Button variant="contained" onClick={() => handleRecord('출근')}>
                     출근
                 </Button>
-                <Button variant="contained" onClick={() => handleRecord('퇴근')}>
+                <Button variant="contained" color="secondary" onClick={() => handleRecord('퇴근')}>
                     퇴근
                 </Button>
                 <Button
@@ -86,8 +97,14 @@ function AttendanceTracker() {
                     onClick={() => setShowSelectedOnly(!showSelectedOnly)}
                     sx={{ marginLeft: '16px' }}
                 >
-                    {showSelectedOnly ? '전체 보기' : '선택된기록만 보기'}
+                    {showSelectedOnly ? '전체 보기' : '선택된 기록만 보기'}
                 </Button>
+                <TextField
+                    label="기록 검색"
+                    variant="outlined"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
             </Box>
 
             {records.length === 0 ? (
@@ -126,6 +143,4 @@ function AttendanceTracker() {
             )}
         </Box>
     );
-}
-
-export default AttendanceTracker;
+};
