@@ -175,18 +175,19 @@ export default function SchedulePage() {
     };
 
     const CustomToolbar = ({ date, onView, onNavigate, view }) => {
-        const views = ["month", "week", "day"];
+
+        const selectedView = view;
 
         const labelText = (() => {
-            if (view === "month") {
+            if (selectedView === "month") {
                 // 📅 월간 뷰 → "2025년 11월"
                 return format(date, "yyyy년 MM월", { locale: ko });
-            } else if (view === "week") {
+            } else if (selectedView === "week") {
                 // 📆 주간 뷰 → "2025.11.03 ~ 2025.11.09"
                 const start = startOfWeek(date, { weekStartsOn: 0 }); // 월요일 시작
                 const end = endOfWeek(date, { weekStartsOn: 0 });
                 return `${format(start, "yyyy.MM.dd")} ~ ${format(end, "MM.dd")}`;
-            } else if (view === "day") {
+            } else if (selectedView === "day") {
                 // 🗓️ 일간 뷰 → "2025.11.11 (화)"
                 return format(date, "yyyy.MM.dd (EEE)", { locale: ko });
             } else {

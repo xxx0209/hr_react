@@ -1,9 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Card } from "react-bootstrap";
 import axios from "../../api/api";
-import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { EnumContext } from "../../context/EnumContext";
 import { API_BASE_URL } from "../../config/config";
 
 export default function MemberDashBoardPage() {
@@ -25,6 +23,7 @@ export default function MemberDashBoardPage() {
 
     const [loading, setLoading] = useState(true);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         const fetchData = async () => {
             try {

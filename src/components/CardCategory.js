@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import {
   Card,
   Typography,
@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 
 export default function CardCa({ loading = false, data, selected, onSelect, expanded }) {
-  const Icon = data?.icon;
 
   const handleClick = () => {
     onSelect?.(data);
