@@ -76,11 +76,7 @@ export default function Contents({ children }) {
 
     const handleToggleAll = () => setExpandedAll((prev) => !prev);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps    
     useEffect(() => {
-        //const handleResize = () => setWindowHeight(window.innerHeight);
-        // eslint-disable-next-line react-hooks/exhaustive-deps    
-        //window.addEventListener("resize", handleResize);
 
         const targetTo = location.pathname;
 
@@ -92,15 +88,11 @@ export default function Contents({ children }) {
         if (matchedCategory) {
             // 2. targetTo와 일치하는 subs 찾기
             const foundSub = matchedCategory?.subs.find(sub => sub.to === targetTo);
-
             setSelectedCategory(matchedCategory);
-            setSelected(foundSub);
             handleSelect(foundSub);
-        } else {
-            return null;
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [location]);
+    }, [location.pathname]);
 
     return (
         <Box

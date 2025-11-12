@@ -238,13 +238,14 @@ export default function SalaryManager() {
                         disabled={s.status === "COMPLETED"}>
                         수정
                       </Button>
-                      <Button size="sm" variant="danger" className="me-1"
+                     
+                    </>
+                  )}
+                   <Button size="sm" variant="danger" className="me-1"
                         onClick={() => handleDelete(s.salaryId, s.status)}
                         disabled={s.status === "COMPLETED"}>
                         삭제
                       </Button>
-                    </>
-                  )}
                   <Button size="sm" variant="success"
                     onClick={() => handleApprove(s.salaryId)}
                     disabled={s.status === "COMPLETED"}>
