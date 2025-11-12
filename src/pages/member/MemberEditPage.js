@@ -186,10 +186,10 @@ export default function MemberEditPage() {
                         </Form.Group>
 
                         <Form.Group className="mb-3">
+                            <Form.Label>비밀번호&nbsp;</Form.Label>
                             <span style={{ fontSize: "0.8em", color: "gray" }}>
                                 (대문자 포함 8자리 이상, 특수 문자 '!@#$%' 중 하나 이상 포함)
                             </span>
-                            <Form.Label>비밀번호</Form.Label>
                             <Form.Control type="password" name="password" value={form.password} onChange={(e) => {
                                 onChange(e);
                                 setErrors(prevErrors => ({ ...prevErrors, password: "" }));  // 오류 초기화
@@ -252,7 +252,7 @@ export default function MemberEditPage() {
                             <Button type="submit" variant="primary" disabled={submitting}>
                                 {submitting ? <><Spinner size="sm" className="me-2" /> 수정 중...</> : "수정"}
                             </Button>
-                            <Button variant="outline-secondary" onClick={() => navigate("/home")}>취소</Button>
+                            <Button variant="outline-secondary" onClick={() => navigate("/home")}>홈으로</Button>
                         </div>
                     </Form>
                 </Card.Body>

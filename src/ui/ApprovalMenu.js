@@ -1,8 +1,8 @@
 import {
     AssignmentTurnedIn as AssignmentTurnedInIcon,
-    Diversity3 as Diversity3Icon,
     EditDocument as EditDocumentIcon,
-    ManageAccounts as ManageAccountsIcon,
+    LocalGroceryStore as LocalGroceryStoreIcon,
+    CreditScore as CreditScoreIcon
 } from "@mui/icons-material";
 
 const approval =
@@ -18,7 +18,7 @@ const approval =
                     no: 1,
                     label: "결재 현황",
                     to: "/approval/status",
-                    icon: ManageAccountsIcon,
+                    icon: <CreditScoreIcon sx={{ color: '#2aa850ff' }} />,
                     isAdminMenu: false,
                     content: "결재 현황을 확인할 수 있는 메뉴입니다."
                 },
@@ -26,7 +26,7 @@ const approval =
                     no: 2,
                     label: "기안 작성",
                     to: "/approval/request",
-                    icon: Diversity3Icon,
+                    icon: <EditDocumentIcon sx={{ color: '#2aa850ff' }} />,
                     isAdminMenu: false,
                     content: "기안을 작성할 수 있는 메뉴입니다."
                 },
@@ -34,7 +34,7 @@ const approval =
                     no: 3,
                     label: "임시 보관함",
                     to: "/approval/temp",
-                    icon: EditDocumentIcon,
+                    icon: <LocalGroceryStoreIcon sx={{ color: '#2aa850ff' }} />,
                     isAdminMenu: false,
                     content: "임시 보관함을 확인할 수 있는 메뉴입니다."
                 },

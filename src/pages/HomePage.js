@@ -13,7 +13,7 @@ import {
 } from "react-icons/fa";
 import api from "../api/api";
 import MemberDashBoardPage from "./member/MemberDashBoardPage";
-import ScheduleDashBoardPage from "./member/ScheduleDashBoardPage";
+import ScheduleDashBoardPage from "./schedule/ScheduleDashBoardPage";
 
 export default function Homepage() {
   const navigate = useNavigate();

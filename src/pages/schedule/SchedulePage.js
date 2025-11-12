@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { Container, Row, Col, Card, Form, Modal, Badge } from "react-bootstrap";
-import { Calendar, dateFnsLocalizer, Views } from "react-big-calendar";
+import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, endOfWeek, getDay, addDays, addMonths } from "date-fns";
 import ko from "date-fns/locale/ko";
 import DatePicker from "react-datepicker";
@@ -9,7 +9,7 @@ import axios from "../../api/api";
 import { AuthContext } from "../../context/AuthContext";
 import SelectCombo from "../../sample/SelectCombo";
 import { ButtonGroup, IconButton, Tooltip, Button } from "@mui/material";
-import { ArrowBackIos, ArrowBackIosNew, ArrowForwardIos, Today } from "@mui/icons-material"
+import { ArrowBackIosNew, ArrowForwardIos, Today } from "@mui/icons-material"
 import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -175,18 +175,19 @@ export default function SchedulePage() {
     };
 
     const CustomToolbar = ({ date, onView, onNavigate, view }) => {
-        const views = ["month", "week", "day"];
+
+        const selectedView = view;
 
         const labelText = (() => {
-            if (view === "month") {
+            if (selectedView === "month") {
                 // 📅 월간 뷰 → "2025년 11월"
                 return format(date, "yyyy년 MM월", { locale: ko });
-            } else if (view === "week") {
+            } else if (selectedView === "week") {
                 // 📆 주간 뷰 → "2025.11.03 ~ 2025.11.09"
                 const start = startOfWeek(date, { weekStartsOn: 0 }); // 월요일 시작
                 const end = endOfWeek(date, { weekStartsOn: 0 });
                 return `${format(start, "yyyy.MM.dd")} ~ ${format(end, "MM.dd")}`;
-            } else if (view === "day") {
+            } else if (selectedView === "day") {
                 // 🗓️ 일간 뷰 → "2025.11.11 (화)"
                 return format(date, "yyyy.MM.dd (EEE)", { locale: ko });
             } else {
@@ -221,13 +222,13 @@ export default function SchedulePage() {
                         <div
                             style={{
                                 fontWeight: "bold",
-                                fontSize: "1.4rem",
-                                padding: "6px 14px",
-                                borderRadius: "12px",
+                                fontSize: "1.2rem", // 1.4rem → 1.2rem
+                                padding: "4px 10px", // padding 줄임
+                                borderRadius: "10px",
                                 backgroundColor: "#f0f4f8",
                                 color: "#1e88e5",
                                 display: "inline-block",
-                                minWidth: "100px",
+                                minWidth: "80px",   // 작게
                                 textAlign: "center",
                             }}
                         >
@@ -243,7 +244,7 @@ export default function SchedulePage() {
                                     size="sm"
                                     value={selectedMember || ""}
                                     onChange={e => setSelectedMember(e.target.value)}
-                                    style={{ height: "34px" }} // 버튼과 동일 높이
+                                    style={{ height: "32px", fontSize: "0.85rem" }} // 높이와 글자 크기 줄임
                                 >
                                     <option value="">회원 선택</option>
                                     {members.map(m => (
@@ -272,8 +273,8 @@ export default function SchedulePage() {
                                         backgroundColor: "#fff",
                                         border: "1px solid #e0e0e0",
                                         color: "#555",
-                                        width: 36,
-                                        height: 36,
+                                        width: 30,      // 36 → 30
+                                        height: 30,     // 36 → 30
                                         "&:hover": {
                                             backgroundColor: "#e3f2fd",
                                             color: "#1976d2",
@@ -292,8 +293,8 @@ export default function SchedulePage() {
                                     sx={{
                                         background: "linear-gradient(135deg, #42a5f5, #1e88e5)",
                                         color: "white",
-                                        width: 38,
-                                        height: 38,
+                                        width: 30,      // 36 → 30
+                                        height: 30,     // 36 → 30
                                         "&:hover": {
                                             background: "linear-gradient(135deg, #2196f3, #1976d2)",
                                             transform: "scale(1.08)",
@@ -312,8 +313,8 @@ export default function SchedulePage() {
                                         backgroundColor: "#fff",
                                         border: "1px solid #e0e0e0",
                                         color: "#555",
-                                        width: 36,
-                                        height: 36,
+                                        width: 30,      // 36 → 30
+                                        height: 30,     // 36 → 30
                                         "&:hover": {
                                             backgroundColor: "#e3f2fd",
                                             color: "#1976d2",
@@ -337,16 +338,16 @@ export default function SchedulePage() {
                                 backgroundColor: "#f9fafb",
                                 borderRadius: "50px",
                                 // boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
-                                p: "4px",
+                                p: "3px",
                             }}
                         >
                             <ToggleButton
                                 value="month"
                                 sx={{
-                                    px: 2.5,
-                                    py: 0.8,
+                                    px: 1.0,          // 2.5 → 1.5
+                                    py: 0.4,          // 0.8 → 0.5
+                                    fontSize: "0.8rem", // 0.9rem → 0.8rem
                                     borderRadius: "50px",
-                                    fontSize: "0.9rem",
                                     textTransform: "none",
                                     fontWeight: 500,
                                     whiteSpace: "nowrap",
@@ -365,10 +366,10 @@ export default function SchedulePage() {
                             <ToggleButton
                                 value="week"
                                 sx={{
-                                    px: 2.5,
-                                    py: 0.8,
+                                    px: 1.0,          // 2.5 → 1.5
+                                    py: 0.4,          // 0.8 → 0.5
+                                    fontSize: "0.8rem", // 0.9rem → 0.8rem
                                     borderRadius: "50px",
-                                    fontSize: "0.9rem",
                                     textTransform: "none",
                                     fontWeight: 500,
                                     whiteSpace: "nowrap",
@@ -387,10 +388,10 @@ export default function SchedulePage() {
                             <ToggleButton
                                 value="day"
                                 sx={{
-                                    px: 2.5,
-                                    py: 0.8,
+                                    px: 1.0,          // 2.5 → 1.5
+                                    py: 0.4,          // 0.8 → 0.5
+                                    fontSize: "0.8rem", // 0.9rem → 0.8rem
                                     borderRadius: "50px",
-                                    fontSize: "0.9rem",
                                     textTransform: "none",
                                     fontWeight: 500,
                                     whiteSpace: "nowrap",

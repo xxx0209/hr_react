@@ -38,7 +38,7 @@ export default function SchedulePage() {
 
     const [currentDate, setCurrentDate] = useState(new Date()); //현재 달
 
-    // ✅ 일정 조회
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
 
         const year = currentDate.getFullYear();
@@ -61,7 +61,7 @@ export default function SchedulePage() {
                 }));
                 setCheckEvents(rMapped);
             });
-    }, [user]);
+    }, [user, currentDate]);
 
     const handleSelectEvent = (event) => setSelectedEvent(event);
 
