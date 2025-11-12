@@ -20,7 +20,7 @@ const board =
                     to: "/board/write",
                     icon: ManageAccountsIcon,
                     isAdminMenu: false,
-                    content: "글을 작성할 수 있는 메뉴입니다.\r\n\r\n"
+                    content: "글을 작성할 수 있는 메뉴입니다.\r\n"
                 },
                 {
                     no: 2,
@@ -36,7 +36,7 @@ const board =
                     to: "/board/free",
                     icon: EditDocumentIcon,
                     isAdminMenu: false,
-                    content: "자유게시판에 글을 작성할 수 있는 메뉴입니다.\r\n\r\n"
+                    content: "자유게시판에 글을 작성할 수 있는 메뉴입니다.\r\n"
                 },
             ]
         }

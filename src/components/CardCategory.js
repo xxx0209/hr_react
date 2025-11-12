@@ -71,9 +71,9 @@ export default function CardCa({ loading = false, data, selected, onSelect, expa
             {data.content.split("\n").map((line, idx) => (
               <Box
                 key={idx}
-                sx={{                  
+                sx={{
                   fontWeight: idx === 0 ? "bold" : "normal",
-                  lineHeight: idx === 0 ? 2 : 1.4,
+                  lineHeight: 1.4,
                   whiteSpace: "pre-wrap",
                   wordBreak: "break-word",
                   fontSize: 12,
