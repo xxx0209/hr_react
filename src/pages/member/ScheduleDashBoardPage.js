@@ -11,6 +11,7 @@ import { Button as BasicButton } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate } from "react-router-dom";
 
 const locales = { ko };
 const localizer = dateFnsLocalizer({
@@ -23,43 +24,42 @@ const localizer = dateFnsLocalizer({
 const ETC_SCHEDULE_LIST = ["checkIn", "checkOut"];
 
 export default function SchedulePage() {
+
+    const navigate = useNavigate();
+
     // eslint-disable-next-line no-unused-vars
     const { user, setUser } = useContext(AuthContext);
 
     const [events, setEvents] = useState([]);
-    const [checkEvents] = useState([
-        {
-            scheduleId: "checkIn",
-            title: "출근",
-            start: new Date("2025-10-30T09:05:00"),
-            end: new Date("2025-10-30T09:05:00"),
-            color: "#0d6efd",
-            isCheck: true
-        },
-        {
-            scheduleId: "checkOut",
-            title: "퇴근",
-            start: new Date("2025-10-30T17:25:00"),
-            end: new Date("2025-10-30T17:25:00"),
-            color: "#dc3545",
-            isCheck: true
-        }
-    ]);
+    const [checkEvents, setCheckEvents] = useState([]);
+    //const [checkEvents] = useState([]);
 
     const [selectedEvent, setSelectedEvent] = useState(null);
+
+    const [currentDate, setCurrentDate] = useState(new Date()); //현재 달
 
     // ✅ 일정 조회
     useEffect(() => {
 
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+
         if (!user.memberId) return;
-        axios.get(`/schedule/member/${user.memberId}`)
+        axios.get(`/schedule/member/${user.memberId}?month=${year}-${month}`)
             .then(res => {
-                const mapped = res.data.map(e => ({
+                const sMapped = res.data.scheduleDtoList.map(e => ({
                     ...e,
                     start: new Date(e.start),
                     end: new Date(e.end),
                 }));
-                setEvents(mapped);
+                setEvents(sMapped);
+                const rMapped = res.data.requestDtoList.map(e => ({
+                    ...e,
+                    start: new Date(e.start),
+                    end: new Date(e.end),
+                    color: '#dc3545' // 휴가의 컬러색 고정
+                }));
+                setCheckEvents(rMapped);
             });
     }, [user]);
 
@@ -114,7 +114,7 @@ export default function SchedulePage() {
                         <h2>📆 스케줄 일정</h2>
                     </Col>
                     <Col className="d-flex justify-content-end px-0">
-                        <BasicButton variant="outline-danger" size="sm">
+                        <BasicButton variant="outline-danger" size="sm" onClick={() => navigate("/member/schedule")}>
                             바로가기
                         </BasicButton>
                     </Col>
@@ -201,6 +201,8 @@ export default function SchedulePage() {
                             📆 스케줄 일정 관리
                         </Card.Title> */}
                         <Calendar
+                            date={currentDate} // ✅ 현재 달 유지
+                            onNavigate={(newDate) => setCurrentDate(newDate)} // ✅ react-big-calendar 기본 네비게이션도 반영
                             localizer={localizer}
                             events={[...events, ...checkEvents]}
                             startAccessor="start"
