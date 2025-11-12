@@ -175,7 +175,6 @@ export default function SchedulePage() {
     };
 
     const CustomToolbar = ({ date, onView, onNavigate, view }) => {
-        const views = ["month", "week", "day"];
 
         const labelText = (() => {
             if (view === "month") {

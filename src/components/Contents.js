@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { Card } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
-import { Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Typography } from "@mui/material";
+import { Box, List, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 import CardCategory from "./CardCategory";
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -34,7 +34,7 @@ export default function Contents({ children }) {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selected, setSelected] = useState(null);
     const [expandedAll, setExpandedAll] = useState(false);
-    const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+    // const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
@@ -52,7 +52,7 @@ export default function Contents({ children }) {
             navigate(findMenu.to);
 
             setSelected(findMenu);
-            setSelectedCategory(cat);            
+            setSelectedCategory(cat);
         }
     };
 
@@ -77,13 +77,8 @@ export default function Contents({ children }) {
     const handleToggleAll = () => setExpandedAll((prev) => !prev);
 
     useEffect(() => {
-        const handleResize = () => setWindowHeight(window.innerHeight);
-        window.addEventListener("resize", handleResize);
 
-        console.log(location.pathname);
         const targetTo = location.pathname;
-
-        //if (selectedCategory === null && selected === null) {
 
         // 1. categories 배열에서 subs.to와 일치하는 항목 찾기
         const matchedCategory = categories.find(category =>
@@ -91,20 +86,12 @@ export default function Contents({ children }) {
         );
 
         if (matchedCategory) {
-            console.log(matchedCategory);
             // 2. targetTo와 일치하는 subs 찾기
             const foundSub = matchedCategory?.subs.find(sub => sub.to === targetTo);
-            console.log(foundSub);
-
             setSelectedCategory(matchedCategory);
-            const findItem = matchedCategory.subs.find(sub => sub.no === matchedCategory.baseToNo);
-            setSelected(foundSub);
             handleSelect(foundSub);
-        } else {
-
         }
-        //}
-        return () => window.removeEventListener("resize", handleResize);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.pathname]);
 
     return (

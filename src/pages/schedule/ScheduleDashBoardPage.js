@@ -61,7 +61,7 @@ export default function SchedulePage() {
                 }));
                 setCheckEvents(rMapped);
             });
-    }, [user]);
+    }, [user, currentDate]);
 
     const handleSelectEvent = (event) => setSelectedEvent(event);
 
