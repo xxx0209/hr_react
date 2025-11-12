@@ -25,16 +25,16 @@ import BoardDetail from "../pages/board/BoardDetail";
 import BoardEdit from "../pages/board/BoardEdit";
 
 // 회원관리
-import SchedulePage from "../pages/member/SchedulePage";
+import SchedulePage from "../pages/schedule/SchedulePage";
+import CategoryPage from '../pages/schedule/CategoryPage';
 import SignupPage from "../pages/member/SignupPage";
+import MemberEditPage from '../pages/member/MemberEditPage';
 import PositionPage from "../pages/member/PositionPage";
 import PositionListPage from "../pages/member/PositionListPage";
 import PositionDetailPage from "../pages/member/PositionDetailPage";
 // import PositionHistoryPage from "../pages/member/PositionHistoryPage";
 import PositionHistoryList from "../pages/member/PositionHistoryList";
 import PositionHistoryForm from "../pages/member/PositionHistoryForm";
-import CategoryPage from '../pages/member/CategoryPage';
-import MemberEditPage from '../pages/member/MemberEditPage';
 
 import MySalaryHistory from '../pages/salary/MySalaryHistory';
 import CompletedSalaries from '../pages/salary/CompletedSalaries';
@@ -94,8 +94,8 @@ function AppRoutes() {
         <Route path="/member/position/history/list" element={<PositionHistoryList />} />
         <Route path="/member/position/history/:id" element={<PositionHistoryForm />} />
         <Route path="/member/position/history/save" element={<PositionHistoryForm />} />
-        <Route path="/member/schedule" element={<SchedulePage />} />
-        <Route path="/member/category" element={<CategoryPage />} />
+        <Route path="/schedule/schedule" element={<SchedulePage />} />
+        <Route path="/schedule/category" element={<CategoryPage />} />
         <Route path="/member/update" element={<MemberEditPage />} />
 
         {/* 근태/휴가 */}

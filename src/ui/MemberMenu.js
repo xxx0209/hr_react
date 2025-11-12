@@ -28,7 +28,7 @@ const member =
                     to: "/member/position/list",
                     icon: Diversity3Icon,
                     isAdminMenu: true,
-                    content: "회사의 직급체계를 관리합니다.\r\n직급을 추가, 수정, 삭제할 수 있습니다."
+                    content: "회사의 직급체계를 관리합니다.\r\n직급을 추가, 수정, 삭제할 수 있습니다.\r\n"
                 },
                 {
                     no: 3,
@@ -36,7 +36,7 @@ const member =
                     to: "/member/position/history/list",
                     icon: EditDocumentIcon,
                     isAdminMenu: true,
-                    content: "직급의 진급 내역을 확인합니다.\r\n 직원의 직급을 변경할 수 있습니다."
+                    content: "직급의 진급 내역을 확인합니다.\r\n직원의 직급을 변경할 수 있습니다.\r\n"
                 },
             ]
         }

@@ -2,9 +2,9 @@ import React, { useState, useCallback, useEffect, useContext } from "react";
 import { Card } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
 import { Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Typography } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import CardCategory from "./CardCategory";
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 
 //메뉴 경로 불러오기
@@ -207,13 +207,41 @@ export default function Contents({ children }) {
                 {(selectedCategory?.useSubs ?? false) && selectedCategory?.subs?.length > 0 && (
                     <>
                         <Box
-                            sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1, cursor: "pointer" }}
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center', // 전체 수직 중앙
+                                gap: 0.5,
+                                mb: 1,
+                                cursor: 'pointer',
+                            }}
                             onClick={handleToggleAll}
                         >
-                            <IconButton sx={{ width: 24, height: 24, p: 0 }}>
-                                {expandedAll ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-                            </IconButton>
-                            <Typography variant="body2">{expandedAll ? "모두 닫기" : "모두 열기"}</Typography>
+                            <Box
+                                sx={{
+                                    width: 24,
+                                    height: 24,
+                                    borderRadius: '50%',
+                                    backgroundColor: '#f08f97ff',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    '&:hover': {
+                                        backgroundColor: '#63b0e0',
+                                    },
+                                }}
+                            >
+                                {expandedAll ? <ExpandLessIcon sx={{ fontSize: 16, color: 'white' }} /> : <ExpandMoreIcon sx={{ fontSize: 16, color: 'white' }} />}
+                            </Box>
+
+                            <Typography
+                                sx={{
+                                    fontSize: 12,
+                                    fontWeight: 'bold',
+                                    lineHeight: '24px', // 버튼과 같은 높이로 맞춤
+                                }}
+                            >
+                                {expandedAll ? '모두 닫기' : '모두 열기 (열기를 클릭시 메뉴 상세 정보를 볼수 있습니다.)'}
+                            </Typography>
                         </Box>
 
                         <Box

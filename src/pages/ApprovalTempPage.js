@@ -224,17 +224,17 @@ export default function ApprovalTempPage() {
       <style>
         {`
           .compact-filter .form-label {
-            font-size: 0.85rem;
+            //font-size: 0.85rem;
             margin-bottom: 2px;
           }
           .compact-filter .form-control,
           .compact-filter .form-select {
             height: 32px;
-            font-size: 0.85rem;
+            //font-size: 0.85rem;
             padding: 4px 8px;
           }
           .compact-filter .btn {
-            font-size: 0.85rem;
+            //font-size: 0.85rem;
             padding: 4px 10px;
           }
           .date-filter input[type="date"] {
@@ -243,7 +243,7 @@ export default function ApprovalTempPage() {
           }
           .date-filter span {
             margin: 0 6px;
-            font-weight: bold;
+            //font-weight: bold;
           }
         `}
       </style>
@@ -279,7 +279,7 @@ export default function ApprovalTempPage() {
             </Form.Select>
           </Col>
           <Col md={3} className="text-end">
-            <div className="d-flex gap-1 justify-content-end">
+            <div className="d-flex gap-1 justify-content-end mt-4">
               <Button size="sm" variant="primary" onClick={handleSearch}>
                 🔍 검색
               </Button>

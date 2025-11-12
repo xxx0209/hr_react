@@ -20,7 +20,7 @@ const salary =
                     to: "/salary/my-salaries",
                     icon: ManageAccountsIcon,
                     isAdminMenu: false,
-                    content: "나의 급여 내역을 확인할수 있는 메뉴 입니다."
+                    content: "나의 급여 내역을 확인할수 있는 메뉴 입니다.\r\n"
                 },
                 {
                     no: 2,
@@ -28,7 +28,7 @@ const salary =
                     to: "/salary/salaries/completed",
                     icon: Diversity3Icon,
                     isAdminMenu: true,
-                    content: "회사의 급여 목록을 관리합니다.\r\n  관리자는 급여를 추가, 수정, 삭제할 수 있습니다."
+                    content: "회사의 급여 목록을 관리합니다.\r\n관리자는 급여를 추가, 수정, 삭제할 수 있습니다."
                 },
                 {
                     no: 3,
@@ -36,7 +36,7 @@ const salary =
                     to: "/salary/salaries/new",
                     icon: EditDocumentIcon,
                     isAdminMenu: true,
-                    content: "급여 생성을 위한 메뉴입니다."
+                    content: "급여 생성을 위한 메뉴입니다.\r\n"
                 },
                 {
                     no: 4,
@@ -44,7 +44,7 @@ const salary =
                     to: "/salary/salary-settings",
                     icon: EditDocumentIcon,
                     isAdminMenu: true,
-                    content: "기본급을 설정할 수 있는 메뉴입니다."
+                    content: "기본급을 설정할 수 있는 메뉴입니다.\r\n"
                 },
             ]
         }
