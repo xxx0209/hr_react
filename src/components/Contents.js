@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Card } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
 import { Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Typography } from "@mui/material";
@@ -40,8 +40,6 @@ export default function Contents({ children }) {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const storedKey = "storedCategory";
-
     const handleCategoryClick = (cat) => {
 
         const findMenu = cat.subs.find(sub => sub.no === cat.baseToNo);
@@ -54,22 +52,9 @@ export default function Contents({ children }) {
             navigate(findMenu.to);
 
             setSelected(findMenu);
-            setSelectedCategory(cat);
-            //updateSessionStorageItem(storedKey, { id: cat.id, no: cat.baseToNo });
+            setSelectedCategory(cat);            
         }
     };
-
-    // const updateSessionStorageItem = (key, updates) => {
-    //     // 1️⃣ 기존 데이터 가져오기
-    //     const existing = sessionStorage.getItem(key);
-    //     const parsed = existing ? JSON.parse(existing) : {};
-
-    //     // 2️⃣ 기존 데이터에 새 값 덮어쓰기
-    //     const updated = { ...parsed, ...updates };
-
-    //     // 3️⃣ 다시 저장
-    //     sessionStorage.setItem(key, JSON.stringify(updated));
-    // }
 
     const handleSelect = ((item) => {
         if (item?.no === selected?.no) {
@@ -81,7 +66,7 @@ export default function Contents({ children }) {
         }
         setSelected(item);
         navigate(item.to);
-        //updateSessionStorageItem(storedKey, { no: item.no });
+
         // 스크롤 이동 기능 임시
         if (categories.id !== 'home') {
             // const el = document.getElementById("approval-page");
@@ -90,31 +75,6 @@ export default function Contents({ children }) {
     });
 
     const handleToggleAll = () => setExpandedAll((prev) => !prev);
-
-    // 브라우저 창 크기 변경 시 높이 업데이트
-    // useEffect(() => {
-    //     const handleResize = () => setWindowHeight(window.innerHeight);
-    //     window.addEventListener("resize", handleResize);
-
-    //     if (selectedCategory === null && selected === null) {
-    //         // 현재 경로에 맞는 카테고리와 서브아이템 찾기
-    //         // 새로고침시 현재 경로에 맞는 카테고리와 서브아이템 설정
-    //         const storedCategory = sessionStorage.getItem(storedKey);
-    //         if (storedCategory) {
-    //             const { id, no } = JSON.parse(storedCategory);
-    //             const category = categories.find(cat => cat.id === id);
-    //             if (category) {
-    //                 setSelectedCategory(category);
-    //                 const findItem = category.subs.find(sub => sub.no === no);
-    //                 setSelected(findItem);
-    //                 handleSelect(findItem);
-    //             } else {
-
-    //             }
-    //         }
-    //     }
-    //     return () => window.removeEventListener("resize", handleResize);
-    // }, []);
 
     useEffect(() => {
         const handleResize = () => setWindowHeight(window.innerHeight);

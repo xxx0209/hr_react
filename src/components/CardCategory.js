@@ -1,12 +1,8 @@
 import * as React from "react";
 import {
   Card,
-  CardHeader,
-  CardContent,
   Typography,
-  Skeleton,
   Avatar,
-  Badge,
   Collapse,
   Box,
 } from "@mui/material";
