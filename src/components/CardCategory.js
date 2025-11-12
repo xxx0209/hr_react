@@ -43,8 +43,9 @@ export default function CardCa({ loading = false, data, selected, onSelect, expa
           p: 0.7,
         }}
       >
-        <Avatar sx={{ width: 40, height: 40, mr: 1 }}>
-          {Icon && <Icon sx={{ fontSize: 30 }} />}
+        <Avatar sx={{ width: 40, height: 40, mr: 1, background: 'white' }}>
+          {/* {Icon && <Icon sx={{ fontSize: 30 }} />} */}
+          {React.cloneElement(data.icon)}
         </Avatar>
         <Typography sx={{ fontWeight: "bold", fontSize: 13, color: selected ? "#fcfcfcff" : "#5e5d5dff" }}>
           {data.label}
