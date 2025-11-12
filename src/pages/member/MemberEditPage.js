@@ -252,7 +252,7 @@ export default function MemberEditPage() {
                             <Button type="submit" variant="primary" disabled={submitting}>
                                 {submitting ? <><Spinner size="sm" className="me-2" /> 수정 중...</> : "수정"}
                             </Button>
-                            <Button variant="outline-secondary" onClick={() => navigate("/home")}>취소</Button>
+                            <Button variant="outline-secondary" onClick={() => navigate("/home")}>홈으로</Button>
                         </div>
                     </Form>
                 </Card.Body>

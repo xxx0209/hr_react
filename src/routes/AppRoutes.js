@@ -63,7 +63,7 @@ function AppRoutes() {
       //sessionStorage.setItem("storedCategory", JSON.stringify({ id: "home", no: 1 }));
       alert("존재하지 않는 페이지입니다. 홈으로 이동합니다.");
       navigate("/home", { replace: true });
-    }, [navigate]);
+    }, []);
 
     return null;
   }

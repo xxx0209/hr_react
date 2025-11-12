@@ -50,11 +50,11 @@ export default function PositionHistoryPage() {
       {/* 헤더 영역 */}
       <Row className="align-items-center mb-3">
         <Col>
-          <h2>📜 직급내역 관리</h2>
+          <h2>📜 진급내역 관리</h2>
         </Col>
         <Col className="text-end">
           <Button variant="outline-secondary" onClick={() => navigate("/member/position/history/save")}>
-            + 직급 변경 등록
+            + 진급 변경
           </Button>
         </Col>
       </Row>
