@@ -257,6 +257,9 @@ export default function Homepage() {
 
       <div className="dashboard-grid mt-4">
         {/* 2행 1열: 공지사항 */}
+                 <Card className="dashboard-card text-center">
+          <BoardDashBoardPage />
+        </Card> 
         {/* <Card className="dashboard-card text-center">
           <Card.Body className="d-flex flex-column align-items-center justify-content-center">
             <FaClipboardList size={50} className="text-warning mb-3" />
