@@ -256,24 +256,12 @@ export default function Homepage() {
       </div>
 
       <div className="dashboard-grid mt-4">
+
         {/* 2행 1열: 공지사항 */}
-                 <Card className="dashboard-card text-center">
+        <div className="dashboard-card text-center">
           <BoardDashBoardPage />
-        </Card> 
-        {/* <Card className="dashboard-card text-center">
-          <Card.Body className="d-flex flex-column align-items-center justify-content-center">
-            <FaClipboardList size={50} className="text-warning mb-3" />
-            <h5>게시판</h5>
-            <p className="text-muted small mb-2">공지사항 / 자유게시판 확인</p>
-            <Button
-              variant="outline-warning"
-              size="sm"
-              onClick={() => navigate("/board/notice")}
-            >
-              바로가기
-            </Button>
-          </Card.Body>
-        </Card>
+        </div>
+         
 
         {/* 2행 3열: 휴가 관리 */}
         <Card className="dashboard-card text-center p-3">
@@ -349,7 +337,7 @@ export default function Homepage() {
       </div>
 
       <div className="dashboard-grid mt-4">
-        {/* 2행 2열: 캘린더 */}
+        {/* 3행 : 캘린더 */}
         <ScheduleDashBoardPage />
       </div>
     </Container>
