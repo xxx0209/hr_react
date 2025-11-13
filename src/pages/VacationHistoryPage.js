@@ -7,25 +7,23 @@ export default function VacationHistoryPage() {
   const [user, setUser] = useState(null);
   const [vacations, setVacations] = useState([]);
   const [monthlyData, setMonthlyData] = useState([]);
-  const TOTAL_VACATION_DAYS = 15; // 기본 연차 기준
+  const TOTAL_VACATION_DAYS = 15; 
 
   const location = useLocation();
 
   useEffect(() => {
-    // 휴가내역 탭 자동 활성화
     if (location.pathname.includes("/vacation/history")) {
-      // 🔹 전역 메뉴 상태가 있다면 여기에 반영
       const sidebarEvent = new CustomEvent("updateActiveMenu", {
         detail: {
           activeMenu: "vacation",
           activeSub: "휴가내역",
         },
       });
-      window.dispatchEvent(sidebarEvent); // 전역으로 신호 보냄
+      window.dispatchEvent(sidebarEvent); 
     }
   }, [location]);
 
-  // 유저 + 승인된 휴가 불러오기
+  // 승인된 휴가
   useEffect(() => {
     const fetchData = async () => {
       try {

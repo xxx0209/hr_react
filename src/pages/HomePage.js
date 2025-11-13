@@ -4,33 +4,106 @@ import {
   Card,
   Button,
   Badge,
+  Table,
+  ProgressBar,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import {
   FaFileSignature,
   FaClipboardList,
   FaCalendarCheck,
+  FaUmbrellaBeach,
 } from "react-icons/fa";
 import api from "../api/api";
 import MemberDashBoardPage from "./member/MemberDashBoardPage";
-import ScheduleDashBoardPage from "./member/ScheduleDashBoardPage";
 import BoardDashBoardPage from "./board/BoardDashBoardPage";
+import ScheduleDashBoardPage from "./schedule/ScheduleDashBoardPage";
 
 export default function Homepage() {
   const navigate = useNavigate();
-  const [approvalSummary, setApprovalSummary] = useState({ waiting: 0 });
+  const [approvalSummary, setApprovalSummary] = useState({ 
+    waiting: 0,
+    recent: [],
+    });
+  const [vacationInfo, setVacationInfo] = useState({
+    used: 0,
+    total: 15,
+    remain: 15,
+    percent: 0,
+    recent: [],
+  });
 
+  // 결재 데이터
   useEffect(() => {
     const fetchApprovals = async () => {
       try {
         const res = await api.get("/api/requests/approvals");
         const waitingCount = res.data.requests?.length || 0;
-        setApprovalSummary({ waiting: waitingCount });
+        const recentDocs = res.data.requests
+          ?.slice(0, 2)
+          .map((r) => ({
+            id: r.id,
+            title: `${r.requestType} - ${r.memberName}`,
+            date: new Date(r.dateTime).toLocaleDateString(),
+          })) || [];
+        setApprovalSummary({ waiting: waitingCount, recent: recentDocs });
       } catch (err) {
         console.error("결재 현황 불러오기 실패:", err);
       }
     };
     fetchApprovals();
+  }, []);
+
+   // 휴가 데이터
+  useEffect(() => {
+    const fetchVacations = async () => {
+      try {
+        const userRes = await api.get("/user/me");
+        const reqRes = await api.get("/api/requests");
+        const approved = reqRes.data.filter(
+          (r) =>
+            r.requestType === "휴가" &&
+            r.status === "승인" &&
+            r.memberId === userRes.data.memberId
+        );
+
+        const TOTAL = 15;
+        const used = approved.reduce((sum, v) => {
+          const start = new Date(v.startDate);
+          const end = new Date(v.endDate);
+          const diff = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+          const count = v.vacationType === "반차" ? 0.5 : diff;
+          return sum + count;
+        }, 0);
+        const percent = Math.min(Math.round((used / TOTAL) * 100), 100);
+        const sorted = [...approved].sort(
+          (a, b) => new Date(b.startDate) - new Date(a.startDate)
+        );
+        const recent = sorted.slice(0, 2).map((v) => ({
+          type: v.vacationType,
+          start: new Date(v.startDate).toLocaleDateString(),
+          end: new Date(v.endDate).toLocaleDateString(),
+          days:
+            v.vacationType === "반차"
+              ? "0.5일"
+              : `${Math.ceil(
+                  (new Date(v.endDate) - new Date(v.startDate)) /
+                    (1000 * 60 * 60 * 24)
+                ) + 1}일`,
+        }));
+
+        setVacationInfo({
+          used,
+          total: TOTAL,
+          remain: TOTAL - used,
+          percent,
+          recent,
+        });
+      } catch (err) {
+        console.error("휴가 데이터 불러오기 실패:", err);
+      }
+    };
+    fetchVacations();
   }, []);
 
   return (
@@ -114,27 +187,56 @@ export default function Homepage() {
   }
 `}</style>
 
-
       <div className="dashboard-grid">
         {/* 1행 1열: 프로필 */}
         <MemberDashBoardPage />
 
         {/* 1행 2열: 전자결재 */}
-        <Card
-          className="dashboard-card text-center"
-          onClick={() => navigate("/approval")}
-          style={{ cursor: "pointer" }}
-        >
+         <Card className="dashboard-card text-center">
           {approvalSummary.waiting > 0 && (
             <Badge bg="danger" className="badge-noti">
               {approvalSummary.waiting}
             </Badge>
           )}
-          <Card.Body className="d-flex flex-column align-items-center justify-content-center">
-            <FaFileSignature size={50} className="text-primary mb-3" />
-            <h5>전자결재</h5>
-            <p className="text-muted small mb-2">결재 요청 / 승인 / 현황 확인</p>
-            <Button variant="outline-primary" size="sm">
+          <Card.Body className="w-100 px-4 d-flex flex-column justify-content-between">
+            <div>
+              <FaFileSignature size={40} className="text-primary mb-2" />
+              <h5>전자결재</h5>
+              <p className="text-muted small mb-2">
+                최근 결재 요청 문서 2건이 표시됩니다.
+              </p>
+              <Table hover size="sm" className="mb-2">
+                <thead className="table-light">
+                  <tr>
+                    <th>문서명</th>
+                    <th>작성일</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {approvalSummary.recent.length === 0 ? (
+                    <tr>
+                      <td colSpan={2} className="text-muted small text-center">
+                        결재 대기 문서 없음
+                      </td>
+                    </tr>
+                  ) : (
+                    approvalSummary.recent.map((r) => (
+                      <tr key={r.id}>
+                        <td className="text-truncate" style={{ maxWidth: "100px" }}>
+                          {r.title}
+                        </td>
+                        <td>{r.date}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </Table>
+            </div>
+            <Button
+              variant="outline-primary"
+              size="sm"
+              onClick={() => navigate("/approval/status")}
+            >
               바로가기
             </Button>
           </Card.Body>
@@ -168,33 +270,77 @@ export default function Homepage() {
               바로가기
             </Button>
           </Card.Body>
-        </Card> */}
-         <Card className="dashboard-card text-center">
-          <BoardDashBoardPage />
-        </Card> 
-         {/* 2행 3열: 휴가 관리 */}
-        <Card className="dashboard-card text-center">
-          <Card.Body className="d-flex flex-column align-items-center justify-content-center">
-            <FaFileSignature size={50} className="text-danger mb-3" />
-            <h5>휴가 관리</h5>
-            <p className="text-muted small mb-2">연차 / 반차 / 휴가 신청 및 확인</p>
+        </Card>
+
+        {/* 2행 3열: 휴가 관리 */}
+        <Card className="dashboard-card text-center p-3">
+          <Card.Body className="w-100 px-2 d-flex flex-column justify-content-between">
+            <div>
+              <div className="d-flex align-items-center justify-content-center mb-2">
+                <FaUmbrellaBeach size={38} className="text-danger me-2" />
+                <h5 className="mb-0">휴가 관리</h5>
+              </div>
+
+              <ProgressBar
+                now={vacationInfo.percent}
+                variant={
+                  vacationInfo.percent >= 90
+                    ? "danger"
+                    : vacationInfo.percent >= 60
+                    ? "warning"
+                    : "success"
+                }
+                label={`${vacationInfo.percent}%`}
+                style={{ height: "14px" }}
+              />
+              <div className="d-flex justify-content-between mt-1 text-muted small">
+                <span>사용 {vacationInfo.used.toFixed(1)}일</span>
+                <span>잔여 {vacationInfo.remain.toFixed(1)}일</span>
+              </div>
+
+              <Table hover size="sm" className="mt-2 mb-2">
+                <thead className="table-light">
+                  <tr>
+                    <th>종류</th>
+                    <th>기간</th>
+                    <th>일수</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {vacationInfo.recent.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className="text-muted small text-center">
+                        승인된 휴가 없음
+                      </td>
+                    </tr>
+                  ) : (
+                    vacationInfo.recent.map((v, idx) => (
+                      <tr key={idx}>
+                        <td>{v.type}</td>
+                        <td className="text-truncate" style={{ maxWidth: "120px" }}>
+                          {v.start}~{v.end}
+                        </td>
+                        <td>{v.days}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </Table>
+            </div>
+
             <Button
-        variant="outline-danger"
-        size="sm"
-        onClick={() => {
-        // 탭 상태 저장
-       sessionStorage.setItem(
-       "storedCategory",
-       JSON.stringify({ id: "vacation", no: 0 })
-      );
-
-     // 페이지 이동
-     navigate("/vacation/list");
-  }}
->
-  바로가기
-</Button>
-
+              variant="outline-danger"
+              size="sm"
+              onClick={() => {
+                sessionStorage.setItem(
+                  "storedCategory",
+                  JSON.stringify({ id: "vacation", no: 0 })
+                );
+                navigate("/vacation/list");
+              }}
+            >
+              휴가 바로가기
+            </Button>
           </Card.Body>
         </Card>
       </div>

@@ -7,7 +7,6 @@ import LoginPage from "../pages/member/LoginPage";
 
 // 전자결재
 import ApprovalPage from "../pages/ApprovalPage";
-
 import ApprovalRequestPage from "../pages/ApprovalRequestPage";
 import ApprovalTempPage from "../pages/ApprovalTempPage";
 import ApprovalDetail from "../pages/ApprovalDetail";
@@ -25,23 +24,22 @@ import BoardFreePage from "../pages/board/BoardFreePage";
 import BoardDetail from "../pages/board/BoardDetail";
 
 // 회원관리
-import SchedulePage from "../pages/member/SchedulePage";
+import SchedulePage from "../pages/schedule/SchedulePage";
+import CategoryPage from '../pages/schedule/CategoryPage';
 import SignupPage from "../pages/member/SignupPage";
+import MemberEditPage from '../pages/member/MemberEditPage';
 import PositionPage from "../pages/member/PositionPage";
 import PositionListPage from "../pages/member/PositionListPage";
 import PositionDetailPage from "../pages/member/PositionDetailPage";
-import PositionHistoryPage from "../pages/member/PositionHistoryPage";
+// import PositionHistoryPage from "../pages/member/PositionHistoryPage";
 import PositionHistoryList from "../pages/member/PositionHistoryList";
 import PositionHistoryForm from "../pages/member/PositionHistoryForm";
-import CategoryPage from '../pages/member/CategoryPage';
-import MemberEditPage from '../pages/member/MemberEditPage';
 
-// 급여 관련
-import MySalaryHistory from "../pages/MySalaryHistory";
-import CompletedSalaries from "../pages/CompletedSalaries";
-import SalaryForm from "../pages/SalaryForm";
-import SalaryDetailPage from "../pages/SalaryDetailCard";
-import SalarySettingPage from "../pages/SalarySettingPage";
+import MySalaryHistory from '../pages/salary/MySalaryHistory';
+import CompletedSalaries from '../pages/salary/CompletedSalaries';
+import SalaryForm from '../pages/salary/SalaryForm';
+import SalaryDetailPage from '../pages/salary/SalaryDetailCard';
+import SalarySettingPage from '../pages/salary/SalarySettingPage';
 
 // 샘플 페이지
 import SamplePage from "../sample/SamplePage";
@@ -60,11 +58,11 @@ function AppRoutes() {
 
   function NotFound() {
     useEffect(() => {
-      sessionStorage.removeItem("storedCategory");
-      sessionStorage.setItem("storedCategory", JSON.stringify({ id: "home", no: 1 }));
+      //sessionStorage.removeItem("storedCategory");
+      //sessionStorage.setItem("storedCategory", JSON.stringify({ id: "home", no: 1 }));
       alert("존재하지 않는 페이지입니다. 홈으로 이동합니다.");
       navigate("/home", { replace: true });
-    }, [navigate]);
+    }, []);
 
     return null;
   }
@@ -91,12 +89,12 @@ function AppRoutes() {
         <Route path="/member/position" element={<PositionPage />} />
         <Route path="/member/position/list" element={<PositionListPage />} />
         <Route path="/member/position/:id" element={<PositionDetailPage />} />
-        <Route path="/member/position/history/page" element={<PositionHistoryPage />} />
+        {/* <Route path="/member/position/history/page" element={<PositionHistoryPage />} /> */}
         <Route path="/member/position/history/list" element={<PositionHistoryList />} />
         <Route path="/member/position/history/:id" element={<PositionHistoryForm />} />
         <Route path="/member/position/history/save" element={<PositionHistoryForm />} />
-        <Route path="/member/schedule" element={<SchedulePage />} />
-        <Route path="/member/category" element={<CategoryPage />} />
+        <Route path="/schedule/schedule" element={<SchedulePage />} />
+        <Route path="/schedule/category" element={<CategoryPage />} />
         <Route path="/member/update" element={<MemberEditPage />} />
 
         {/* 근태/휴가 */}
@@ -104,7 +102,7 @@ function AppRoutes() {
         <Route path="/attendance/leave" element={<LeaveStatus />} />
         <Route path="/vacation/list" element={<VacationPage />} />
         <Route path="/vacation/history" element={<VacationHistoryPage />} />
-            
+
         {/* 급여 관련 */}
         <Route path="/salary/salary" element={<Navigate to="/salary/my-salaries" />} />
         <Route path="/salary/my-salaries" element={<MySalaryHistory />} />

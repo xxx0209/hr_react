@@ -1,14 +1,14 @@
-import React, { useState, useCallback, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Card } from "react-bootstrap";
 import { AuthContext } from "../context/AuthContext";
-import { Box, List, ListItemButton, ListItemIcon, ListItemText, IconButton, Typography } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import { Box, List, ListItemButton, ListItemIcon, ListItemText, Typography } from "@mui/material";
 import CardCategory from "./CardCategory";
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 
 //메뉴 경로 불러오기
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { MemberMenu } from "../ui/MemberMenu";
 import { BoardMenu } from "../ui/BoardMenu";
 import { ApprovalMenu } from "../ui/ApprovalMenu";
@@ -34,12 +34,11 @@ export default function Contents({ children }) {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selected, setSelected] = useState(null);
     const [expandedAll, setExpandedAll] = useState(false);
-    const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+    // const [windowHeight, setWindowHeight] = useState(window.innerHeight);
 
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
-
-    const storedKey = "storedCategory";
+    const location = useLocation();
 
     const handleCategoryClick = (cat) => {
 
@@ -54,21 +53,8 @@ export default function Contents({ children }) {
 
             setSelected(findMenu);
             setSelectedCategory(cat);
-            updateSessionStorageItem(storedKey, { id: cat.id, no: cat.baseToNo });
         }
     };
-
-    const updateSessionStorageItem = (key, updates) => {
-        // 1️⃣ 기존 데이터 가져오기
-        const existing = sessionStorage.getItem(key);
-        const parsed = existing ? JSON.parse(existing) : {};
-
-        // 2️⃣ 기존 데이터에 새 값 덮어쓰기
-        const updated = { ...parsed, ...updates };
-
-        // 3️⃣ 다시 저장
-        sessionStorage.setItem(key, JSON.stringify(updated));
-    }
 
     const handleSelect = ((item) => {
         if (item?.no === selected?.no) {
@@ -80,7 +66,7 @@ export default function Contents({ children }) {
         }
         setSelected(item);
         navigate(item.to);
-        updateSessionStorageItem(storedKey, { no: item.no });
+
         // 스크롤 이동 기능 임시
         if (categories.id !== 'home') {
             // const el = document.getElementById("approval-page");
@@ -90,35 +76,25 @@ export default function Contents({ children }) {
 
     const handleToggleAll = () => setExpandedAll((prev) => !prev);
 
-    // 브라우저 창 크기 변경 시 높이 업데이트
     useEffect(() => {
-        const handleResize = () => setWindowHeight(window.innerHeight);
-        window.addEventListener("resize", handleResize);
 
-        if (selectedCategory === null && selected === null) {
-            // 현재 경로에 맞는 카테고리와 서브아이템 찾기
-            // 새로고침시 현재 경로에 맞는 카테고리와 서브아이템 설정
-            const storedCategory = sessionStorage.getItem(storedKey);
-            if (storedCategory) {
-                const { id, no } = JSON.parse(storedCategory);
-                const category = categories.find(cat => cat.id === id);
-                if (category) {
-                    setSelectedCategory(category);
-                    const findItem = category.subs.find(sub => sub.no === no);
-                    setSelected(findItem);
-                    handleSelect(findItem);
-                } else {
+        const targetTo = location.pathname;
 
-                }
-            }
+        // 1. categories 배열에서 subs.to와 일치하는 항목 찾기
+        const matchedCategory = categories.find(category =>
+            category.subs.some(sub => sub.to === targetTo)
+        );
+
+        if (matchedCategory) {
+            // 2. targetTo와 일치하는 subs 찾기
+            const foundSub = matchedCategory?.subs.find(sub => sub.to === targetTo);
+            setSelectedCategory(matchedCategory);
+            handleSelect(foundSub);
         }
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
-
-
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [location.pathname]);
 
     return (
-
         <Box
             sx={{
                 display: "flex",
@@ -178,13 +154,41 @@ export default function Contents({ children }) {
                 {(selectedCategory?.useSubs ?? false) && selectedCategory?.subs?.length > 0 && (
                     <>
                         <Box
-                            sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1, cursor: "pointer" }}
+                            sx={{
+                                display: 'flex',
+                                alignItems: 'center', // 전체 수직 중앙
+                                gap: 0.5,
+                                mb: 1,
+                                cursor: 'pointer',
+                            }}
                             onClick={handleToggleAll}
                         >
-                            <IconButton sx={{ width: 24, height: 24, p: 0 }}>
-                                {expandedAll ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
-                            </IconButton>
-                            <Typography variant="body2">{expandedAll ? "모두 닫기" : "모두 열기"}</Typography>
+                            <Box
+                                sx={{
+                                    width: 24,
+                                    height: 24,
+                                    borderRadius: '50%',
+                                    backgroundColor: '#f08f97ff',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'center',
+                                    '&:hover': {
+                                        backgroundColor: '#63b0e0',
+                                    },
+                                }}
+                            >
+                                {expandedAll ? <ExpandLessIcon sx={{ fontSize: 16, color: 'white' }} /> : <ExpandMoreIcon sx={{ fontSize: 16, color: 'white' }} />}
+                            </Box>
+
+                            <Typography
+                                sx={{
+                                    fontSize: 12,
+                                    fontWeight: 'bold',
+                                    lineHeight: '24px', // 버튼과 같은 높이로 맞춤
+                                }}
+                            >
+                                {expandedAll ? '모두 닫기' : '모두 열기 (열기를 클릭시 메뉴 상세 정보를 볼수 있습니다.)'}
+                            </Typography>
                         </Box>
 
                         <Box

@@ -11,6 +11,7 @@ import {
   Pagination,
 } from "react-bootstrap";
 import api from "../api/api";
+import { formatInTimeZone } from "date-fns-tz";
 import { textTemplates } from "../templates/textTemplates";
 
 export default function ApprovalRequestPage() {
@@ -216,11 +217,36 @@ export default function ApprovalRequestPage() {
   const handleSubmit = async (e, isTemp = false) => {
     e.preventDefault();
     try {
-      const submitData = {
-        ...form,
-        status: isTemp ? "임시저장" : "결재요청",
-        memberName: user?.name || form.memberName,
-      };
+    let adjustedStartDate = null;
+    let adjustedEndDate = null;
+
+    // 반차 유형에 따른 시간대 자동 지정
+    if (form.vacationType === "오전반차") {
+      // 오전반차: 09:00 ~ 13:00
+      adjustedStartDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 09:00:00");
+      adjustedEndDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 13:00:00");
+    } else if (form.vacationType === "오후반차") {
+      // 오후반차: 14:00 ~ 18:00
+      adjustedStartDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 14:00:00");
+      adjustedEndDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 18:00:00");
+    } else {
+      // 일반 휴가 (연차, 병가, 공가 등)
+      adjustedStartDate = form.startDate
+        ? formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 00:00:00")
+        : null;
+      adjustedEndDate = form.endDate
+        ? formatInTimeZone(form.endDate, "Asia/Seoul", "yyyy-MM-dd 23:59:59")
+        : null;
+    }
+
+    const submitData = {
+      ...form,
+      startDate: adjustedStartDate,
+      endDate: adjustedEndDate,
+      status: isTemp ? "임시저장" : "결재요청",
+      memberName: user?.name || form.memberName,
+    };
+
 
       if (!isTemp && !form.approverId) {
         alert("결재자를 선택하세요.");
@@ -312,26 +338,26 @@ const handleEdit = (r) => {
       <style>
         {`
           .compact-filter .form-label {
-            font-size: 0.85rem;
+            //font-size: 0.85rem;
             margin-bottom: 2px;
           }
           .compact-filter .form-control,
           .compact-filter .form-select {
             height: 32px;
-            font-size: 0.85rem;
+            //font-size: 0.85rem;
             padding: 4px 8px;
           }
           .compact-filter .btn {
-            font-size: 0.85rem;
+            // font-size: 0.85rem;
             padding: 4px 10px;
           }
           .date-filter input[type="date"] {
             width: 130px;
-            font-size: 0.85rem;
+            //font-size: 0.85rem;
           }
           .date-filter span {
             margin: 0 6px;
-            font-weight: bold;
+            //font-weight: bold;
           }
         `}
       </style>
@@ -367,7 +393,7 @@ const handleEdit = (r) => {
             </Form.Select>
           </Col>
           <Col md={3} className="text-end">
-            <div className="d-flex gap-1 justify-content-end">
+            <div className="d-flex gap-1 justify-content-end mt-4">
               <Button size="sm" variant="primary" onClick={handleSearch}>🔍 검색</Button>
               <Button size="sm" variant="secondary" onClick={handleReset}>↺ 초기화</Button>
             </div>
@@ -498,10 +524,10 @@ const handleEdit = (r) => {
                 <Form.Select name="vacationType" value={form.vacationType || ""} onChange={handleChange}>
                   <option value="">선택하세요</option>
                   <option value="연차">연차</option>
-                  <option value="반차">반차</option>
+                  <option value="오전반차">오전반차</option>
+                  <option value="오후반차">오후반차</option>
                   <option value="병가">병가</option>
                   <option value="공가">공가</option>
-                  <option value="기타">기타</option>
                 </Form.Select>
               </Form.Group>
             )}

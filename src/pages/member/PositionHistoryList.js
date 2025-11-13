@@ -50,11 +50,11 @@ export default function PositionHistoryPage() {
       {/* 헤더 영역 */}
       <Row className="align-items-center mb-3">
         <Col>
-          <h2>📜 직급 변경 이력</h2>
+          <h2>📜 진급내역 관리</h2>
         </Col>
         <Col className="text-end">
-          <Button variant="outline-secondary" onClick={() => navigate(-1)}>
-            ← 뒤로가기
+          <Button variant="outline-secondary" onClick={() => navigate("/member/position/history/save")}>
+            + 진급 변경
           </Button>
         </Col>
       </Row>
@@ -80,14 +80,12 @@ export default function PositionHistoryPage() {
               >
                 <thead className="table-light">
                   <tr>
-                    <th style={{ width: "140px" }}>변경일자</th>
-                    <th style={{ width: "120px" }}>회원아이디</th>
-                    <th style={{ width: "120px" }}>회원명</th>
-                    <th style={{ width: "100px" }}>이전직급ID</th>
-                    <th style={{ width: "140px" }}>이전직급명</th>
-                    <th style={{ width: "100px" }}>신규직급ID</th>
-                    <th style={{ width: "140px" }}>신규직급명</th>
-                    <th>변경사유</th>
+                    <th style={{ width: "140px", textAlign: "center" }}>변경일자</th>
+                    <th style={{ width: "120px", textAlign: "center" }}>회원아이디</th>
+                    <th style={{ width: "120px", textAlign: "center" }}>회원명</th>
+                    <th style={{ width: "140px", textAlign: "center" }}>이전직급명</th>
+                    <th style={{ width: "140px", textAlign: "center" }}>현재직급명</th>
+                    <th style={{ textAlign: "center" }}>변경사유</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -100,19 +98,17 @@ export default function PositionHistoryPage() {
                   ) : (
                     histories.map((h) => (
                       <tr key={h.id}>
-                        <td className="text-muted">
+                        <td className="text-center">
                           {new Date(h.changedAt)
                             .toLocaleDateString("ko-KR")
                             .replace(/\s/g, "")
                             .slice(0, -1)}
                         </td>
-                        <td>{h.memberId}</td>
-                        <td>{h.memberName}</td>
-                        <td>{h.oldPositionId || "-"}</td>
-                        <td>{h.oldPositionName || "-"}</td>
-                        <td>{h.newPositionId}</td>
-                        <td>{h.newPositionName}</td>
-                        <td className="text-muted">{h.changeReason}</td>
+                        <td className="text-center">{h.memberId}</td>
+                        <td className="text-center">{h.memberName}</td>
+                        <td className="text-center">{h.oldPositionName || "-"}</td>
+                        <td className="text-center">{h.newPositionName}</td>
+                        <td>{h.changeReason}</td>
                       </tr>
                     ))
                   )}

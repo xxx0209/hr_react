@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { logout } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import { Logout as LogoutIcon } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 
 function Header() {
 
@@ -14,7 +14,7 @@ function Header() {
 
     const handleLogout = async () => {
         await logout();
-        sessionStorage.clear();
+        //sessionStorage.clear();
         setUser(null);
         navigate("/login");
         return;
@@ -34,10 +34,9 @@ function Header() {
             <Navbar expand="lg" className="custom-navbar">
                 <Container>
                     <Navbar.Brand style={{ color: 'white', cursor: 'pointer' }} onClick={() => navigate('/home')}>HR Management</Navbar.Brand>
-                    <Nav className="ms-auto">
+                    <Nav className="ms-auto" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
                         {user ? (
-                            <div>
-                                <strong style={{ color: 'white' }}>{user.username} 님 반갑습니다.&nbsp;</strong>
+                            <>
                                 <Button
                                     variant="text" // 또는 "contained", "text"
                                     startIcon={<LogoutIcon />}
@@ -48,13 +47,17 @@ function Header() {
                                             color: '#e53935',              // 마우스 올렸을 때 글자색
                                             backgroundColor: 'rgba(229,57,53,0.1)', // 살짝 붉은 배경
                                         },
+
                                     }}
                                 >
                                     로그아웃
                                 </Button>
-                            </div>
+                                {/* 사용자 정보 텍스트 */}
+                                <Typography sx={{ color: 'white', fontSize: 12, mt: 0.5 }}>
+                                    <span style={{ fontWeight: 'bold', color: '#ffeb3b' }}>{user.username}</span>님 반갑습니다.
+                                </Typography>
+                            </>
                         ) : ("로그인 필요")}
-
                     </Nav>
                 </Container>
             </Navbar>
