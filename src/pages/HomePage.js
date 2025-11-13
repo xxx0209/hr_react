@@ -270,7 +270,11 @@ export default function Homepage() {
               바로가기
             </Button>
           </Card.Body>
-        </Card>
+        </Card> */}
+         <Card className="dashboard-card text-center">
+          <BoardDashBoardPage />
+        </Card> 
+         
 
         {/* 2행 3열: 휴가 관리 */}
         <Card className="dashboard-card text-center p-3">
