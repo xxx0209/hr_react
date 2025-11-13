@@ -106,7 +106,7 @@ export default function Contents({ children }) {
             setSelected(matchedSub);
             // navigate는 클릭 시에만 호출, useEffect에서는 상태만 맞춤
         }
-    }, [location.pathname, categories]);
+    }, []);
 
     // -----------------------------
     // 렌더
