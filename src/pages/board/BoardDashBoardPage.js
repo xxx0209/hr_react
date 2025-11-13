@@ -25,8 +25,8 @@ export default function BoardPage() {
   }, [selectedBoard]); // selectedBoard가 변경될 때마다 게시글 목록을 가져옵니다.
 
   // 게시글 클릭 시 해당 상세 페이지로 이동하는 함수
-  const handleSelectPost = (postId) => {
-    navigate(`/board/detail/${postId}`); // 클릭한 게시글의 상세 페이지로 이동
+  const handleSelectPost = (kind, postId) => {
+    navigate(`/board/${kind}/detail/${postId}`); // 클릭한 게시글의 상세 페이지로 이동
   };
 
   // 게시판 선택 함수
@@ -95,7 +95,7 @@ export default function BoardPage() {
         <ListGroup.Item
           className="text-start"
           action
-          onClick={() => handleSelectPost(posts[0]?.id)} // 첫 번째 게시글 클릭 시 상세 페이지로 이동
+          onClick={() => handleSelectPost('notice', posts[0]?.id)} // 첫 번째 게시글 클릭 시 상세 페이지로 이동
           style={{ cursor: "pointer" }}
         >
           <Row>
@@ -127,7 +127,7 @@ export default function BoardPage() {
         <ListGroup.Item
           className="text-start"
           action
-          onClick={() => handleSelectPost(posts[1]?.id)} // 두 번째 게시글 클릭 시 상세 페이지로 이동
+          onClick={() => handleSelectPost('free', posts[1]?.id)} // 두 번째 게시글 클릭 시 상세 페이지로 이동
           style={{ cursor: "pointer" }}
         >
           <Row>
