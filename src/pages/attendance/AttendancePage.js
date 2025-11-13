@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import ClockButtons from "../../components/ClockButtons";
 
 export default function AttendancePage() {
     const [checkInTime, setCheckInTime] = useState(null);
@@ -30,6 +31,7 @@ export default function AttendancePage() {
             <button onClick={handleCheckOut} style={{ marginLeft: "10px" }}>퇴근</button>
 
             <div style={{ marginTop: "20px" }}>
+                <ClockButtons />
                 <p>출근 시간: {checkInTime || "미기록"}</p>
                 <p>퇴근 시간: {checkOutTime || "미기록"}</p>
             </div>

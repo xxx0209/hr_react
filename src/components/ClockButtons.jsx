@@ -1,26 +1,42 @@
-import React, { useState } from 'react';
+import React from "react";
+import { checkIn, checkOut } from "../api/attendance";
 import './ClockButtons.css';
 
-const ClockButtons = ({ onRecord }) => {
-    const [clockInTime, setClockInTime] = useState(null);
-    const [clockOutTime, setClockOutTime] = useState(null);
-
-    const handleClockIn = () => {
-        const now = new Date().toLocaleTimeString();
-        setClockInTime(now);
-        onRecord({ type: 'clockIn', time: now });
+const ClockButtons = () => {
+    const handleCheckIn = async () => {
+        try {
+            await checkIn();
+            alert("출근 완료!");
+        } catch (err) {
+            console.error("출근 실패:", err);
+            alert("출근 실패 😢");
+        }
     };
 
-    const handleClockOut = () => {
-        const now = new Date().toLocaleTimeString();
-        setClockOutTime(now);
-        onRecord({ type: 'clockOut', time: now });
+    const handleCheckOut = async () => {
+        try {
+            await checkOut();
+            alert("퇴근 완료!");
+        } catch (err) {
+            console.error("퇴근 실패:", err);
+            alert("퇴근 실패 😢");
+        }
     };
 
     return (
-        <div>
-            <button onClick={handleClockIn}>출근</button>
-            <button onClick={handleClockOut}>퇴근</button>
+        <div className="flex gap-4 mt-4">
+            <button
+                onClick={handleCheckIn}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+                출근
+            </button>
+            <button
+                onClick={handleCheckOut}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            >
+                퇴근
+            </button>
         </div>
     );
 };

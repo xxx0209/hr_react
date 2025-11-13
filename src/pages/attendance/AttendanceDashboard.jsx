@@ -1,59 +1,45 @@
 import React from 'react';
-import AttendanceSubMenu from "../../ui/AttendanceSubMenu";
-import AttendanceBarChart from '../../components/AttendanceBarChart';
+import { Bar } from "react-chartjs-2";
+import { fetchAttendanceData } from "../../api/attendance";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+} from "chart.js";
 
-const dummyRecords = [
-    {
-        checkIn: "2023-09-01T08:00:00",
-        checkOut: "2023-09-01T17:00:00",
-    },
-    {
-        checkIn: "2023-09-02T09:00:00",
-        checkOut: "2023-09-02T18:00:00",
-    },
-    {
-        checkIn: "2023-09-03T08:30:00",
-        checkOut: "2023-09-03T17:30:00",
-    },
-];
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-function parseHour(time) {
-    return new Date(time).getHours();
-}
-
-function parseDate(time) {
-    const date = new Date(time);
-    return `${date.getMonth() + 1}/${date.getDate()}`; //MM/DD
-}
-
-function generateChartData(records) {
-    const labels = records.map((r) => parseDate(r.checkIn));
+const AttendanceDashboard = ({ chartData = [] }) => {
+    const labels = chartData.map((data) => data.date);
     const datasets = [
         {
-            label: "출근 시간",
-            data: records.map((r) => parseHour(r.checkIn)),
-            backgroundColor: "#A0D2E2",
+            label: "출근시간",
+            data: chartData.map((data) => data.clockIn),
+            backgroundColor: "#4CAF50",
         },
         {
-            label: "퇴근 시간",
-            data: records.map((r) => parseHour(r.checkOut)),
-            backgroundColor: "#F7A072",
+            label: "퇴근시간",
+            data: chartData.map((data) => data.clockOut),
+            backgroundColor: "#F44336",
         },
     ];
 
-    return { labels, datasets };
-}
-
-const AttendanceDashboard = () => {
-    const chartData = generateChartData(dummyRecords);
-
-    console.log("chartData", chartData);
-
     return (
-        <div style={{ padding: "2rem" }} >
-            <h2>출석 현황</h2>
-            <AttendanceSubMenu />
-            <AttendanceBarChart data={chartData} />
+        <div className="p-6">
+            <Bar
+                data={{ labels, datasets }}
+                options={{
+                    responsive: true,
+                    plugins: {
+                        legend: { position: "top" },
+                        title: { display: true, text: "출석 시간 비교" },
+                    },
+                }}
+            />
         </div >
     );
 };
