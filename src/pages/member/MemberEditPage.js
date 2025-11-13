@@ -28,7 +28,7 @@ export default function MemberEditPage() {
     const [preview, setPreview] = useState(null); // 선택한 파일 미리보기
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
-    const [error, setError] = useState("");
+
     const [success, setSuccess] = useState("");
 
     //폼 유효성 검사(Form Validation Check) 관련 state 정의 : 입력 양식에 문제 발생시 값을 저장할 곳
@@ -75,7 +75,7 @@ export default function MemberEditPage() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        setError("");
+
         setSuccess("");
         setSubmitting(true);
 
@@ -85,13 +85,16 @@ export default function MemberEditPage() {
                 if (value !== null && value !== "") formData.append(key, value);
             });
 
-            await axios.put("/member/update", formData, {
+            const response = await axios.put("/member/update", formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            setSuccess("✅ 회원 정보가 수정되었습니다!");
+            if (response.status === 200) {
+                setSuccess("✅ 회원 정보가 수정되었습니다!");
+            }
+
         } catch (err) {
-            if (err.response && err.response.data) {
+            if (err.response && err.response.data && err.status !== 500) {
                 // 서버에서 받은 오류 정보를 객체로 저장합니다.
                 setErrors(err.response.data);
             } else { // 입력 값 이외에 발생하는 다른 오류와 관련됨.
@@ -115,7 +118,7 @@ export default function MemberEditPage() {
 
             <Card>
                 <Card.Body>
-                    {error && <Alert variant="danger">{error}</Alert>}
+                    {errors.general && <Alert variant="danger">{errors.general}</Alert>}
                     {success && <Alert variant="success">{success}</Alert>}
 
                     <Form onSubmit={onSubmit}>
