@@ -120,10 +120,12 @@ function AppRoutes() {
         <Route path="/test-approval" element={<ApprovalDetail />} />
 
         {/* 게시판 */}
-        <Route path="/board/write" element={<BoardWrite />} />
+        <Route path="/board/notice/write" element={<BoardWrite />} />
+        <Route path="/board/free/write" element={<BoardWrite />} />
         <Route path="/board/notice" element={<BoardNoticePage />} />
         <Route path="/board/free" element={<BoardFreePage />} />
-        <Route path="/board/detail/:id" element={<BoardDetail />} />
+        <Route path="/board/notice/detail/:id" element={<BoardDetail />} />
+        <Route path="/board/free/detail/:id" element={<BoardDetail />} />
       </Route>
     </Routes>
   );
