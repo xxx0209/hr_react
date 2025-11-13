@@ -25,7 +25,7 @@ const board =
                 {
                     no: 2,
                     label: "공지사항",
-                    to: ["/board/notice", "/board/notice/write", "/board/notice/detail"],
+                    to: ["/board/notice", "/board/notice/write", "/board/notice/detail/:id"],
                     icon: <AccessAlarmIcon sx={{ color: '#ec9838ff' }} />,
                     isAdminMenu: false,
                     content: "회사의 공지사항을 관리합니다.\r\n관리자는 공지사항을 추가, 수정, 삭제할 수 있습니다."
@@ -33,7 +33,7 @@ const board =
                 {
                     no: 3,
                     label: "자유게시판",
-                    to: ["/board/free", "/board/free/write", "/board/notice/detail"],
+                    to: ["/board/free", "/board/free/write", "/board/free/detail/:id"],
                     icon: <EditNoteIcon sx={{ color: '#ec9838ff' }} />,
                     isAdminMenu: false,
                     content: "자유게시판에 글을 작성할 수 있는 메뉴입니다.\r\n"
