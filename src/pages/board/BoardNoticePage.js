@@ -125,7 +125,7 @@ export default function  NoticeBoard() {
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
   const goWrite = () => {
-    navigate("/board/write", { state: { category: "공지사항" } }); // 글쓰기 페이지로 카테고리 넘기기
+    navigate("/board/notice/write", { state: { category: "공지사항" } }); // 글쓰기 페이지로 카테고리 넘기기
   };
 
   async function handleLikesClick(postId) {
@@ -212,7 +212,7 @@ export default function  NoticeBoard() {
             data.map((p, idx) => (
               <tr                
                 key={p.id}
-                onClick={() => navigate(`/board/detail/${p.id}`)} // ✅ 행 전체 클릭 시 이동
+                onClick={() => navigate(`/board/notice/detail/${p.id}`)} // ✅ 행 전체 클릭 시 이동
               >
                 <td style={{ ...styles.td, ...styles.no }}>{total - (page - 1) * PER_PAGE - idx}</td>
                 <td style={{ ...styles.td, ...styles.titleCell}}>{p.title}</td>
