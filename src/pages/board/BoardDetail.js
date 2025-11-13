@@ -218,7 +218,7 @@ const handleCommentUpdate = async (commentId) => {
           <h3 className="mb-3">
             {post.title}
             {comments.length > 0 && (
-              <span style={{ fontSize: "1.5rem", color: "#777", marginLeft: "6px" }}>
+              <span style={{ fontSize: "1.3rem", color: "#777", marginLeft: "6px" }}>
                 [{comments.length}]
               </span>
             )}

@@ -108,8 +108,9 @@ export default function PostWrite() {
                 name="title"
                 value={form.title}
                 onChange={onChange}
-                placeholder="제목을 입력하세요"
-                maxLength={200}
+                placeholder="제목을 입력하세요 (최소 1자, 최대40자)"
+                maxLength={40}
+                minLength={1}
                 required
               />
             </Form.Group>
