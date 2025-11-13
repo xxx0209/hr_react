@@ -24,19 +24,18 @@ import BoardWrite from "../pages/board/BoardWrite";
 import BoardNoticePage from "../pages/board/BoardNoticePage";
 import BoardFreePage from "../pages/board/BoardFreePage";
 import BoardDetail from "../pages/board/BoardDetail";
-import BoardEdit from "../pages/board/BoardEdit";
 
 // 회원관리
-import SchedulePage from "../pages/member/SchedulePage";
+import SchedulePage from "../pages/schedule/SchedulePage";
+import CategoryPage from '../pages/schedule/CategoryPage';
 import SignupPage from "../pages/member/SignupPage";
+import MemberEditPage from '../pages/member/MemberEditPage';
 import PositionPage from "../pages/member/PositionPage";
 import PositionListPage from "../pages/member/PositionListPage";
 import PositionDetailPage from "../pages/member/PositionDetailPage";
 // import PositionHistoryPage from "../pages/member/PositionHistoryPage";
 import PositionHistoryList from "../pages/member/PositionHistoryList";
 import PositionHistoryForm from "../pages/member/PositionHistoryForm";
-import CategoryPage from '../pages/member/CategoryPage';
-import MemberEditPage from '../pages/member/MemberEditPage';
 
 import MySalaryHistory from '../pages/salary/MySalaryHistory';
 import CompletedSalaries from '../pages/salary/CompletedSalaries';
@@ -63,7 +62,7 @@ function AppRoutes() {
             //sessionStorage.setItem("storedCategory", JSON.stringify({ id: "home", no: 1 }));
             alert("존재하지 않는 페이지입니다. 홈으로 이동합니다.");
             navigate("/home", { replace: true });
-        }, [navigate]);
+        }, []);
 
         return null;
     }
@@ -94,8 +93,8 @@ function AppRoutes() {
                 <Route path="/member/position/history/list" element={<PositionHistoryList />} />
                 <Route path="/member/position/history/:id" element={<PositionHistoryForm />} />
                 <Route path="/member/position/history/save" element={<PositionHistoryForm />} />
-                <Route path="/member/schedule" element={<SchedulePage />} />
-                <Route path="/member/category" element={<CategoryPage />} />
+                <Route path="/schedule/schedule" element={<SchedulePage />} />
+                <Route path="/schedule/category" element={<CategoryPage />} />
                 <Route path="/member/update" element={<MemberEditPage />} />
 
                 {/* 급여 관련 */}
@@ -120,7 +119,7 @@ function AppRoutes() {
                 <Route path="/board/notice" element={<BoardNoticePage />} />
                 <Route path="/board/free" element={<BoardFreePage />} />
                 <Route path="/board/detail/:id" element={<BoardDetail />} />
-                <Route path="/board/edit/:id" element={<BoardEdit />} />
+                {/* <Route path="/board/edit/:id" element={<BoardEdit />} /> */}
 
                 {/* 근태 관련 */}
                 <Route path="/attendance/dashboard" element={<AttendanceDashboard />} />
@@ -138,7 +137,6 @@ function AppRoutes() {
             </Route>
         </Routes>
     );
-
 }
 
 export default AppRoutes;

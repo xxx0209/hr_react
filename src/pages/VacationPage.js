@@ -23,7 +23,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { ArrowUpRight } from "react-bootstrap-icons"; 
+import { ArrowUpRight } from "react-bootstrap-icons";
 import api from "../api/api";
 
 export default function VacationPage() {
@@ -138,8 +138,8 @@ export default function VacationPage() {
                 percentUsed >= 90
                   ? "danger"
                   : percentUsed >= 60
-                  ? "warning"
-                  : "success"
+                    ? "warning"
+                    : "success"
               }
               label={`${percentUsed}% 사용`}
               style={{ height: "18px", fontWeight: "600" }}
@@ -161,23 +161,23 @@ export default function VacationPage() {
             <div className="d-flex justify-content-between align-items-center">
               <h5 className="fw-semibold mb-0">📅 예정 휴가</h5>
               {upcoming.length > 3 && (
-                  <OverlayTrigger
-                    placement="top"
-                    overlay={<Tooltip>휴가 내역 보기</Tooltip>}
-                  >
+                <OverlayTrigger
+                  placement="top"
+                  overlay={<Tooltip>휴가 내역 보기</Tooltip>}
+                >
                   <Button
-                  variant="link"
-                  className="p-0 text-muted"
-                  onClick={() => {
-                  // ‘휴가내역’ 탭으로 이동 + 상태 전달
-                  navigate("/vacation/history", {
-                  state: { activeMenu: "vacation", activeSub: "휴가내역" },
-                });
-              }}
-               style={{ fontSize: "1.1rem" }}
-               >
-              <ArrowUpRight />
-             </Button>
+                    variant="link"
+                    className="p-0 text-muted"
+                    onClick={() => {
+                      // ‘휴가내역’ 탭으로 이동 + 상태 전달
+                      navigate("/vacation/history", {
+                        state: { activeMenu: "vacation", activeSub: "휴가내역" },
+                      });
+                    }}
+                    style={{ fontSize: "1.1rem" }}
+                  >
+                    <ArrowUpRight />
+                  </Button>
                 </OverlayTrigger>
               )}
             </div>
@@ -193,7 +193,7 @@ export default function VacationPage() {
               </thead>
               <tbody>
                 {limitedUpcoming.length === 0 ? (
-                  <tr>
+                  <tr key="empty">
                     <td colSpan={4} className="text-center text-muted">
                       예정된 휴가가 없습니다.
                     </td>
@@ -206,9 +206,9 @@ export default function VacationPage() {
                       v.vacationType === "반차"
                         ? "0.5일"
                         : `${Math.ceil(
-                            (new Date(v.endDate) - new Date(v.startDate)) /
-                              (1000 * 60 * 60 * 24)
-                          ) + 1}일`;
+                          (new Date(v.endDate) - new Date(v.startDate)) /
+                          (1000 * 60 * 60 * 24)
+                        ) + 1}일`;
                     return (
                       <tr key={v.requestId}>
                         <td>{v.vacationType}</td>
@@ -259,24 +259,24 @@ export default function VacationPage() {
               </thead>
               <tbody>
                 {limitedPast.length === 0 ? (
-                  <tr>
+                  <tr key="empty">
                     <td colSpan={4} className="text-center text-muted">
                       지난 휴가가 없습니다.
                     </td>
                   </tr>
                 ) : (
-                  limitedPast.map((v) => {
+                  limitedPast.map((v, index) => {
                     const start = new Date(v.startDate).toLocaleDateString();
                     const end = new Date(v.endDate).toLocaleDateString();
                     const days =
                       v.vacationType === "반차"
                         ? "0.5일"
                         : `${Math.ceil(
-                            (new Date(v.endDate) - new Date(v.startDate)) /
-                              (1000 * 60 * 60 * 24)
-                          ) + 1}일`;
+                          (new Date(v.endDate) - new Date(v.startDate)) /
+                          (1000 * 60 * 60 * 24)
+                        ) + 1}일`;
                     return (
-                      <tr key={v.requestId}>
+                      <tr key={index}>
                         <td>{v.vacationType}</td>
                         <td>{`${start} ~ ${end}`}</td>
                         <td>{days}</td>
@@ -294,81 +294,81 @@ export default function VacationPage() {
       </Row>
 
       {/* 그래프 영역 */}
-<Card className="shadow-sm border-0 rounded-4 p-3 mt-1">
-  <Row className="align-items-end mb-2">
-    <Col md={2}>
-      <Form.Label className="fw-semibold small">조회 연도</Form.Label>
-      <Form.Control
-        size="sm"
-        type="number"
-        value={selectedYear}
-        onChange={(e) => setSelectedYear(e.target.value)}
-      />
-    </Col>
-    <Col md={3}>
-      <Button
-        size="sm"
-        variant="primary"
-        className="me-2"
-        onClick={handleFilter}
-      >
-        적용
-      </Button>
-      <Button size="sm" variant="outline-secondary" onClick={resetFilter}>
-        초기화
-      </Button>
-    </Col>
-  </Row>
+      <Card className="shadow-sm border-0 rounded-4 p-3 mt-1">
+        <Row className="align-items-end mb-2">
+          <Col md={2}>
+            <Form.Label className="fw-semibold small">조회 연도</Form.Label>
+            <Form.Control
+              size="sm"
+              type="number"
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+            />
+          </Col>
+          <Col md={3}>
+            <Button
+              size="sm"
+              variant="primary"
+              className="me-2"
+              onClick={handleFilter}
+            >
+              적용
+            </Button>
+            <Button size="sm" variant="outline-secondary" onClick={resetFilter}>
+              초기화
+            </Button>
+          </Col>
+        </Row>
 
-  <h6 className="fw-semibold mb-2">📊 월별 휴가 통계</h6>
-  <ResponsiveContainer width="100%" height={240}>
-    <LineChart
-      data={chartData}
-      margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
-    >
-      <defs>
-        <linearGradient id="colorDays" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="5%" stopColor="#007bff" stopOpacity={0.8} />
-          <stop offset="95%" stopColor="#007bff" stopOpacity={0.1} />
-        </linearGradient>
-        <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="5%" stopColor="#00c9a7" stopOpacity={0.8} />
-          <stop offset="95%" stopColor="#00c9a7" stopOpacity={0.1} />
-        </linearGradient>
-      </defs>
-      <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
-      <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-      <YAxis tick={{ fontSize: 11 }} />
-      <ReTooltip
-        contentStyle={{
-          backgroundColor: "rgba(255,255,255,0.95)",
-          borderRadius: "10px",
-          border: "1px solid #ddd",
-          fontSize: "0.8rem",
-        }}
-      />
-      <Legend wrapperStyle={{ fontSize: "0.8rem" }} />
-      <Line
-        type="monotone"
-        dataKey="days"
-        name="사용 일수"
-        stroke="url(#colorDays)"
-        strokeWidth={2.5}
-        dot={{ r: 3 }}
-        activeDot={{ r: 6 }}
-      />
-      <Line
-        type="monotone"
-        dataKey="count"
-        name="휴가 건수"
-        stroke="url(#colorCount)"
-        strokeWidth={2.5}
-        dot={{ r: 3 }}
-        activeDot={{ r: 6 }}
-      />
-    </LineChart>
-    </ResponsiveContainer>
-    </Card>
+        <h6 className="fw-semibold mb-2">📊 월별 휴가 통계</h6>
+        <ResponsiveContainer width="100%" height={240}>
+          <LineChart
+            data={chartData}
+            margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
+          >
+            <defs>
+              <linearGradient id="colorDays" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#007bff" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#007bff" stopOpacity={0.1} />
+              </linearGradient>
+              <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#00c9a7" stopOpacity={0.8} />
+                <stop offset="95%" stopColor="#00c9a7" stopOpacity={0.1} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#ddd" />
+            <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+            <YAxis tick={{ fontSize: 11 }} />
+            <ReTooltip
+              contentStyle={{
+                backgroundColor: "rgba(255,255,255,0.95)",
+                borderRadius: "10px",
+                border: "1px solid #ddd",
+                fontSize: "0.8rem",
+              }}
+            />
+            <Legend wrapperStyle={{ fontSize: "0.8rem" }} />
+            <Line
+              type="monotone"
+              dataKey="days"
+              name="사용 일수"
+              stroke="url(#colorDays)"
+              strokeWidth={2.5}
+              dot={{ r: 3 }}
+              activeDot={{ r: 6 }}
+            />
+            <Line
+              type="monotone"
+              dataKey="count"
+              name="휴가 건수"
+              stroke="url(#colorCount)"
+              strokeWidth={2.5}
+              dot={{ r: 3 }}
+              activeDot={{ r: 6 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </Card>
     </Container>
   );
 }

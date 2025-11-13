@@ -45,7 +45,7 @@ export default function PositionListPage() {
             {/* 헤더 영역 */}
             <Row className="align-items-center mb-3">
                 <Col>
-                    <h2>💼 직급관리 목록</h2>
+                    <h2>💼 직급체계 현황</h2>
                 </Col>
                 <Col className="text-end">
                     <Button

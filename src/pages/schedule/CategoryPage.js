@@ -198,12 +198,12 @@ export default function CategoryPage() {
                                     type="color"
                                     value={current.color}
                                     onChange={e => setCurrent({ ...current, color: e.target.value })}
-                                    style={{ height: "38px", padding: 0 }} // 높이 맞춤
+                                     // 높이 맞춤
                                 />
                             </Col>
                             <Col xs={10}>
-                                <Form.Label className="d-block mb-1">활성</Form.Label>
-                                <div className="d-flex align-items-center" style={{ height: "38px" }}>
+                                <Form.Label className="">활성</Form.Label>
+                                <div className="d-flex align-items-center">
                                     <RadioGroup
                                         label=""
                                         options={[

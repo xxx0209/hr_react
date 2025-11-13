@@ -1,9 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useContext } from "react";
 import { Container, Row, Col, Table, Button, Form, InputGroup, Pagination, Modal } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import axios from "../../api/api";
+import { AuthContext } from "../../context/AuthContext";
 
-const PER_PAGE = 10;
+import {
+    Diversity3 as Diversity3Icon,
+} from "@mui/icons-material";
+
+
+const PER_PAGE = 5;
 
 const styles = {
   wrap: { paddingTop: 12, paddingBottom: 12 },
@@ -76,24 +82,23 @@ export default function  NoticeBoard() {
 
   const [showLikesModal, setShowLikesModal] = useState(false);
   const [likedUsers, setLikedUsers] = useState([]);
-  
+
+  const { user, setUser } = useContext(AuthContext);
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page]);
+        }, [page]);
 
   async function load() {
     try {
       const params = {
         page: page - 1,
         size: PER_PAGE,
-        sort: "createDate,desc",
+        sort:"createDate,desc",
         category: "공지사항",
       };
       if (q.trim()) params.q = q.trim();
       const res = await axios.get(`/api/posts`, { params });
-      console.log(res?.data);
       const list = res?.data?.content || [];
       setRows(list);
       setTotal(res?.data?.totalElements ?? list.length);
@@ -109,10 +114,10 @@ export default function  NoticeBoard() {
     return rows.filter((p) => {
       const title = (p.title || "").toLowerCase();
       const content = (p.content || "").toLowerCase();
-      const author = (p.createId || "").toLowerCase();
+      const author = (p.memberName || "").toLowerCase();
       if (field === "title") return title.includes(needle);
       if (field === "content") return content.includes(needle);
-      if (field === "createId") return author.includes(needle);
+      if (field === "memberName") return author.includes(needle);
       return title.includes(needle) || content.includes(needle);
     });
   }, [rows, q, field]);
@@ -134,15 +139,18 @@ export default function  NoticeBoard() {
         }
   }
   
+    
   return (
     <Container style={styles.wrap}>
       {/* 상단 */}
-      <h2 className="m-0 mb-4">📢 공지사항</h2>
-      <Row className="align-items-center" style={styles.topBar}>
-        <Col>
-          <button style={styles.writeLink} onClick={goWrite}>
-            <span className="me-1">✏️</span> 글쓰기
-          </button>
+      <Row className="align-items-center" >
+      <Col><h2 className="m-0 mb-4"><Diversity3Icon/> 공지사항</h2></Col>
+        <Col className="text-end">
+          {user?.role === "ROLE_ADMIN" ? (
+                <button className="btn btn-outline-secondary" onClick={goWrite}>
+                   <span className="me-1">✏️</span> 글쓰기
+                </button>
+              ) : null}
         </Col>
       </Row>
       <Row className="align-items-center" style={styles.topBar}>
@@ -159,7 +167,7 @@ export default function  NoticeBoard() {
             <option value="title+content">제목+내용</option>
             <option value="title">제목</option>
             <option value="content">내용</option>
-            <option value="createId">작성자</option>
+            <option value="memberName">작성자</option>
           </Form.Select>
         </Col>
 
@@ -205,18 +213,17 @@ export default function  NoticeBoard() {
               <tr
                 key={p.id}
                 onClick={() => navigate(`/board/detail/${p.id}`)} // ✅ 행 전체 클릭 시 이동
-                style={{ cursor: "pointer" }} // ✅ 마우스 포인터 표시
               >
                 <td style={{ ...styles.td, ...styles.no }}>
                   {total - (page - 1) * PER_PAGE - idx}
                 </td>
                 <td style={{ ...styles.td, ...styles.titleCell }}>
                   <span style={styles.titleText}>
-                    {p.title}
+                     {p.title.length > 42 ? `${p.title.substring(0, 42)} ...` : p.title}
                     {p.commentCount > 0 && (
                       <span style={{ color: "#111", fontSize: "14px" }}>
                         {" "}
-                        ({p.commentCount})
+                        [{p.commentCount}]
                       </span>
                     )}
                   </span>
@@ -253,7 +260,16 @@ export default function  NoticeBoard() {
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
             />
-            <Pagination.Item active>{page}</Pagination.Item>
+            {/* 페이지 숫자 버튼을 동적으로 생성 */}
+            {[...Array(totalPages)].map((_, index) => (
+              <Pagination.Item
+                key={index}
+                active={index + 1 === page}
+                onClick={() => setPage(index + 1)}
+              >
+                {index + 1}
+              </Pagination.Item>
+            ))}
             <Pagination.Next
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}

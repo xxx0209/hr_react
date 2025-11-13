@@ -125,12 +125,12 @@ export default function ApprovalPage() {
       const matchWriter = appliedFilters.writer && r.memberName?.includes(appliedFilters.writer);
       const matchApprover = appliedFilters.approver && r.approverName?.includes(appliedFilters.approver);
       const matchType =
-      appliedFilters.type &&
-      (
-       (appliedFilters.type === "휴가" &&
-       ["연차", "반차", "병가", "공가", "기타"].includes(r.requestType))
-       || r.requestType === appliedFilters.type
-      );
+        appliedFilters.type &&
+        (
+          (appliedFilters.type === "휴가" &&
+            ["연차", "반차", "병가", "공가", "기타"].includes(r.requestType))
+          || r.requestType === appliedFilters.type
+        );
 
 
       const matchStart =
@@ -182,129 +182,129 @@ export default function ApprovalPage() {
     );
   };
 
-// 작성일자 하단 배치
-const renderFilterBar = () => (
-  <>
-    <style>
-      {`
+  // 작성일자 하단 배치
+  const renderFilterBar = () => (
+    <>
+      <style>
+        {`
         .compact-filter .form-label {
-          font-size: 0.85rem;
+          //font-size: 0.85rem;
           margin-bottom: 2px;
         }
         .compact-filter .form-control,
         .compact-filter .form-select {
           height: 32px;
-          font-size: 0.85rem;
+          //font-size: 0.85rem;
           padding: 4px 8px;
         }
         .compact-filter .btn {
-          font-size: 0.85rem;
+          //font-size: 0.85rem;
           padding: 4px 10px;
         }
         .date-filter input[type="date"] {
           width: 130px;
-          font-size: 0.85rem;
+          //font-size: 0.85rem;
         }
         .date-filter span {
           margin: 0 6px;
-          font-weight: bold;
+          //font-weight: bold;
         }
       `}
-    </style>
+      </style>
 
-    <Form className="p-2 bg-light rounded mb-3 shadow-sm compact-filter">
-      {/* 첫 번째 줄: 작성자 / 결재자 / 문서 종류 / 버튼 */}
-      <Row className="g-2 align-items-center mb-1">
-        <Col md={3}>
-          <Form.Label>작성자</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="작성자 이름"
-            value={filters.writer}
-            onChange={(e) => setFilters({ ...filters, writer: e.target.value })}
-          />
-        </Col>
-
-        <Col md={3}>
-          <Form.Label>결재자</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="결재자 이름"
-            value={filters.approver}
-            onChange={(e) => setFilters({ ...filters, approver: e.target.value })}
-          />
-        </Col>
-
-        <Col md={3}>
-          <Form.Label>문서 종류</Form.Label>
-          <Form.Select
-            value={filters.type}
-            onChange={(e) => setFilters({ ...filters, type: e.target.value })}
-          >
-            <option value="">전체</option>
-            <option value="휴가">휴가</option>  
-            <option value="출장">출장</option>
-            <option value="지출품의서">지출품의서</option>
-          </Form.Select>
-        </Col>
-
-        <Col md={3} className="text-end">
-          <div className="d-flex gap-1 justify-content-end mt-3">
-            <Button variant="primary" onClick={handleSearch}>
-              🔍 검색
-            </Button>
-            <Button variant="secondary" onClick={handleReset}>
-              ↺ 초기화
-            </Button>
-          </div>
-        </Col>
-      </Row>
-
-      {/* 두 번째 줄: 작성일자 + 검색 모드 */}
-      <Row className="g-2 align-items-center mt-1">
-        <Col md={6}>
-          <Form.Label>작성일자</Form.Label>
-          <div className="d-flex align-items-center date-filter">
+      <Form className="p-2 bg-light rounded mb-3 shadow-sm compact-filter">
+        {/* 첫 번째 줄: 작성자 / 결재자 / 문서 종류 / 버튼 */}
+        <Row className="g-2 align-items-center mb-1">
+          <Col md={3}>
+            <Form.Label>작성자</Form.Label>
             <Form.Control
-              type="date"
-              value={filters.startDate}
-              onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
+              type="text"
+              placeholder="작성자 이름"
+              value={filters.writer}
+              onChange={(e) => setFilters({ ...filters, writer: e.target.value })}
             />
-            <span>~</span>
-            <Form.Control
-              type="date"
-              value={filters.endDate}
-              onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-            />
-          </div>
-        </Col>
+          </Col>
 
-        <Col md={6} className="text-end">
-          <div>
-            <Form.Check
-              inline
-              label="통합검색"
-              type="radio"
-              name="searchMode"
-              id="mode-and"
-              checked={searchMode === "and"}
-              onChange={() => setSearchMode("and")}
+          <Col md={3}>
+            <Form.Label>결재자</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="결재자 이름"
+              value={filters.approver}
+              onChange={(e) => setFilters({ ...filters, approver: e.target.value })}
             />
-            <Form.Check
-              inline
-              label="카테고리검색"
-              type="radio"
-              name="searchMode"
-              id="mode-or"
-              checked={searchMode === "or"}
-              onChange={() => setSearchMode("or")}
-            />
-          </div>
-        </Col>
-      </Row>
-    </Form>
-  </>
-);
+          </Col>
+
+          <Col md={3}>
+            <Form.Label>문서 종류</Form.Label>
+            <Form.Select
+              value={filters.type}
+              onChange={(e) => setFilters({ ...filters, type: e.target.value })}
+            >
+              <option value="">전체</option>
+              <option value="휴가">휴가</option>
+              <option value="출장">출장</option>
+              <option value="지출품의서">지출품의서</option>
+            </Form.Select>
+          </Col>
+
+          <Col md={3} className="text-end">
+            <div className="d-flex gap-1 justify-content-end mt-4">
+              <Button variant="primary" onClick={handleSearch}>
+                🔍 검색
+              </Button>
+              <Button variant="secondary" onClick={handleReset}>
+                ↺ 초기화
+              </Button>
+            </div>
+          </Col>
+        </Row>
+
+        {/* 두 번째 줄: 작성일자 + 검색 모드 */}
+        <Row className="g-2 align-items-center mt-1">
+          <Col md={6}>
+            <Form.Label>작성일자</Form.Label>
+            <div className="d-flex align-items-center date-filter">
+              <Form.Control
+                type="date"
+                value={filters.startDate}
+                onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
+              />
+              <span>~</span>
+              <Form.Control
+                type="date"
+                value={filters.endDate}
+                onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
+              />
+            </div>
+          </Col>
+
+          <Col md={6} className="text-end">
+            <div>
+              <Form.Check
+                inline
+                label="통합검색"
+                type="radio"
+                name="searchMode"
+                id="mode-and"
+                checked={searchMode === "and"}
+                onChange={() => setSearchMode("and")}
+              />
+              <Form.Check
+                inline
+                label="카테고리검색"
+                type="radio"
+                name="searchMode"
+                id="mode-or"
+                checked={searchMode === "or"}
+                onChange={() => setSearchMode("or")}
+              />
+            </div>
+          </Col>
+        </Row>
+      </Form>
+    </>
+  );
 
   const renderTable = (data, type) => {
     const filtered = applyFilters(data);
@@ -347,10 +347,10 @@ const renderFilterBar = () => (
                         r.status === "승인"
                           ? "success"
                           : r.status === "반려"
-                          ? "danger"
-                          : r.status === "결재요청"
-                          ? "warning"
-                          : "secondary"
+                            ? "danger"
+                            : r.status === "결재요청"
+                              ? "warning"
+                              : "secondary"
                       }
                     >
                       {r.status}
@@ -408,86 +408,86 @@ const renderFilterBar = () => (
       </Tabs>
 
       {/* 상세보기 모달 */}
-<Modal show={showDetail} onHide={() => setShowDetail(false)} centered size="lg">
-  <Modal.Header closeButton>
-    <Modal.Title>문서 상세보기</Modal.Title>
-  </Modal.Header>
-  <Modal.Body style={{ maxHeight: "75vh", overflowY: "auto" }}>
-    {selectedDoc ? (
-      <>
-        <p><strong>작성자:</strong> {selectedDoc.memberName}</p>
-        <p><strong>결재자:</strong> {selectedDoc.approverName || "-"}</p>
-        <p><strong>종류:</strong> {selectedDoc.requestType}</p>
+      <Modal show={showDetail} onHide={() => setShowDetail(false)} centered size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>문서 상세보기</Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{ maxHeight: "75vh", overflowY: "auto" }}>
+          {selectedDoc ? (
+            <>
+              <p><strong>작성자:</strong> {selectedDoc.memberName}</p>
+              <p><strong>결재자:</strong> {selectedDoc.approverName || "-"}</p>
+              <p><strong>종류:</strong> {selectedDoc.requestType}</p>
 
-        <p><strong>내용:</strong></p>
-        <div
-          className="border rounded p-3 bg-light mb-3"
-          style={{
-            whiteSpace: "pre-wrap",
-            lineHeight: "1.6",
-            fontSize: "0.95rem",
-            maxHeight: "60vh",
-            overflowY: "auto",
-          }}
-        >
-          {selectedDoc.content || "내용 없음"}
-        </div>
+              <p><strong>내용:</strong></p>
+              <div
+                className="border rounded p-3 bg-light mb-3"
+                style={{
+                  whiteSpace: "pre-wrap",
+                  lineHeight: "1.6",
+                  fontSize: "0.95rem",
+                  maxHeight: "60vh",
+                  overflowY: "auto",
+                }}
+              >
+                {selectedDoc.content || "내용 없음"}
+              </div>
 
-        <p><strong>작성일자:</strong> {new Date(selectedDoc.dateTime).toLocaleDateString()}</p>
-        <p>
-          <strong>상태:</strong>{" "}
-          <Badge
-            bg={
-              selectedDoc.status === "승인"
-                ? "success"
-                : selectedDoc.status === "반려"
-                ? "danger"
-                : selectedDoc.status === "결재요청"
-                ? "warning"
-                : "secondary"
-            }
+              <p><strong>작성일자:</strong> {new Date(selectedDoc.dateTime).toLocaleDateString()}</p>
+              <p>
+                <strong>상태:</strong>{" "}
+                <Badge
+                  bg={
+                    selectedDoc.status === "승인"
+                      ? "success"
+                      : selectedDoc.status === "반려"
+                        ? "danger"
+                        : selectedDoc.status === "결재요청"
+                          ? "warning"
+                          : "secondary"
+                  }
+                >
+                  {selectedDoc.status}
+                </Badge>
+              </p>
+            </>
+          ) : (
+            <p>선택된 문서가 없습니다.</p>
+          )}
+        </Modal.Body>
+      </Modal>
+
+      {/* 승인/반려 모달 */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered size="md">
+        <Modal.Header closeButton>
+          <Modal.Title>{approvalType} 사유 입력</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group>
+              <Form.Label>{approvalType} 사유</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={5} // 🔹 더 넉넉하게
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder={`${approvalType} 사유를 입력하세요`}
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            취소
+          </Button>
+          <Button
+            variant={approvalType === "승인" ? "success" : "danger"}
+            onClick={handleApproval}
           >
-            {selectedDoc.status}
-          </Badge>
-        </p>
-      </>
-    ) : (
-      <p>선택된 문서가 없습니다.</p>
-    )}
-  </Modal.Body>
-</Modal>
-
-{/* 승인/반려 모달 */}
-<Modal show={showModal} onHide={() => setShowModal(false)} centered size="md">
-  <Modal.Header closeButton>
-    <Modal.Title>{approvalType} 사유 입력</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form>
-      <Form.Group>
-        <Form.Label>{approvalType} 사유</Form.Label>
-        <Form.Control
-          as="textarea"
-          rows={5} // 🔹 더 넉넉하게
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder={`${approvalType} 사유를 입력하세요`}
-        />
-      </Form.Group>
-    </Form>
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={() => setShowModal(false)}>
-      취소
-    </Button>
-    <Button
-      variant={approvalType === "승인" ? "success" : "danger"}
-      onClick={handleApproval}
-    >
-      {approvalType} 완료
-    </Button>
-  </Modal.Footer>
-</Modal>
+            {approvalType} 완료
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
     </Container>
   );

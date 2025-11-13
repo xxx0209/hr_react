@@ -1,102 +1,87 @@
-import * as React from "react";
+import React from "react";
 import {
   Card,
-  CardHeader,
-  CardContent,
   Typography,
-  Skeleton,
   Avatar,
-  Badge,
   Collapse,
+  Box,
 } from "@mui/material";
 
 export default function CardCa({ loading = false, data, selected, onSelect, expanded }) {
-  const Icon = data?.icon;
 
   const handleClick = () => {
     onSelect?.(data);
   };
 
-  return (    
+  return (
     <Card
       onClick={handleClick}
       sx={{
         cursor: "pointer",
-        backgroundColor: "white",
-        border: selected ? "1px solid #b9b8b8ff" : "1px solid #ddd",
-        color: selected ? "#000" : "inherit",
-        transition: "all 0.2s ease",
-        "&:hover": { boxShadow: 0 },
+        backgroundColor: "#f0f2f3",
         width: "100%",
         display: "flex",
         flexDirection: "column",
-        boxShadow: "none", // 기본 그림자 제거
-
+        boxShadow: "none",
+        borderRadius: 2,
+        overflow: "hidden", // border-radius가 안쪽 박스에도 적용
       }}
     >
-      <CardHeader
+      {/* 🔹 바깥쪽 헤더 박스 */}
+      <Box
         sx={{
-          backgroundColor: selected ? "#cecfd1ff" : "white",
-          "& .MuiCardHeader-title": { fontWeight: "bold" },
-          borderBottom: "1px solid #fab2b2ff", // ← 여기서 border 지정
-          py: 1,
+          backgroundColor: selected ? "#cecfd1" : "#d9d9d9", // 헤더 전체 배경
           px: 2,
-          minHeight: 48,
+          py: 1,
           display: "flex",
-          alignItems: "center", // CardHeader 전체 세로 중앙
-          userSelect: "none", // 텍스트 선택 방지
+          alignItems: "center",
+          p: 0.7,
         }}
-        avatar={
-          loading ? (
-            <Skeleton animation="wave" variant="circular" width={45} height={45} />
-          ) : (
-            // <Badge
-            //   overlap="circular"
-            //   badgeContent={4}
-            //   color="error"
-            //   sx={{
-            //     display: "flex",        // Badge 자체를 flex로
-            //     alignItems: "center",   // 세로 중앙
-            //     justifyContent: "center",
-            //   }}
-            // >
-            <Avatar alt="icon" sx={{ width: 40, height: 40 }}>
-              {Icon && <Icon sx={{ fontSize: 30 }} />}
-            </Avatar>
-            // </Badge>
-          )
-        }
-        title={
-          loading ? (
-            <Skeleton animation="wave" height={10} width="80%" sx={{ mb: 1 }} />
-          ) : (
-            data.label
-          )
-        }
-      />
+      >
+        <Avatar sx={{ width: 40, height: 40, mr: 1, background: 'white' }}>
+          {/* {Icon && <Icon sx={{ fontSize: 30 }} />} */}
+          {React.cloneElement(data.icon)}
+        </Avatar>
+        <Typography sx={{ fontWeight: "bold", fontSize: 13, color: selected ? "#fcfcfcff" : "#5e5d5dff" }}>
+          {data.label}
+        </Typography>
+      </Box>
 
-
-      {/* ✅ Collapse로 열림/닫힘 제어*/}
+      {/* 🔹 Collapse + Content */}
       <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent sx={{ flexGrow: 1 }}>
-          {loading ? (
-            <>
-              <Skeleton animation="wave" height={10} sx={{ mb: 1 }} />
-              <Skeleton animation="wave" height={10} width="80%" />
-            </>
-          ) : (
-            <Typography
-              variant="body2"
-              sx={{
-                color: selected ? "#000" : "inherit",
-                whiteSpace: "pre-line",
-                userSelect: "none", // 텍스트 선택 방지
-              }}
-            >
-              {data.content}
-            </Typography>
-          )}
-        </CardContent>
+
+        <Box sx={{ flexGrow: 1, pt: 0.5, px: 0.5, pb: 0.5 }}>
+          {/* 🔹 Collapse + Content */}
+          <Box
+            sx={{
+              p: 0.5,
+              backgroundColor: "#ffffff",
+              borderRadius: 1.5,
+              display: "flex",
+              flexDirection: "column",
+              //gap: 0.5,              
+              fontSize: 12,
+              color: "#333",
+            }}
+          >
+            {data.content.split("\n").map((line, idx) => (
+              <Box
+                key={idx}
+                sx={{
+                  fontWeight: idx === 0 ? "bold" : "normal",
+                  lineHeight: 1.4,
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                  fontSize: 12,
+                  gap: 0.5,
+                  //mt: 0.5
+                }}
+              >
+                {line}&nbsp;
+              </Box>
+            ))}
+          </Box>
+        </Box>
       </Collapse>
     </Card>
   );

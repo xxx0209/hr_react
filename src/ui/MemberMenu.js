@@ -10,33 +10,33 @@ const member =
         {
             id: 'member',
             icon: <PeopleIcon sx={{ color: '#8b8c8dff' }} />,
-            label: "회원관리",
+            label: "직원관리",
             baseToNo: 1,
             useSubs: true,
             subs: [
                 {
                     no: 1,
-                    label: "회원정보 수정",
+                    label: "직원정보 수정",
                     to: "/member/update",
-                    icon: ManageAccountsIcon,
+                    icon: <ManageAccountsIcon sx={{ color: '#6e3170ff' }} />,
                     isAdminMenu: false,
                     content: "회원의 기본 정보를 수정할수 있는 메뉴 입니다.\r\n이름, 비밀번호, 이메일, 프로필 사진 등을 변경할 수 있습니다."
                 },
                 {
                     no: 2,
-                    label: "직급등록 관리",
+                    label: "직급체계 관리",
                     to: "/member/position/list",
-                    icon: Diversity3Icon,
+                    icon: <Diversity3Icon sx={{ color: '#6e3170ff' }} />,
                     isAdminMenu: true,
-                    content: "회사의 직급체계를 관리합니다.\r\n직급을 추가, 수정, 삭제할 수 있습니다."
+                    content: "회사의 직급체계를 관리합니다.\r\n직급을 추가, 수정, 삭제할 수 있습니다.\r\n"
                 },
                 {
                     no: 3,
-                    label: "직급 진급관리",
+                    label: "진급 관리",
                     to: "/member/position/history/list",
-                    icon: EditDocumentIcon,
+                    icon: <EditDocumentIcon sx={{ color: '#6e3170ff' }} />,
                     isAdminMenu: true,
-                    content: "직급의 진급 내역을 확인합니다.\r\n 직원의 직급을 변경할 수 있습니다."
+                    content: "직원의 진급 내역을 확인합니다.\r\n직원의 직급을 변경할 수 있습니다.\r\n"
                 },
             ]
         }

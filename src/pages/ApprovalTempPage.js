@@ -125,67 +125,79 @@ export default function ApprovalTempPage() {
     }));
   };
 
-  const handleEdit = (item) => {
-    const rt =
-      item.requestType === "휴가"
-        ? `휴가-${item.vacationType || "연차"}`
-        : item.requestType;
+   const normalizeRequestType = (item) => {
+    const rt = (item.requestType || "").trim();
+    const vt = (item.vacationType || "").trim();
 
-    setForm({
-      ...item,
-      requestType: rt,
-      startDate: formatDate(item.startDate),
-      endDate: formatDate(item.endDate),
-    });
-    setShowModal(true);
+    if (rt.startsWith("휴가-")) return rt; // 이미 조합된 경우
+    const VAC_MAP = new Set(["연차", "오전반차", "오후반차", "병가", "공가"]);
+
+    if (rt === "휴가") return vt ? `휴가-${vt}` : "휴가-연차";
+    if (VAC_MAP.has(rt)) return `휴가-${rt}`;
+    return rt; // 출장, 지출품의서 등
   };
+
+const handleEdit = (item) => {
+  let fullType = item.requestType || "";
+
+  // 휴가인 경우 content나 requestType에서 연차, 반차, 병가 등 텍스트 추출
+  if (item.requestType === "휴가" && item.content) {
+    const match = item.content.match(/연차|오전반차|오후반차|병가|공가/);
+    if (match) fullType = `휴가-${match[0]}`;
+  }
+
+  setForm({
+    ...item,
+    requestType: fullType,
+    startDate: formatDate(item.startDate),
+    endDate: formatDate(item.endDate),
+  });
+
+  setShowModal(true);
+};
+
 
 const handleSave = async () => {
   try {
-    // 문서/휴가 타입 분리
     const [mainType, subType] = (form.requestType || "").split("-");
 
-    // 반차/일반 날짜 보정
     let adjustedStartDate = null;
     let adjustedEndDate = null;
 
-    if (mainType === "휴가" && subType === "오전반차") {
-      adjustedStartDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 09:00:00");
-      adjustedEndDate   = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 13:00:00");
-    } else if (mainType === "휴가" && subType === "오후반차") {
-      adjustedStartDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 14:00:00");
-      adjustedEndDate   = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 18:00:00");
-    } else {
-      adjustedStartDate = form.startDate
-        ? formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 00:00:00")
-        : null;
-      adjustedEndDate = form.endDate
-        ? formatInTimeZone(form.endDate, "Asia/Seoul", "yyyy-MM-dd 23:59:59")
-        : null;
-    }
+      if (mainType === "휴가" && subType === "오전반차") {
+        adjustedStartDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 09:00:00");
+        adjustedEndDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 13:00:00");
+      } else if (mainType === "휴가" && subType === "오후반차") {
+        adjustedStartDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 14:00:00");
+        adjustedEndDate = formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 18:00:00");
+      } else {
+        adjustedStartDate = form.startDate
+          ? formatInTimeZone(form.startDate, "Asia/Seoul", "yyyy-MM-dd 00:00:00")
+          : null;
+        adjustedEndDate = form.endDate
+          ? formatInTimeZone(form.endDate, "Asia/Seoul", "yyyy-MM-dd 23:59:59")
+          : null;
+      }
 
-    // "yyyy-MM-dd HH:mm:ss" 로 고정 (T 제거)
     const fmt = (s) => (s ? s.slice(0, 19).replace("T", " ") : null);
     const clean = (v) => (v === "" || v === undefined ? null : v);
 
-    // 서버 관리 필드 제거용 헬퍼
     const stripServerFields = ({
       createDate, updateDate, createId, updateId,
       dateTime, approvalDate, /* comment 는 필요시만 보냄 */
       ...rest
     }) => rest;
 
-    // 폼에서 서버필드 제거
     const base = stripServerFields(form);
 
-    // 최종 페이로드(필요한 필드만)
+    // 최종 페이로드
     const payload = {
       id: base.id,
       memberId: base.memberId,          // 서버가 로그인 정보로 덮어써도 무방
       memberName: base.memberName,
       requestType: mainType || "",
       vacationType: mainType === "휴가" ? (subType || "") : "",
-      content: base.content || "",
+      content: form.content || "",
       approverId: base.approverId || "",
       approverName: base.approverName || "",
       price: clean(base.price) !== null ? Number(base.price) : null,
@@ -205,6 +217,25 @@ const handleSave = async () => {
     }
   };
 
+   const handleSubmit = async (id) => {
+    const target = temps.find((t) => t.id === id);
+
+    if (!form.approverId && !target?.approverId) {
+      alert("결재자를 지정하세요!");
+      return;
+    }
+
+    try {
+      await axios.patch(`${API_BASE_URL}/api/requests/${id}/status`, {
+        status: "결재요청",
+      });
+      alert("결재 요청이 완료되었습니다");
+      fetchTemps();
+    } catch (err) {
+      console.error("결재 요청 실패:", err);
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!window.confirm("정말 삭제하시겠습니까?")) return;
     try {
@@ -214,22 +245,6 @@ const handleSave = async () => {
     } catch (err) {
       console.error("삭제 실패:", err);
       alert("삭제 중 오류가 발생했습니다");
-    }
-  };
-
-  const handleSubmit = async (id) => {
-    if (!form.approverId) {
-      alert("결재자를 지정하세요!");
-      return;
-    }
-    try {
-      await axios.patch(`${API_BASE_URL}/api/requests/${id}/status`, {
-        status: "결재요청",
-      });
-      alert("결재 요청이 완료되었습니다");
-      fetchTemps();
-    } catch (err) {
-      console.error("결재 요청 실패:", err);
     }
   };
 
@@ -314,8 +329,8 @@ const handleSave = async () => {
 
       {renderPagination()}
 
-      {/* 🟡 변경됨: 문서 종류 단일 Select UI */}
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
+      {/* 문서 종류 표시 UI */}
+        <Modal show={showModal} onHide={() => setShowModal(false)} centered size="lg">
         <Modal.Header closeButton>
           <Modal.Title>임시문서 수정</Modal.Title>
         </Modal.Header>
@@ -326,7 +341,7 @@ const handleSave = async () => {
               <Form.Select
                 name="requestType"
                 value={form.requestType || ""}
-                onChange={handleChange}
+                disabled
               >
                 <option value="">문서 종류 선택</option>
                 <option value="출장">출장</option>
