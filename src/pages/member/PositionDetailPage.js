@@ -59,9 +59,10 @@ export default function PositionDetailPage() {
                     {/* <Form.Check type="checkbox" label="활성 여부" name="active" checked={form.active} onChange={e => setForm({ ...form, active: e.target.checked })} /> */}
                 </Form.Group>
 
-
-                <Button type="submit">수정</Button>
-                <Button variant="secondary" onClick={() => navigate("/member/position/list")} className="ms-2">목록</Button>
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                    <Button type="submit">수정</Button>
+                    <Button variant="secondary" onClick={() => navigate("/member/position/list")} className="ms-2">목록</Button>
+                </div>
             </Form>
         </Container>
     );

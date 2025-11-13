@@ -47,13 +47,19 @@ export default function Contents({ children }) {
         if (findMenu == null) {
             alert("해당 카테고리의 기본 경로가 설정되어 있지 않습니다.");
             return;
-        } else {
-            // 기본 경로로 이동
-            navigate(findMenu.to);
-
-            setSelected(findMenu);
-            setSelectedCategory(cat);
         }
+        // navigate 할 경로 결정
+        let targetPath;
+        if (Array.isArray(findMenu.to)) {
+            // 배열이면 첫 번째 경로 선택 (원하는 로직으로 바꿀 수 있음)
+            targetPath = findMenu.to[0];
+        } else {
+            targetPath = findMenu.to;
+        }
+
+        navigate(targetPath);
+        setSelected(findMenu);
+        setSelectedCategory(cat);
     };
 
     const handleSelect = ((item) => {
@@ -65,8 +71,16 @@ export default function Contents({ children }) {
             return;
         }
         setSelected(item);
-        navigate(item.to);
 
+        let targetPath;
+        if (Array.isArray(item.to)) {
+            // 현재 경로와 매칭되는 경로가 있으면 선택, 없으면 첫 번째
+            targetPath = item.to.find(path => path === location.pathname) || item.to[0];
+        } else {
+            targetPath = item.to;
+        }
+
+        navigate(targetPath);
         // 스크롤 이동 기능 임시
         if (categories.id !== 'home') {
             // const el = document.getElementById("approval-page");
@@ -80,14 +94,25 @@ export default function Contents({ children }) {
 
         const targetTo = location.pathname;
 
-        // 1. categories 배열에서 subs.to와 일치하는 항목 찾기
+        // categories 배열에서 subs.to와 일치하는 항목 찾기
         const matchedCategory = categories.find(category =>
-            category.subs.some(sub => sub.to === targetTo)
+            category.subs.some(sub => {
+                if (Array.isArray(sub.to)) {
+                    return sub.to.includes(targetTo); // 배열이면 포함 여부 체크
+                }
+                return sub.to === targetTo; // 문자열이면 그대로 비교
+            })
         );
 
         if (matchedCategory) {
-            // 2. targetTo와 일치하는 subs 찾기
-            const foundSub = matchedCategory?.subs.find(sub => sub.to === targetTo);
+            // targetTo와 일치하는 subs 찾기
+            const foundSub = matchedCategory.subs.find(sub => {
+                if (Array.isArray(sub.to)) {
+                    return sub.to.includes(targetTo);
+                }
+                return sub.to === targetTo;
+            });
+
             setSelectedCategory(matchedCategory);
             handleSelect(foundSub);
         }

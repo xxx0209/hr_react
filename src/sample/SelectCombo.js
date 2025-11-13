@@ -34,6 +34,8 @@ export default function SelectCombo({
   valueKey = "value",
   labelKey = "label",
   colorKey = "color", // 🎨 추가
+  isInvalid = false,  // ✅ 추가
+  invalidMessage = "", //추가
 }) {
   const normOptions = useMemo(() => {
     return options.map((o) => {
@@ -197,7 +199,7 @@ export default function SelectCombo({
                       : ""
                   }
                   required
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
               )}
             </div>
@@ -209,6 +211,7 @@ export default function SelectCombo({
                 value={displayLabel() || ""}
                 placeholder={placeholder}
                 disabled={disabled}
+                isInvalid={isInvalid}   // ✅ 추가 (부모에서 내려받음)
                 style={{
                   cursor: disabled ? "not-allowed" : "pointer",
                   background: disabled ? "#e9ecef" : "white",
@@ -226,7 +229,7 @@ export default function SelectCombo({
                   }}
                   value={selected || ""}
                   required
-                  onChange={() => {}}
+                  onChange={() => { }}
                 />
               )}
             </>
@@ -251,12 +254,17 @@ export default function SelectCombo({
             disabled={disabled}
           >
             {selected &&
-            (multiple
-              ? Array.isArray(selected) && selected.length > 0
-              : selected !== "")
+              (multiple
+                ? Array.isArray(selected) && selected.length > 0
+                : selected !== "")
               ? "×"
               : "▾"}
           </Button>
+          {isInvalid && invalidMessage && (
+            <Form.Control.Feedback type="invalid" style={{ display: "block" }}>
+              {invalidMessage}
+            </Form.Control.Feedback>
+          )}
         </InputGroup>
 
         {open && (
