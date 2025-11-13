@@ -14,6 +14,7 @@ import {
 import api from "../api/api";
 import MemberDashBoardPage from "./member/MemberDashBoardPage";
 import ScheduleDashBoardPage from "./member/ScheduleDashBoardPage";
+import BoardDashBoardPage from "./board/BoardDashBoardPage";
 
 export default function Homepage() {
   const navigate = useNavigate();
@@ -154,10 +155,10 @@ export default function Homepage() {
 
       <div className="dashboard-grid mt-4">
         {/* 2행 1열: 공지사항 */}
-        <Card className="dashboard-card text-center">
+        {/* <Card className="dashboard-card text-center">
           <Card.Body className="d-flex flex-column align-items-center justify-content-center">
             <FaClipboardList size={50} className="text-warning mb-3" />
-            <h5>공지사항</h5>
+            <h5>게시판</h5>
             <p className="text-muted small mb-2">공지사항 / 자유게시판 확인</p>
             <Button
               variant="outline-warning"
@@ -167,8 +168,10 @@ export default function Homepage() {
               바로가기
             </Button>
           </Card.Body>
-        </Card>
-
+        </Card> */}
+         <Card className="dashboard-card text-center">
+          <BoardDashBoardPage />
+        </Card> 
          {/* 2행 3열: 휴가 관리 */}
         <Card className="dashboard-card text-center">
           <Card.Body className="d-flex flex-column align-items-center justify-content-center">

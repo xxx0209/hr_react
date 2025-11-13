@@ -11,17 +11,17 @@ const board =
             id: 'board',
             icon: <ForumIcon sx={{ color: '#8b8c8dff' }} />,
             label: "게시판",
-            baseToNo: 1,
+            baseToNo: 2,
             useSubs: true,
             subs: [
-                {
-                    no: 1,
-                    label: "글쓰기",
-                    to: "/board/write",
-                    icon: ManageAccountsIcon,
-                    isAdminMenu: false,
-                    content: "글을 작성할 수 있는 메뉴입니다."
-                },
+                // {
+                //     no: 1,
+                //     label: "글쓰기",
+                //     to: "/board/write",
+                //     icon: ManageAccountsIcon,
+                //     isAdminMenu: false,
+                //     content: "글을 작성할 수 있는 메뉴입니다."
+                // },
                 {
                     no: 2,
                     label: "공지사항",

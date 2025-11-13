@@ -3,6 +3,10 @@ import { Container, Row, Col, Table, Button, Form, InputGroup, Pagination, Modal
 import { useNavigate } from "react-router-dom";
 import axios from "../../api/api";
 
+import {
+    EditDocument as EditDocumentIcon,
+} from "@mui/icons-material";
+
 const PER_PAGE = 10;
 
 const styles = {
@@ -134,10 +138,10 @@ export default function  NoticeBoard() {
   return (
     <Container style={styles.wrap}>
       {/* 상단 */}
-      <h2 className="m-0 mb-4">💬 자유게시판</h2>
-      <Row className="align-items-center" style={styles.topBar}>
-        <Col>
-          <button style={styles.writeLink} onClick={goWrite}>
+      <Row className="align-items-center" >
+      <Col><h2 className="m-0 mb-4"><EditDocumentIcon/> 자유게시판</h2></Col>
+        <Col className="text-end">
+          <button className="btn btn-outline-secondary" onClick={goWrite}>
             <span className="me-1">✏️</span> 글쓰기
           </button>
         </Col>
@@ -202,7 +206,6 @@ export default function  NoticeBoard() {
               <tr
                 key={p.id}
                 onClick={() => navigate(`/board/detail/${p.id}`)} // ✅ 행 전체 클릭 시 이동
-                style={{ cursor: "pointer" }} // ✅ 마우스 포인터 표시
               >
                 <td style={{ ...styles.td, ...styles.no }}>
                   {total - (page - 1) * PER_PAGE - idx}
@@ -213,7 +216,7 @@ export default function  NoticeBoard() {
                     {p.commentCount > 0 && (
                       <span style={{ color: "#111", fontSize: "14px" }}>
                         {" "}
-                        ({p.commentCount})
+                        [{p.commentCount}]
                       </span>
                     )}
                   </span>
@@ -252,7 +255,16 @@ export default function  NoticeBoard() {
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
             />
-            <Pagination.Item active>{page}</Pagination.Item>
+            {/* 페이지 숫자 버튼을 동적으로 생성 */}
+            {[...Array(totalPages)].map((_, index) => (
+              <Pagination.Item
+                key={index}
+                active={index + 1 === page}
+                onClick={() => setPage(index + 1)}
+              >
+                {index + 1}
+              </Pagination.Item>
+            ))}
             <Pagination.Next
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}

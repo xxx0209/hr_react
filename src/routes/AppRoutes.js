@@ -23,7 +23,6 @@ import BoardWrite from "../pages/board/BoardWrite";
 import BoardNoticePage from "../pages/board/BoardNoticePage";
 import BoardFreePage from "../pages/board/BoardFreePage";
 import BoardDetail from "../pages/board/BoardDetail";
-import BoardEdit from "../pages/board/BoardEdit";
 
 // 회원관리
 import SchedulePage from "../pages/member/SchedulePage";
@@ -127,7 +126,6 @@ function AppRoutes() {
         <Route path="/board/notice" element={<BoardNoticePage />} />
         <Route path="/board/free" element={<BoardFreePage />} />
         <Route path="/board/detail/:id" element={<BoardDetail />} />
-        <Route path="/board/edit/:id" element={<BoardEdit />} />
       </Route>
     </Routes>
   );

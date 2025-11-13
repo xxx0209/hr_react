@@ -1,7 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Container, Row, Col, Card, Form, Button, Alert, Spinner } from "react-bootstrap";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import axios from "../../api/api";
+import { AuthContext } from "../../context/AuthContext";
+
+import {
+    Diversity3 as Diversity3Icon,
+    EditDocument as EditDocumentIcon,
+} from "@mui/icons-material";
 
 export default function PostWrite() {
   const navigate = useNavigate();
@@ -18,6 +24,8 @@ export default function PostWrite() {
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+
+  const { user, setUser } = useContext(AuthContext);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -89,7 +97,7 @@ export default function PostWrite() {
             <Form.Group className="mb-3">
               <Form.Label>게시판 종류</Form.Label>
               <Form.Select name="category" value={form.category} onChange={onChange}>
-                <option value="공지사항">📢 공지사항</option>
+                {user.role === "ROLE_ADMIN" && (<option value="공지사항">📢 공지사항</option>)}
                 <option value="자유게시판">💬 자유게시판</option>
               </Form.Select>
             </Form.Group>
