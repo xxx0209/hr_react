@@ -50,11 +50,10 @@ export default function BoardPage() {
           <Col xs={5} className="d-flex justify-content-center">
             <Button
               variant="link"
-              className={`d-flex align-items-center w-100 ${selectedBoard === "공지사항" ? "text-dark" : "text-muted"}`}
+              className={`d-flex align-items-center ${selectedBoard === "공지사항" ? "text-dark" : "text-muted"}`}
               style={{ 
                 justifyContent: "center",
                 textDecoration: selectedBoard === "공지사항" ? "underline" : "none", // 선택된 버튼에만 밑줄 추가
-                padding: "10px 20px",
                 fontWeight: selectedBoard === "공지사항" ? "bold" : "normal",
                 transition: "all 0.3s ease",
               }}
@@ -71,11 +70,10 @@ export default function BoardPage() {
           <Col xs={5} className="d-flex justify-content-center">
             <Button
               variant="link"
-              className={`d-flex align-items-center w-100 ${selectedBoard === "자유게시판" ? "text-dark" : "text-muted"}`}
+              className={`d-flex align-items-center ${selectedBoard === "자유게시판" ? "text-dark" : "text-muted"}`}
               style={{
                 justifyContent: "center",
                 textDecoration: selectedBoard === "자유게시판" ? "underline" : "none", // 선택된 버튼에만 밑줄 추가
-                padding: "10px 20px",
                 fontWeight: selectedBoard === "자유게시판" ? "bold" : "normal",
                 transition: "all 0.3s ease",
               }}
