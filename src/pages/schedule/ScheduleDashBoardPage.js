@@ -114,7 +114,7 @@ export default function SchedulePage() {
                         <h2>📆 스케줄 일정</h2>
                     </Col>
                     <Col className="d-flex justify-content-end px-0">
-                        <BasicButton variant="outline-danger" size="sm" onClick={() => navigate("/member/schedule")}>
+                        <BasicButton variant="outline-danger" size="sm" onClick={() => navigate("/schedule/schedule")}>
                             바로가기
                         </BasicButton>
                     </Col>
