@@ -21,10 +21,10 @@ import ScheduleDashBoardPage from "./schedule/ScheduleDashBoardPage";
 
 export default function Homepage() {
   const navigate = useNavigate();
-  const [approvalSummary, setApprovalSummary] = useState({ 
+  const [approvalSummary, setApprovalSummary] = useState({
     waiting: 0,
     recent: [],
-    });
+  });
   const [vacationInfo, setVacationInfo] = useState({
     used: 0,
     total: 15,
@@ -54,7 +54,7 @@ export default function Homepage() {
     fetchApprovals();
   }, []);
 
-   // 휴가 데이터
+  // 휴가 데이터
   useEffect(() => {
     const fetchVacations = async () => {
       try {
@@ -87,9 +87,9 @@ export default function Homepage() {
             v.vacationType === "반차"
               ? "0.5일"
               : `${Math.ceil(
-                  (new Date(v.endDate) - new Date(v.startDate)) /
-                    (1000 * 60 * 60 * 24)
-                ) + 1}일`,
+                (new Date(v.endDate) - new Date(v.startDate)) /
+                (1000 * 60 * 60 * 24)
+              ) + 1}일`,
         }));
 
         setVacationInfo({
@@ -193,7 +193,7 @@ export default function Homepage() {
 
         /* 캘린더 카드 폭 조정 */
         .dashboard-grid:nth-of-type(3) .dashboard-card-wrapper {
-        max-width: 900px;     /* 원하는 폭으로 줄이기 */
+        //max-width: 900px;     /* 원하는 폭으로 줄이기 */
         flex: 1 1 900px;       /* 강제로 이 폭으로 맞추기 */
        }
 
@@ -267,7 +267,7 @@ export default function Homepage() {
                 size="sm"
                 onClick={() => navigate("/approval/status")}
               >
-               바로가기
+                바로가기
               </Button>
             </Card.Body>
           </Card>
@@ -317,8 +317,8 @@ export default function Homepage() {
                     vacationInfo.percent >= 90
                       ? "danger"
                       : vacationInfo.percent >= 60
-                      ? "warning"
-                      : "success"
+                        ? "warning"
+                        : "success"
                   }
                   label={`${vacationInfo.percent}%`}
                   style={{ height: "14px" }}
