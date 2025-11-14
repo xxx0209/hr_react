@@ -30,6 +30,7 @@ export default function Contents({ children }) {
 
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selected, setSelected] = useState(null);
+    const [movePath, setMovePath] = useState(null);
     const [expandedAll, setExpandedAll] = useState(false);
 
     const { user } = useContext(AuthContext);
@@ -45,38 +46,24 @@ export default function Contents({ children }) {
             alert("해당 카테고리의 기본 경로가 설정되어 있지 않습니다.");
             return;
         }
-
-        // navigate 할 경로
-        const targetPath = Array.isArray(defaultSub.to) ? defaultSub.to[0] : defaultSub.to;
-
-        navigate(targetPath);
-        setSelected(defaultSub);
-        setSelectedCategory(cat);
+        setSelectedCategory(cat); //대분류
+        handleSelect(defaultSub);
     };
 
     // -----------------------------
     // 중분류 선택 처리
     // -----------------------------
     const handleSelect = (item) => {
-        if (!item || item.no === selected?.no) return;
+        //if (!item || item.no === selected?.no) return;
 
         if (item.isAdminMenu && user?.role !== 'ROLE_ADMIN') {
             alert("관리자만 접근할 수 있는 메뉴입니다.");
             return;
         }
 
+        const targetPath = Array.isArray(item.to) ? item.to[0] : item.to;
         setSelected(item);
-
-        let targetPath;
-        if (Array.isArray(item.to)) {
-            // 매칭되는 경로가 있으면 location.pathname 사용, 없으면 첫 번째 경로
-            const match = item.to.find(path => matchPath({ path, end: true }, location.pathname));
-            targetPath = match ? location.pathname : item.to[0];
-        } else {
-            targetPath = item.to;
-        }
-
-        navigate(targetPath);
+        setMovePath(targetPath); // 이동할 경로       
     };
 
     const handleToggleAll = () => setExpandedAll(prev => !prev);
@@ -85,28 +72,46 @@ export default function Contents({ children }) {
     // URL 변경 시 상태 동기화
     // -----------------------------
     useEffect(() => {
+        if (selected) {
+            if (movePath) {
+                navigate(movePath);
+            }
+        }
+
+    }, [selected]);
+
+    // 새로고침이나 바로가기로 접근시
+    useEffect(() => {
         const targetPath = location.pathname;
+        console.log("url 변경 : " + targetPath);
+        console.log("movePath : " + movePath);
 
-        const matchedCategory = categories.find(category =>
-            category.subs.some(sub =>
-                Array.isArray(sub.to)
-                    ? sub.to.some(path => matchPath({ path, end: true }, targetPath))
-                    : matchPath({ path: sub.to, end: true }, targetPath)
-            )
-        );
-
-        if (matchedCategory) {
-            const matchedSub = matchedCategory.subs.find(sub =>
-                Array.isArray(sub.to)
-                    ? sub.to.some(path => matchPath({ path, end: true }, targetPath))
-                    : matchPath({ path: sub.to, end: true }, targetPath)
+        if (targetPath != movePath) {
+            // 해당 경로에 일치하는 카테고리가 있는지 조회
+            const matchedCategory = categories.find(category =>
+                category.subs.some(sub =>
+                    Array.isArray(sub.to)
+                        ? sub.to.some(path => matchPath({ path, end: true }, targetPath))
+                        : matchPath({ path: sub.to, end: true }, targetPath)
+                )
             );
 
-            setSelectedCategory(matchedCategory);
-            setSelected(matchedSub);
-            // navigate는 클릭 시에만 호출, useEffect에서는 상태만 맞춤
+            console.log(matchedCategory);
+
+            setSelectedCategory(matchedCategory); //대분류
+
+            if (matchedCategory) {
+                const matchedSub = matchedCategory.subs.find(sub =>
+                    Array.isArray(sub.to)
+                        ? sub.to.some(path => matchPath({ path, end: true }, targetPath))
+                        : matchPath({ path: sub.to, end: true }, targetPath)
+                );
+                setSelected(matchedSub);
+                setMovePath(targetPath);
+            }
         }
-    }, []);
+
+    }, [location.pathname]);
 
     // -----------------------------
     // 렌더
