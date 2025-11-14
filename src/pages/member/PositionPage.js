@@ -54,6 +54,7 @@ export default function PositionRegisterPage() {
 
         setSubmitting(true);
         try {
+            if (!window.confirm("등록 하시겠습니까?")) return;
             await axios.post("/position/save", form, {
                 headers: { "Content-Type": "application/json" },
                 withCredentials: true,

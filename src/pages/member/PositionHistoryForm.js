@@ -60,6 +60,7 @@ export default function ChangePositionPage() {
 
         setSubmitting(true);
         try {
+            if (!window.confirm("변경 하시겠습니까?")) return;
             await axios.post("/position/history/change", form);
             setSuccess("✅ 직급 변경이 완료되었습니다!");
             setForm({ memberId: "", newPositionId: "", changeReason: "" });
@@ -115,7 +116,7 @@ export default function ChangePositionPage() {
                                     value={form.memberId}
                                     onChange={(v) => {
                                         handleChange(v, "memberId");
-                                        setErrors(prevErrors => ({ ...prevErrors, name: "" }));  // 오류 초기화
+                                        setErrors(prevErrors => ({ ...prevErrors, memberId: "" }));  // 오류 초기화
                                     }}
                                     searchable
                                     isInvalid={!!errors.memberId}

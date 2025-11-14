@@ -75,6 +75,7 @@ export default function MemberEditPage() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        if (!window.confirm("수정 하시겠습니까?")) return;
 
         setSuccess("");
         setSubmitting(true);

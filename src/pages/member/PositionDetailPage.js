@@ -60,6 +60,7 @@ export default function PositionDetailPage() {
         setMessage("");
 
         try {
+            if (!window.confirm("수정 하시겠습니까?")) return;
             await axios.put(`/position/${id}`, form);
             setMessage({ type: "success", text: "✅ 수정이 완료되었습니다!" });
         } catch (err) {
@@ -180,13 +181,6 @@ export default function PositionDetailPage() {
                                 ) : (
                                     "수정"
                                 )}
-                            </Button>
-
-                            <Button
-                                variant="secondary"
-                                onClick={() => navigate("/member/position/list")}
-                            >
-                                목록
                             </Button>
                         </div>
 
