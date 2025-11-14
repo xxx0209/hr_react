@@ -41,8 +41,8 @@ function PositionSalaryPage() {
               searchActive === ""
                 ? undefined
                 : searchActive === "true"
-                ? true
-                : false,
+                  ? true
+                  : false,
           },
         }),
       ]);
@@ -126,7 +126,7 @@ function PositionSalaryPage() {
       <h3>직위별 급여 관리</h3>
 
       {/* 검색 필터 */}
-      <div className="d-flex mb-3">
+      <div className="d-flex mb-3 " style={{ gap: "10px" }}>
         <SelectCombo
           options={[
             { label: "전체 직급", value: "" },
@@ -217,7 +217,7 @@ function PositionSalaryPage() {
       </Table>
 
       {/* 페이징 */}
-     <div className="d-flex justify-content-center mt-3">
+      <div className="d-flex justify-content-center mt-3">
         <Pagination>
           <Pagination.First onClick={() => setPage(0)} disabled={page === 0} />
           <Pagination.Prev onClick={() => setPage((prev) => Math.max(prev - 1, 0))} disabled={page === 0} />

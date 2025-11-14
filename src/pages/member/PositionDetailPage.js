@@ -1,69 +1,198 @@
 import { useState, useEffect } from "react";
-import { Form, Button, Container, Alert } from "react-bootstrap";
-import axios from "../../api/api";
+import {
+    Container,
+    Row,
+    Col,
+    Card,
+    Form,
+    Button,
+    Alert,
+    Spinner,
+    InputGroup
+} from "react-bootstrap";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "../../api/api";
 import RadioGroup from "../../sample/RadioGroup";
 
 export default function PositionDetailPage() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [form, setForm] = useState({});
-    const [message, setMessage] = useState(null);
+
+    const [form, setForm] = useState({
+        positionCode: "",
+        positionName: "",
+        description: "",
+        active: true
+    });
+
+    const [loading, setLoading] = useState(true);
+    const [submitting, setSubmitting] = useState(false);
+
+    const [message, setMessage] = useState("");
+    const [errors, setErrors] = useState({
+        positionName: "",
+        description: ""
+    });
 
     useEffect(() => {
-        axios.get(`/position/${id}`).then(res => setForm(res.data));
+        axios
+            .get(`/position/${id}`)
+            .then((res) => {
+                setForm(res.data);
+            })
+            .catch(() => {
+                alert("데이터를 불러오는 중 오류가 발생했습니다.");
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     }, [id]);
 
-    const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: "" }));
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSubmitting(true);
+        setMessage("");
+
         try {
             await axios.put(`/position/${id}`, form);
-            setMessage({ type: "success", text: "수정 성공!" });
+            setMessage({ type: "success", text: "✅ 수정이 완료되었습니다!" });
         } catch (err) {
-            setMessage({ type: "danger", text: "수정 실패" });
+            if (err.response?.data) {
+                setErrors(err.response.data);
+            } else {
+                setMessage({ type: "danger", text: "❌ 수정 중 오류가 발생했습니다." });
+            }
+        } finally {
+            setSubmitting(false);
         }
     };
 
-    if (!form.positionId) return <div>로딩중...</div>;
+    if (loading) return <div className="p-4">로딩중...</div>;
 
     return (
-        <Container style={{ maxWidth: "600px", marginTop: "30px" }}>
-            <h2>직급 상세/수정</h2>
-            {message && <Alert variant={message.type}>{message.text}</Alert>}
+        <Container className="py-4">
 
-            <Form onSubmit={handleSubmit}>
-                <Form.Group className="mb-3">
-                    <Form.Label>직급 코드</Form.Label>
-                    <Form.Control type="text" value={form.positionCode} disabled />
-                </Form.Group>
+            {/* 헤더 */}
+            <Row className="mb-3">
+                <Col>
+                    <h2>💼 직급관리 상세 / 수정</h2>
+                </Col>
+                <Col className="text-end">
+                    <Button
+                        variant="outline-secondary"
+                        onClick={() => navigate("/member/position/list")}
+                    >
+                        목록으로
+                    </Button>
+                </Col>
+            </Row>
 
-                <Form.Group className="mb-3">
-                    <Form.Label>직급 이름</Form.Label>
-                    <Form.Control type="text" name="positionName" value={form.positionName} onChange={handleChange} required />
-                </Form.Group>
+            <Card>
+                <Card.Body>
 
-                <Form.Group className="mb-3">
-                    <Form.Label>설명</Form.Label>
-                    <Form.Control as="textarea" name="description" value={form.description} onChange={handleChange} rows={3} />
-                </Form.Group>
+                    {/* 메시지 출력 */}
+                    {message && (
+                        <Alert variant={message.type} className="mb-3">
+                            {message.text}
+                        </Alert>
+                    )}
 
-                <Form.Group className="mb-3">
-                    <RadioGroup
-                        label="활성 여부"
-                        options={[{ label: '활성', value: true }, { label: '비활성', value: false }]}
-                        value={form.active}
-                        onChange={(e) => setForm({ ...form, active: e })}
-                    />
-                    {/* <Form.Check type="checkbox" label="활성 여부" name="active" checked={form.active} onChange={e => setForm({ ...form, active: e.target.checked })} /> */}
-                </Form.Group>
+                    <Form onSubmit={handleSubmit}>
 
-                <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                    <Button type="submit">수정</Button>
-                    <Button variant="secondary" onClick={() => navigate("/member/position/list")} className="ms-2">목록</Button>
-                </div>
-            </Form>
+                        {/* 직급 코드 - 수정 불가 */}
+                        <Form.Group className="mb-3">
+                            <Form.Label>직급 코드</Form.Label>
+                            <InputGroup>
+                                <Form.Control
+                                    type="text"
+                                    value={form.positionCode}
+                                    disabled
+                                />
+                            </InputGroup>
+                        </Form.Group>
+
+                        {/* 직급 이름 */}
+                        <Form.Group className="mb-3">
+                            <Form.Label>직급 이름</Form.Label>
+                            <InputGroup>
+                                <Form.Control
+                                    type="text"
+                                    name="positionName"
+                                    value={form.positionName}
+                                    onChange={handleChange}
+                                    maxLength={50}
+                                    isInvalid={!!errors.positionName}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.positionName}
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Form.Group>
+
+                        {/* 설명 */}
+                        <Form.Group className="mb-4">
+                            <Form.Label>설명</Form.Label>
+                            <InputGroup>
+                                <Form.Control
+                                    as="textarea"
+                                    name="description"
+                                    value={form.description}
+                                    onChange={handleChange}
+                                    rows={5}
+                                    isInvalid={!!errors.description}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.description}
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Form.Group>
+
+                        {/* 활성 여부 */}
+                        <Form.Group className="mb-3">
+                            <RadioGroup
+                                label="활성 여부"
+                                options={[
+                                    { label: "활성", value: true },
+                                    { label: "비활성", value: false }
+                                ]}
+                                value={form.active}
+                                onChange={(v) => setForm((prev) => ({ ...prev, active: v }))}
+                            />
+                        </Form.Group>
+
+                        {/* 버튼 영역 */}
+                        <div className="d-flex justify-content-end gap-2">
+                            <Button
+                                type="submit"
+                                variant="primary"
+                                disabled={submitting}
+                            >
+                                {submitting ? (
+                                    <>
+                                        <Spinner size="sm" className="me-2" /> 수정 중...
+                                    </>
+                                ) : (
+                                    "수정"
+                                )}
+                            </Button>
+
+                            <Button
+                                variant="secondary"
+                                onClick={() => navigate("/member/position/list")}
+                            >
+                                목록
+                            </Button>
+                        </div>
+
+                    </Form>
+                </Card.Body>
+            </Card>
         </Container>
     );
 }

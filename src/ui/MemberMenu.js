@@ -25,7 +25,7 @@ const member =
                 {
                     no: 2,
                     label: "직급체계 관리",
-                    to: ["/member/position/list", "/member/position"],
+                    to: ["/member/position/list", "/member/position", "/member/position/:id"],
                     icon: <Diversity3Icon sx={{ color: '#6e3170ff' }} />,
                     isAdminMenu: true,
                     content: "회사의 직급체계를 관리합니다.\r\n직급을 추가, 수정, 삭제할 수 있습니다.\r\n"
