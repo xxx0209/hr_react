@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Container, Row, Col, Card, Modal, Badge } from "react-bootstrap";
+import { Container, Row, Col, Card, Modal, Badge, Form } from "react-bootstrap";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, getDay } from "date-fns";
 import ko from "date-fns/locale/ko";
@@ -212,7 +212,7 @@ export default function SchedulePage() {
                             timeslots={4}
                             views={["month"]}
                             defaultView="month"
-                            selectable
+                            //selectable
                             popup
                             culture="ko"
                             eventPropGetter={eventPropGetter}
@@ -260,44 +260,102 @@ export default function SchedulePage() {
             </Row>
 
             {/* 이벤트 상세 Modal */}
-            <Modal show={!!selectedEvent} onHide={() => setSelectedEvent(null)} centered size="lg">
+            <Modal
+                show={!!selectedEvent}
+                onHide={() => setSelectedEvent(null)}
+                centered
+                size="lg"
+            >
                 {selectedEvent && (
                     <>
                         <Modal.Header closeButton>
                             <Modal.Title>
-                                일정 상세보기 <Badge bg="secondary">{selectedEvent.category}</Badge>
+                                일정 상세보기{" "}
+                                <Badge bg="secondary">{selectedEvent.category}</Badge>
                             </Modal.Title>
                         </Modal.Header>
-                        <Modal.Body>
-                            <p><strong>제목:</strong> {selectedEvent.title}</p>
-                            {ETC_SCHEDULE_LIST.includes(selectedEvent.scheduleId) && (
-                                <p><strong>근태 :</strong> {new Date(selectedEvent.end).toLocaleString()}</p>
-                            )}
 
-                            {!ETC_SCHEDULE_LIST.includes(selectedEvent.scheduleId) && (
-                                <>
-                                    <p><strong>시작:</strong> {new Date(selectedEvent.start).toLocaleString()}</p>
-                                    <p><strong>종료:</strong> {new Date(selectedEvent.end).toLocaleString()}</p>
-                                    <p><strong>내용:</strong></p>
-                                    <div style={{
-                                        maxHeight: "200px",
-                                        overflowY: "auto",
-                                        padding: "5px",
-                                        border: "1px solid #dee2e6",
-                                        borderRadius: "4px",
-                                        whiteSpace: "pre-wrap"
-                                    }}>
-                                        <p>{selectedEvent.content}</p>
-                                    </div>
-                                </>
-                            )}
+                        <Modal.Body>
+                            <Form>
+                                {/* 제목 */}
+                                <Form.Group className="mb-3">
+                                    <Form.Label><strong>제목</strong></Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        value={selectedEvent.title}
+                                        disabled
+                                    />
+                                </Form.Group>
+
+                                {/* 근태 일정 */}
+                                {ETC_SCHEDULE_LIST.includes(selectedEvent.scheduleId) && (
+                                    <Form.Group className="mb-3">
+                                        <Form.Label><strong>근태</strong></Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            value={new Date(selectedEvent.end).toLocaleString()}
+                                            disabled
+                                        />
+                                    </Form.Group>
+                                )}
+
+                                {/* 일반 일정 */}
+                                {!ETC_SCHEDULE_LIST.includes(selectedEvent.scheduleId) && (
+                                    <>
+                                        <Form.Group className="mb-3">
+                                            <Form.Label><strong>시작</strong></Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                value={new Date(selectedEvent.start).toLocaleString()}
+                                                disabled
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3">
+                                            <Form.Label><strong>종료</strong></Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                value={new Date(selectedEvent.end).toLocaleString()}
+                                                disabled
+                                            />
+                                        </Form.Group>
+
+                                        {/* 내용 */}
+                                        <Form.Group className="mb-3">
+                                            <Form.Label><strong>내용</strong></Form.Label>
+                                            <div
+                                                style={{
+                                                    minHeight: "100px",      // 최소 높이
+                                                    maxHeight: "100px",      // 최대 높이
+                                                    overflowY: "auto",
+                                                    fontSize: "12px",
+                                                    padding: "10px",
+                                                    border: "1px solid #dee2e6",
+                                                    borderRadius: "4px",
+                                                    whiteSpace: "pre-wrap",
+                                                    background: "#fafafa"
+                                                }}
+                                            >
+                                                {selectedEvent.content}
+                                            </div>
+                                        </Form.Group>
+                                    </>
+                                )}
+
+                            </Form>
                         </Modal.Body>
                         <Modal.Footer>
-                            <Button variant="secondary" onClick={() => setSelectedEvent(null)}>닫기</Button>
+                            <Button
+                                variant="secondary"
+                                onClick={() => setSelectedEvent(null)}
+                            >
+                                닫기
+                            </Button>
                         </Modal.Footer>
                     </>
                 )}
             </Modal>
+
         </Container>
     );
 }
