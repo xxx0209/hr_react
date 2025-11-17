@@ -28,6 +28,7 @@ import SchedulePage from "../pages/schedule/SchedulePage";
 import CategoryPage from '../pages/schedule/CategoryPage';
 import SignupPage from "../pages/member/SignupPage";
 import MemberEditPage from '../pages/member/MemberEditPage';
+import MemberSearchPage from "../pages/member/MemberSearchPage";
 import PositionPage from "../pages/member/PositionPage";
 import PositionListPage from "../pages/member/PositionListPage";
 import PositionDetailPage from "../pages/member/PositionDetailPage";
@@ -96,6 +97,7 @@ function AppRoutes() {
         <Route path="/schedule/schedule" element={<SchedulePage />} />
         <Route path="/schedule/category" element={<CategoryPage />} />
         <Route path="/member/update" element={<MemberEditPage />} />
+        <Route path="/member/search" element={<MemberSearchPage />} />
 
         {/* 근태/휴가 */}
         <Route path="/attendance/attendance" element={<AttendanceTracker />} />
