@@ -1,0 +1,28 @@
+.dashboard {
+    padding: 2rem;
+}
+
+.tab-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.tab {
+    padding: 0.5rem 1rem;
+    background: #eee;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.tab.active {
+    background: #6200ea;
+    color: white;
+}
+
+.card-grid {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
