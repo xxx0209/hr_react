@@ -91,7 +91,7 @@ function Header() {
                                 {/* 사용자 정보 텍스트 */}
                                 <div className="user-info">
                                     <Typography sx={{ color: 'white', fontSize: 12, mt: 0.5 }}>
-                                        <span style={{ color: '#ffeb3b' }}>{user.username}</span>님 반갑습니다.
+                                        <span style={{ color: '#ffeb3b' }}>{user.username}({user.name})</span>님 반갑습니다.
                                     </Typography>
                                     <Typography sx={{ color: 'white', fontSize: 12, mt: 0.5 }}>
                                         직급: <span className="position-text">{user.positionName || "-"}</span> /

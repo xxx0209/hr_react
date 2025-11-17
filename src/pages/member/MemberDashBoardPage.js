@@ -20,6 +20,7 @@ export default function MemberDashBoardPage() {
         positionName: "",
         profileImage: null,
         profileImageUrl: null, // 서버 이미지 URL
+        imageError: false,   // ⬅⬅⬅ 추가
     });
 
     const [loading, setLoading] = useState(true);
@@ -44,6 +45,7 @@ export default function MemberDashBoardPage() {
                     password: "",
                     profileImage: null,
                     profileImageUrl: resMember.data.profileImageUrl || null,
+                    imageError: false,
                 }));
             } catch (err) {
                 console.error(err);
@@ -72,11 +74,12 @@ export default function MemberDashBoardPage() {
                         alignItems: "center",
                         justifyContent: "center",
                     }}>
-                        {form.profileImageUrl ? (
+                        {form.profileImageUrl && !form.imageError ? (
                             <img
                                 src={`${API_BASE_URL}${form.profileImageUrl}`}
                                 alt="프로필"
                                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                onError={() => setForm(prev => ({ ...prev, imageError: true }))}
                             />
                         ) : (
                             <span style={{ fontSize: 12, color: "#adb5bd", textAlign: "center" }}>
@@ -115,7 +118,12 @@ export default function MemberDashBoardPage() {
                     <div className="text-start">
                         <Row className="align-items-center mb-2" style={{ color: "#6c757d", fontSize: "0.85rem", fontWeight: "normal" }}>
                             <Col xs="auto"><PersonFill style={{ color: "#6c757d", fontSize: "0.9rem" }} /></Col>
-                            <Col>{form.gender || "성별 없음"}</Col>
+                            <Col>
+                                <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                                    <div style={{ width: "12px", height: "12px", borderRadius: "50%", backgroundColor: form.gender === "MALE" ? "#4a90e2" : "#f06292" }} />
+                                    <span>{form.gender === "MALE" ? "남성" : "여성"}</span>
+                                </div>
+                            </Col>
                         </Row>
                         <Row className="align-items-center mb-2" style={{ color: "#6c757d", fontSize: "0.85rem", fontWeight: "normal" }}>
                             <Col xs="auto"><EnvelopeFill style={{ color: "#6c757d", fontSize: "0.9rem" }} /></Col>
