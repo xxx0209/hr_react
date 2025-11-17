@@ -83,7 +83,11 @@ export default function Contents({ children }) {
                 movePath = "/home";
             }
             if (movePath) {
-                navigate(movePath);
+                if (movePath == '/') {
+                    navigate("/home", { replace: true });
+                } else {
+                    navigate(movePath);
+                }
             }
         }
 

@@ -74,7 +74,6 @@ function AppRoutes() {
       <Route element={<AuthRedirectRoute />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/test" element={<TestPage />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />

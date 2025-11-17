@@ -13,7 +13,7 @@ const home =
                 {
                     no: 1,
                     label: "Home",
-                    to: "/home",
+                    to: ["/home", "/", ""],
                     icon: HomeIcon,
                     isAdminMenu: false,
                     content: "메인 대시보드 입니다."
