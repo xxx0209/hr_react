@@ -2,6 +2,7 @@ import React from "react";
 import { checkIn, checkOut } from "../api/attendance";
 import './ClockButtons.css';
 
+console.log("ClockButtons 컴포넌트 렌더링됨");
 const ClockButtons = () => {
     const handleCheckIn = async () => {
         try {

@@ -1,10 +1,9 @@
 import {
     AccessTime as AccessTimeIcon,
-    EditDocument as EditDocumentIcon,
     Diversity1 as Diversity1Icon,
 } from "@mui/icons-material";
 
-const AttendanceMenu = [
+const Attendance = [
     {
         id: 'attendance',
         label: "근태 관리",
@@ -14,22 +13,14 @@ const AttendanceMenu = [
         subs: [
             {
                 no: 1,
-                label: "출석 현황",
-                to: "/attendance/tracker",
-                icon: AccessTimeIcon,
+                label: "출퇴근 관리",
+                to: "/attendance",
+                icon: <AccessTimeIcon sx={{ color: '#6e3170ff' }} />,
                 isAdminMenu: false,
-                content: "출근 기록 페이지입니다.",
-            },
-            {
-                no: 2,
-                label: "대쉬보드",
-                icon: Diversity1Icon,
-                to: "attendance/dashboard",
-                isAdminMenu: false,
-                content: "대쉬보드입니다. 관리 페이지입니다.",
+                content: "출퇴근 관리 페이지 입니다.",
             },
         ],
     },
 ];
 
-export default AttendanceMenu;
+export const AttendanceMenu = Attendance;

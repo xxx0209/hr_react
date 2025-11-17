@@ -1,0 +1,54 @@
+import React from "react";
+import { checkin, checkout, getlist, getstatus } from "../../api/attendance";
+
+const AttendanceTracker = () => {
+    const handleCheckin = () => {
+        checkin(); //출근 API 호출
+    };
+
+    const handleCheckout = () => {
+        checkout(); //퇴근 API 호출
+    };
+
+    return (
+        <div style={styles.container}>
+            <h2 style={styles.title}>출퇴근 체크</h2>
+            <div style={styles.buttonWrapper}>
+                <button style={styles.button} onClick={handleCheckin}>
+                    출근
+                </button>
+                <button style={styles.button} onClick={handleCheckout}>
+                    퇴근
+                </button>
+            </div>
+        </div>
+    );
+};
+
+const styles = {
+    container: {
+        textAlign: "center",
+        marginTop: "50px",
+        fontFamily: "sans-serif"
+    },
+    title: {
+        fontSize: "24px",
+        marginBottom: "20px",
+    },
+    buttonGroup: {
+        display: "flex",
+        justifyContent: "center",
+        gap: "20px",
+    },
+    button: {
+        padding: "12px 24px",
+        fontSize: "18px",
+        backgroundColor: "#4CAF50",
+        color: "white",
+        border: "none",
+        borderRadius: "8px",
+        cursor: "pointer",
+    },
+};
+
+export default AttendanceTracker;

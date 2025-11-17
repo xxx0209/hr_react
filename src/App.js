@@ -3,9 +3,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from "./context/AuthContext";
 import { EnumProvider } from "./context/EnumContext"
 import AppRoutes from './routes/AppRoutes';
-// import AttendanceMenuList from './pages/AttendanceMenuList';
-// import AttendanceDashboardList from './pages/AttendanceDashboardList';
-import AttendanceDashboard from './pages/attendance/AttendanceDashboard'; //우리가 만든 컴포넌트
 
 function App() {
     return (
@@ -17,9 +14,6 @@ function App() {
                 <EnumProvider>
                     {/* 실제 라우팅 설정을 정의한 컴포넌트  */}
                     <Routes>
-                        {/* <Route path="/dashboard-list" element={<AttendanceDashboardList />} />
-                        <Route path="/menu-list" element={<AttendanceMenuList />} /> */}
-                        <Route path="/attendance" element={<AttendanceDashboard />} />
                     </Routes>
                     <AppRoutes />
                 </EnumProvider>
