@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { Container, Row, Col, Card, Form, Modal, Badge } from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Modal, Badge, Button as ReactButton } from "react-bootstrap";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, endOfWeek, getDay, addDays, addMonths } from "date-fns";
 import ko from "date-fns/locale/ko";
@@ -12,9 +12,8 @@ import { ButtonGroup, IconButton, Tooltip, Button } from "@mui/material";
 import { ArrowBackIosNew, ArrowForwardIos, Today } from "@mui/icons-material"
 import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 
-import "react-datepicker/dist/react-datepicker.css";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import "bootstrap/dist/css/bootstrap.min.css";
+
+
 
 const locales = { ko };
 const localizer = dateFnsLocalizer({
@@ -772,8 +771,8 @@ export default function SchedulePage() {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={handleAddSlotEvent}>등록</Button>
-                    <Button variant="secondary" onClick={() => setShowSlotModal(false)}>닫기</Button>
+                    <ReactButton variant="secondary" onClick={() => setShowSlotModal(false)}>닫기</ReactButton>
+                    <ReactButton variant="primary" onClick={handleAddSlotEvent}>등록</ReactButton>
                 </Modal.Footer>
             </Modal>
         </Container>
