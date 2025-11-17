@@ -27,7 +27,7 @@ const member =
                     label: "회원 리스트",
                     to: "/member/search",
                     icon: <ManageAccountsIcon sx={{ color: '#6e3170ff' }} />,
-                    isAdminMenu: false,
+                    isAdminMenu: true,
                     content: "회원목록을 조회할수 있는 메뉴 입니다.\r\n"
                 },
                 {

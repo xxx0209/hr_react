@@ -32,10 +32,13 @@ export default function Contents({ children }) {
     const [selected, setSelected] = useState(null);
     const [movePath, setMovePath] = useState(null);
     const [expandedAll, setExpandedAll] = useState(false);
+    const [isAuth, setIsAuth] = useState(false);
 
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
+
+
 
     // -----------------------------
     // 카테고리 클릭 처리
@@ -61,6 +64,8 @@ export default function Contents({ children }) {
             return;
         }
 
+        setIsAuth(true);
+
         const targetPath = Array.isArray(item.to) ? item.to[0] : item.to;
         setSelected(item);
         setMovePath(targetPath); // 이동할 경로       
@@ -73,6 +78,10 @@ export default function Contents({ children }) {
     // -----------------------------
     useEffect(() => {
         if (selected) {
+            if (selected.isAdminMenu && user.role != 'ROLE_ADMIN') {
+                alert('접근권한이 없습니다.');
+                movePath = "/home";
+            }
             if (movePath) {
                 navigate(movePath);
             }
@@ -83,8 +92,6 @@ export default function Contents({ children }) {
     // 새로고침이나 바로가기로 접근시
     useEffect(() => {
         const targetPath = location.pathname;
-        console.log("url 변경 : " + targetPath);
-        console.log("movePath : " + movePath);
 
         if (targetPath != movePath) {
             // 해당 경로에 일치하는 카테고리가 있는지 조회
@@ -96,18 +103,24 @@ export default function Contents({ children }) {
                 )
             );
 
-            console.log(matchedCategory);
-
-            setSelectedCategory(matchedCategory); //대분류
-
             if (matchedCategory) {
                 const matchedSub = matchedCategory.subs.find(sub =>
                     Array.isArray(sub.to)
                         ? sub.to.some(path => matchPath({ path, end: true }, targetPath))
                         : matchPath({ path: sub.to, end: true }, targetPath)
                 );
-                setSelected(matchedSub);
-                setMovePath(targetPath);
+
+                if (matchedSub.isAdminMenu && user.role != 'ROLE_ADMIN') {
+                    navigate("/home");
+                    alert('접근권한이 없습니다.');
+                    return;
+
+                } else {
+                    setIsAuth(true);
+                    setSelectedCategory(matchedCategory); //대분류
+                    setSelected(matchedSub);
+                    setMovePath(targetPath);
+                }
             }
         }
 
@@ -152,7 +165,7 @@ export default function Contents({ children }) {
             {/* 오른쪽 컨텐츠 */}
             <Box sx={{ flexGrow: 1, padding: 1, bgcolor: "background.paper", display: "flex", flexDirection: "column" }}>
                 {/* 중분류 */}
-                {selectedCategory?.useSubs && selectedCategory?.subs?.length > 0 && (
+                {isAuth && selectedCategory?.useSubs && selectedCategory?.subs?.length > 0 && (
                     <>
                         <Box
                             sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1, cursor: 'pointer' }}
@@ -197,7 +210,7 @@ export default function Contents({ children }) {
                 {/* 컨텐츠 영역 */}
                 <Card className="w-100" style={{ flexGrow: 1, display: "flex", flexDirection: "column", overflow: "hidden", borderRadius: 0, margin: 0 }}>
                     <Card.Body style={{ flexGrow: 1, display: "flex", flexDirection: "column", overflow: "auto", padding: 0 }}>
-                        {children}
+                        {isAuth && children}
                         <div id="approval-page"></div>
                     </Card.Body>
                 </Card>
