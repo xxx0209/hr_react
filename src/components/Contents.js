@@ -5,10 +5,8 @@ import { Box, List, ListItemButton, ListItemIcon, ListItemText, Typography } fro
 import CardCategory from "./CardCategory";
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { matchPath, useLocation, useNavigate } from "react-router-dom";
 
-
-//메뉴 경로 불러오기
-import { useLocation, useNavigate } from "react-router-dom";
 import { MemberMenu } from "../ui/MemberMenu";
 import { BoardMenu } from "../ui/BoardMenu";
 import { ApprovalMenu } from "../ui/ApprovalMenu";
@@ -19,7 +17,6 @@ import { CalendarMenu } from "../ui/CalendarMenu";
 import { VacationMenu } from "../ui/VacationMenu";
 
 export default function Contents({ children }) {
-
     const categories = [
         ...HomeMenu,
         ...MemberMenu,
@@ -33,83 +30,115 @@ export default function Contents({ children }) {
 
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selected, setSelected] = useState(null);
+    const [movePath, setMovePath] = useState(null);
     const [expandedAll, setExpandedAll] = useState(false);
-    // const [windowHeight, setWindowHeight] = useState(window.innerHeight);
+    const [isAuth, setIsAuth] = useState(false);
 
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
 
+
+
+    // -----------------------------
+    // 카테고리 클릭 처리
+    // -----------------------------
     const handleCategoryClick = (cat) => {
-
-        const findMenu = cat.subs.find(sub => sub.no === cat.baseToNo);
-
-        if (findMenu == null) {
+        const defaultSub = cat.subs.find(sub => sub.no === cat.baseToNo);
+        if (!defaultSub) {
             alert("해당 카테고리의 기본 경로가 설정되어 있지 않습니다.");
             return;
-        } else {
-            // 기본 경로로 이동
-            navigate(findMenu.to);
-
-            setSelected(findMenu);
-            setSelectedCategory(cat);
         }
+        setSelectedCategory(cat); //대분류
+        handleSelect(defaultSub);
     };
 
-    const handleSelect = ((item) => {
-        if (item?.no === selected?.no) {
-            return;
-        }
+    // -----------------------------
+    // 중분류 선택 처리
+    // -----------------------------
+    const handleSelect = (item) => {
+        //if (!item || item.no === selected?.no) return;
+
         if (item.isAdminMenu && user?.role !== 'ROLE_ADMIN') {
             alert("관리자만 접근할 수 있는 메뉴입니다.");
             return;
         }
+
+        setIsAuth(true);
+
+        const targetPath = Array.isArray(item.to) ? item.to[0] : item.to;
         setSelected(item);
-        navigate(item.to);
+        setMovePath(targetPath); // 이동할 경로       
+    };
 
-        // 스크롤 이동 기능 임시
-        if (categories.id !== 'home') {
-            // const el = document.getElementById("approval-page");
-            // el?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-    });
+    const handleToggleAll = () => setExpandedAll(prev => !prev);
 
-    const handleToggleAll = () => setExpandedAll((prev) => !prev);
-
+    // -----------------------------
+    // URL 변경 시 상태 동기화
+    // -----------------------------
     useEffect(() => {
-
-        const targetTo = location.pathname;
-
-        // 1. categories 배열에서 subs.to와 일치하는 항목 찾기
-        const matchedCategory = categories.find(category =>
-            category.subs.some(sub => sub.to === targetTo)
-        );
-
-        if (matchedCategory) {
-            // 2. targetTo와 일치하는 subs 찾기
-            const foundSub = matchedCategory?.subs.find(sub => sub.to === targetTo);
-            setSelectedCategory(matchedCategory);
-            handleSelect(foundSub);
+        if (selected) {
+            if (selected.isAdminMenu && user.role != 'ROLE_ADMIN') {
+                alert('접근권한이 없습니다.');
+                movePath = "/home";
+            }
+            if (movePath) {
+                if (movePath == '/') {
+                    navigate("/home", { replace: true });
+                } else {
+                    navigate(movePath);
+                }
+            }
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    }, [selected]);
+
+    // 새로고침이나 바로가기로 접근시
+    useEffect(() => {
+        const targetPath = location.pathname;
+
+        if (targetPath != movePath) {
+            // 해당 경로에 일치하는 카테고리가 있는지 조회
+            const matchedCategory = categories.find(category =>
+                category.subs.some(sub =>
+                    Array.isArray(sub.to)
+                        ? sub.to.some(path => matchPath({ path, end: true }, targetPath))
+                        : matchPath({ path: sub.to, end: true }, targetPath)
+                )
+            );
+
+            if (matchedCategory) {
+                const matchedSub = matchedCategory.subs.find(sub =>
+                    Array.isArray(sub.to)
+                        ? sub.to.some(path => matchPath({ path, end: true }, targetPath))
+                        : matchPath({ path: sub.to, end: true }, targetPath)
+                );
+
+                if (matchedSub.isAdminMenu && user.role != 'ROLE_ADMIN') {
+                    navigate("/home");
+                    alert('접근권한이 없습니다.');
+                    return;
+
+                } else {
+                    setIsAuth(true);
+                    setSelectedCategory(matchedCategory); //대분류
+                    setSelected(matchedSub);
+                    setMovePath(targetPath);
+                }
+            }
+        }
+
     }, [location.pathname]);
 
+    // -----------------------------
+    // 렌더
+    // -----------------------------
     return (
-        <Box
-            sx={{
-                display: "flex",
-                flexGrow: 1,
-                // minHeight: mainHeight,
-                marginTop: 0.2,
-                marginBottom: 0.2,
-                border: "1px solid #ddd"
-            }}
-        >
-            {/* 왼쪽 메뉴(대분류 카테고리) */}
+        <Box sx={{ display: "flex", flexGrow: 1, marginTop: 0.2, marginBottom: 0.2, border: "1px solid #ddd" }}>
+            {/* 왼쪽 메뉴 */}
             <Box sx={{ width: 200, bgcolor: "background.paper", borderRight: "1px solid #ddd", marginTop: 0 }}>
                 <List sx={{ flexGrow: 1, overflowY: "auto", padding: 1 }}>
-
-                    {categories.map((cat) => (
+                    {categories.map(cat => (
                         <ListItemButton
                             key={cat.id}
                             selected={selectedCategory?.id === cat.id}
@@ -122,10 +151,9 @@ export default function Contents({ children }) {
                                     color: "white",
                                     border: "2px solid #afaeaeff",
                                     "& .MuiListItemIcon-root": { color: "white" },
-                                    "&:hover": { backgroundColor: "#e7e5e5ff" },
                                 },
                                 "&:hover": {
-                                    backgroundColor: selectedCategory?.id === cat.id ? "#eb1818ff" : "rgba(212, 212, 212, 0.1)",
+                                    backgroundColor: "rgba(212, 212, 212, 0.1)",
                                 },
                             }}
                         >
@@ -139,28 +167,12 @@ export default function Contents({ children }) {
             </Box>
 
             {/* 오른쪽 컨텐츠 */}
-            <Box
-                sx={{
-                    flexGrow: 1,
-                    paddingLeft: 1,
-                    paddingRight: 1,
-                    paddingTop: 1,
-                    bgcolor: "background.paper",
-                    display: "flex",
-                    flexDirection: "column",
-                }}
-            >
-                {/* 중분류가 사용일때  */}
-                {(selectedCategory?.useSubs ?? false) && selectedCategory?.subs?.length > 0 && (
+            <Box sx={{ flexGrow: 1, padding: 1, bgcolor: "background.paper", display: "flex", flexDirection: "column" }}>
+                {/* 중분류 */}
+                {isAuth && selectedCategory?.useSubs && selectedCategory?.subs?.length > 0 && (
                     <>
                         <Box
-                            sx={{
-                                display: 'flex',
-                                alignItems: 'center', // 전체 수직 중앙
-                                gap: 0.5,
-                                mb: 1,
-                                cursor: 'pointer',
-                            }}
+                            sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mb: 1, cursor: 'pointer' }}
                             onClick={handleToggleAll}
                         >
                             <Box
@@ -172,38 +184,20 @@ export default function Contents({ children }) {
                                     display: 'flex',
                                     justifyContent: 'center',
                                     alignItems: 'center',
-                                    '&:hover': {
-                                        backgroundColor: '#63b0e0',
-                                    },
+                                    '&:hover': { backgroundColor: '#63b0e0' },
                                 }}
                             >
                                 {expandedAll ? <ExpandLessIcon sx={{ fontSize: 16, color: 'white' }} /> : <ExpandMoreIcon sx={{ fontSize: 16, color: 'white' }} />}
                             </Box>
 
-                            <Typography
-                                sx={{
-                                    fontSize: 12,
-                                    fontWeight: 'bold',
-                                    lineHeight: '24px', // 버튼과 같은 높이로 맞춤
-                                }}
-                            >
+                            <Typography sx={{ fontSize: 12, fontWeight: 'bold', lineHeight: '24px' }}>
                                 {expandedAll ? '모두 닫기' : '모두 열기 (열기를 클릭시 메뉴 상세 정보를 볼수 있습니다.)'}
                             </Typography>
                         </Box>
 
-                        <Box
-                            sx={{
-                                display: "grid",
-                                gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-                                gap: 1,
-                                mb: 2,
-                            }}
-                        >
+                        <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: 1, mb: 2 }}>
                             {selectedCategory.subs
-                                .filter(sub => {
-                                    if (user.role === "ROLE_ADMIN") return true; // 관리자면 모두 표시
-                                    return sub.isAdminMenu === false; // 일반 유저는 isAdminMenu false만
-                                })
+                                .filter(sub => user.role === "ROLE_ADMIN" || sub.isAdminMenu === false)
                                 .map(sub => (
                                     <CardCategory
                                         key={sub.no}
@@ -218,30 +212,9 @@ export default function Contents({ children }) {
                 )}
 
                 {/* 컨텐츠 영역 */}
-                <Card
-                    className="w-100"
-                    style={{
-                        flexGrow: 1,
-                        display: "flex",
-                        flexDirection: "column",
-                        overflow: "hidden",
-                        marginTop: "0px",   // 위쪽 마진
-                        marginBottom: "0px", // 아래쪽 마진
-                        marginLeft: "0px",   // 좌우 마진 필요 시
-                        marginRight: "0px",
-                        borderRadius: 0, // ← 여기가 포인트
-                    }}
-                >
-                    <Card.Body
-                        style={{
-                            flexGrow: 1,
-                            display: "flex",
-                            flexDirection: "column",
-                            overflow: "auto",
-                            padding: 0,
-                        }}
-                    >
-                        {children}
+                <Card className="w-100" style={{ flexGrow: 1, display: "flex", flexDirection: "column", overflow: "hidden", borderRadius: 0, margin: 0 }}>
+                    <Card.Body style={{ flexGrow: 1, display: "flex", flexDirection: "column", overflow: "auto", padding: 0 }}>
+                        {isAuth && children}
                         <div id="approval-page"></div>
                     </Card.Body>
                 </Card>

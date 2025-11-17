@@ -125,7 +125,7 @@ export default function  NoticeBoard() {
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
   const goWrite = () => {
-    navigate("/board/write", { state: { category: "공지사항" } }); // 글쓰기 페이지로 카테고리 넘기기
+    navigate("/board/notice/write", { state: { category: "공지사항" } }); // 글쓰기 페이지로 카테고리 넘기기
   };
 
   async function handleLikesClick(postId) {
@@ -210,41 +210,18 @@ export default function  NoticeBoard() {
             </tr>
           ) : (
             data.map((p, idx) => (
-              <tr
+              <tr                
                 key={p.id}
-                onClick={() => navigate(`/board/detail/${p.id}`)} // ✅ 행 전체 클릭 시 이동
+                onClick={() => navigate(`/board/notice/detail/${p.id}`)} // ✅ 행 전체 클릭 시 이동
               >
-                <td style={{ ...styles.td, ...styles.no }}>
-                  {total - (page - 1) * PER_PAGE - idx}
-                </td>
-                <td style={{ ...styles.td, ...styles.titleCell }}>
-                  <span style={styles.titleText}>
-                     {p.title.length > 42 ? `${p.title.substring(0, 42)} ...` : p.title}
-                    {p.commentCount > 0 && (
-                      <span style={{ color: "#111", fontSize: "14px" }}>
-                        {" "}
-                        [{p.commentCount}]
-                      </span>
-                    )}
-                  </span>
-                </td>
+                <td style={{ ...styles.td, ...styles.no }}>{total - (page - 1) * PER_PAGE - idx}</td>
+                <td style={{ ...styles.td, ...styles.titleCell}}>{p.title}</td>
                 <td style={{ ...styles.td, ...styles.author }}>{p.memberName || "-"}</td>
                 <td style={{ ...styles.td, ...styles.date }}>{fmtDate(p.createDate)}</td>
                 <td style={{ ...styles.td, ...styles.views }}>{p.views ?? 0}</td>
-                <td
-                  style={{
-                    ...styles.td,
-                    ...styles.likes,
-                    cursor: "pointer",
-                    color: "#000000ff",
-                  }}
-                  onClick={(e) => {
-                    e.stopPropagation(); // ✅ 좋아요 클릭 시 상세 이동 방지
-                    handleLikesClick(p.id);
-                  }}
-                >
-                  {p.likes ?? 0}
-                </td>
+                <td style={{ ...styles.td, ...styles.likes, cursor: "pointer", color: "#000000ff"}}
+                  onClick={(e) => {e.stopPropagation(); // ✅ 좋아요 클릭 시 상세 이동 방지
+                    handleLikesClick(p.id); }}>{p.likes ?? 0}</td>
               </tr>
             ))
           )}

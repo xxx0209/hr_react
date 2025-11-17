@@ -30,6 +30,7 @@ import SchedulePage from "../pages/schedule/SchedulePage";
 import CategoryPage from '../pages/schedule/CategoryPage';
 import SignupPage from "../pages/member/SignupPage";
 import MemberEditPage from '../pages/member/MemberEditPage';
+import MemberSearchPage from "../pages/member/MemberSearchPage";
 import PositionPage from "../pages/member/PositionPage";
 import PositionListPage from "../pages/member/PositionListPage";
 import PositionDetailPage from "../pages/member/PositionDetailPage";
@@ -54,89 +55,94 @@ import AuthRedirectRoute from "./AuthRedirectRoute";
 // 이 파일은 라우팅 정보를 담고 있는 파일입니다.
 // 이러한 파일을 네트워크에서는 routing table이라고 합니다.
 function AppRoutes() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    function NotFound() {
-        useEffect(() => {
-            //sessionStorage.removeItem("storedCategory");
-            //sessionStorage.setItem("storedCategory", JSON.stringify({ id: "home", no: 1 }));
-            alert("존재하지 않는 페이지입니다. 홈으로 이동합니다.");
-            navigate("/home", { replace: true });
-        }, []);
+  function NotFound() {
+    useEffect(() => {
+      //sessionStorage.removeItem("storedCategory");
+      //sessionStorage.setItem("storedCategory", JSON.stringify({ id: "home", no: 1 }));
+      alert("존재하지 않는 페이지입니다. 홈으로 이동합니다.");
+      navigate("/home", { replace: true });
+    }, []);
 
-        return null;
-    }
+    return null;
+  }
 
-    return (
-        <Routes>
-            {/* 로그인/회원가입페이지 */}
-            <Route element={<AuthRedirectRoute />}>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignupPage />} />
-                <Route path="/test" element={<TestPage />} />
-            </Route>
+  return (
+    <Routes>
+      {/* 로그인/회원가입페이지 */}
+      <Route element={<AuthRedirectRoute />}>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+      </Route>
 
-            <Route path="*" element={<NotFound />} />
+      <Route path="*" element={<NotFound />} />
 
-            {/* 공통 Layout + PrivateRoute 그룹 */}
-            <Route element={<PrivateLayoutRoute />}>
-                <Route path="/" element={<Navigate to="/home" replace />} />
-                <Route path="/home" element={<HomePage />} />
+      {/* 공통 Layout + PrivateRoute 그룹 */}
+      <Route element={<PrivateLayoutRoute />}>
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/home" element={<HomePage />} />
 
-                {/* 회원 관련 */}
-                <Route path="/" element={<Navigate to="/home" replace />} />
-                <Route path="/member/samplePage" element={<SamplePage />} />
-                <Route path="/member/position" element={<PositionPage />} />
-                <Route path="/member/position/list" element={<PositionListPage />} />
-                <Route path="/member/position/:id" element={<PositionDetailPage />} />
-                {/* <Route path="/member/position/history/page" element={<PositionHistoryPage />} /> */}
-                <Route path="/member/position/history/list" element={<PositionHistoryList />} />
-                <Route path="/member/position/history/:id" element={<PositionHistoryForm />} />
-                <Route path="/member/position/history/save" element={<PositionHistoryForm />} />
-                <Route path="/schedule/schedule" element={<SchedulePage />} />
-                <Route path="/schedule/category" element={<CategoryPage />} />
-                <Route path="/member/update" element={<MemberEditPage />} />
+        {/* 회원 관련 */}
+        <Route path="/" element={<Navigate to="/home" replace />} />
+        <Route path="/member/samplePage" element={<SamplePage />} />
+        <Route path="/member/position" element={<PositionPage />} />
+        <Route path="/member/position/list" element={<PositionListPage />} />
+        <Route path="/member/position/:id" element={<PositionDetailPage />} />
+        {/* <Route path="/member/position/history/page" element={<PositionHistoryPage />} /> */}
+        <Route path="/member/position/history/list" element={<PositionHistoryList />} />
+        <Route path="/member/position/history/:id" element={<PositionHistoryForm />} />
+        <Route path="/member/position/history/save" element={<PositionHistoryForm />} />
+        <Route path="/schedule/schedule" element={<SchedulePage />} />
+        <Route path="/schedule/category" element={<CategoryPage />} />
+        <Route path="/member/update" element={<MemberEditPage />} />
+        <Route path="/member/search" element={<MemberSearchPage />} />
 
-                {/* 급여 관련 */}
-                <Route path="/salary/salary" element={<Navigate to="/salary/my-salaries" />} />
-                <Route path="/salary/my-salaries" element={<MySalaryHistory />} />
-                <Route path="/salary/salaries/completed" element={<CompletedSalaries />} />
-                <Route path="/salary/salaries/new" element={<SalaryForm />} />
-                <Route path="/salary/salaries/:salaryId" element={<SalaryDetailPage />} />
-                <Route path="/salary/salary-settings" element={<SalarySettingPage />} />
+        {/* 급여 관련 */}
+        <Route path="/salary/salary" element={<Navigate to="/salary/my-salaries" />} />
+        <Route path="/salary/my-salaries" element={<MySalaryHistory />} />
+        <Route path="/salary/salaries/completed" element={<CompletedSalaries />} />
+        <Route path="/salary/salaries/new" element={<SalaryForm />} />
+        <Route path="/salary/salaries/:salaryId" element={<SalaryDetailPage />} />
+        <Route path="/salary/salary-settings" element={<SalarySettingPage />} />
 
-                {/* 전자결재 */}
-                <Route path="/approval" element={<Navigate to="/approval/status" />} />
-                <Route path="/approval/request" element={<ApprovalRequestPage />} />
-                <Route path="/approval/status" element={<ApprovalPage />} />
-                <Route path="/approval/temp" element={<ApprovalTempPage />} />
-                <Route path="/approval/detail/:id" element={<ApprovalDetail />} />
-                <Route path="/test-approval" element={<ApprovalDetail />} />
+        {/* 전자결재 */}
+        <Route path="/approval" element={<Navigate to="/approval/status" />} />
+        <Route path="/approval/request" element={<ApprovalRequestPage />} />
+        <Route path="/approval/status" element={<ApprovalPage />} />
+        <Route path="/approval/temp" element={<ApprovalTempPage />} />
+        <Route path="/approval/detail/:id" element={<ApprovalDetail />} />
+        <Route path="/test-approval" element={<ApprovalDetail />} />
 
-                {/* 게시판 */}
-                {/* <Route path="/board" element={<BoardPage />} /> */}
-                <Route path="/board/write" element={<BoardWrite />} />
-                <Route path="/board/notice" element={<BoardNoticePage />} />
-                <Route path="/board/free" element={<BoardFreePage />} />
-                <Route path="/board/detail/:id" element={<BoardDetail />} />
-                {/* <Route path="/board/edit/:id" element={<BoardEdit />} /> */}
+        {/* 게시판 */}
+        {/* <Route path="/board" element={<BoardPage />} /> */}
+        <Route path="/board/write" element={<BoardWrite />} />
+        <Route path="/board/notice" element={<BoardNoticePage />} />
+        <Route path="/board/free" element={<BoardFreePage />} />
+        <Route path="/board/detail/:id" element={<BoardDetail />} />
+        {/* <Route path="/board/edit/:id" element={<BoardEdit />} /> */}
 
-                {/* 근태 관련 */}
-                <Route path="/attendance/dashboard" element={<AttendanceDashboard />} />
-                {/* <Route path="/attendance/tracker" element={<AttendanceTracker />} /> */}
-                <Route path="/attendance/leave" element={<LeaveStatus />} />
-                <Route path="/attendance" element={<AttendancePage />} />
+        {/* 게시판 */}
+        <Route path="/board/notice/write" element={<BoardWrite />} />
+        <Route path="/board/free/write" element={<BoardWrite />} />
+        <Route path="/board/notice" element={<BoardNoticePage />} />
+        <Route path="/board/free" element={<BoardFreePage />} />
+        <Route path="/board/notice/detail/:id" element={<BoardDetail />} />
+        <Route path="/board/free/detail/:id" element={<BoardDetail />} />
 
-                {/* 근태/휴가 */}
-                <Route path="/vacation/list" element={<VacationPage />} />
-                <Route path="/vacation/history" element={<VacationHistoryPage />} />
+        {/* 근태 관련 */}
+        <Route path="/attendance/dashboard" element={<AttendanceDashboard />} />
+        {/* <Route path="/attendance/tracker" element={<AttendanceTracker />} /> */}
+        <Route path="/attendance/leave" element={<LeaveStatus />} />
+        <Route path="/attendance" element={<AttendancePage />} />
 
+        {/* 근태/휴가 */}
+        <Route path="/vacation/list" element={<VacationPage />} />
+        <Route path="/vacation/history" element={<VacationHistoryPage />} />
 
-                {/* 다른 페이지 추가 */}
-
-            </Route>
-        </Routes>
-    );
+      </Route>
+    </Routes>
+  );
 }
 
 export default AppRoutes;

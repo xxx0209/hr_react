@@ -198,7 +198,7 @@ export default function MySalaryHistory() {
                     </Table>
                   </>
                 ) : (
-                  <div className="text-muted">왼쪽에서 급여를 선택하세요.</div>
+                  <div className="text-muted" style={{ fontSize: '12px' }}>왼쪽에서 급여를 선택하세요.</div>
                 )}
               </Card.Body>
             </Card>

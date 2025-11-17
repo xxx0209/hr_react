@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Container, Row, Col, Card, Table, Button, Modal, Form, Pagination, Alert, Spinner } from "react-bootstrap";
+import { Container, Row, Col, Card, Table, Button, Modal, Form, Pagination, Alert, Spinner, InputGroup } from "react-bootstrap";
 import axios from "../../api/api";
 import RadioGroup from "../../sample/RadioGroup";
 
@@ -12,6 +12,10 @@ export default function CategoryPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+
+    const [errors, setErrors] = useState({
+        name: "", color: "#0d6efd", active: true
+    });
 
     useEffect(() => {
         fetchCategories(page);
@@ -32,10 +36,15 @@ export default function CategoryPage() {
 
     const handleSave = async () => {
         if (!current.name) {
-            setError("이름을 입력하세요.");
+            setErrors({ name: "이름을 입력하세요." });
+            return;
+        }
+        if (!current.name) {
+            setErrors({ name: "이름을 입력하세요." });
             return;
         }
         setError("");
+        setErrors([]);
         setSuccess("");
 
         try {
@@ -55,7 +64,10 @@ export default function CategoryPage() {
     };
 
     const handleEdit = (cat) => {
-        setCurrent(cat);
+        setErrors([]);
+        setError(null);
+        setSuccess(null);
+        setCurrent(cat);        
         setShowModal(true);
     };
 
@@ -80,7 +92,10 @@ export default function CategoryPage() {
                 <Col className="text-end">
                     <Button
                         variant="outline-secondary"
-                        onClick={() => setShowModal(true)}
+                        onClick={() => {
+                            setCurrent({ name: "", color: "#0d6efd", categoryId: null, active: true });
+                            setShowModal(true)
+                        }}
                     >
                         + 새 카테고리 등록
                     </Button>
@@ -178,51 +193,105 @@ export default function CategoryPage() {
             </div>
 
             {/* Modal */}
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
+            <Modal
+                show={showModal}
+                onHide={() => setShowModal(false)}
+                centered
+            >
                 <Modal.Header closeButton>
-                    <Modal.Title>{current.categoryId ? "카테고리 수정" : "카테고리 등록"}</Modal.Title>
+                    <Modal.Title>
+                        {current.categoryId ? "카테고리 수정" : "카테고리 등록"}
+                    </Modal.Title>
                 </Modal.Header>
+
                 <Modal.Body>
                     <Form>
-                        <Form.Group className="mb-3">
+
+                        {/* 이름 */}
+                        <Form.Group className="mb-4">
                             <Form.Label>이름</Form.Label>
-                            <Form.Control
-                                value={current.name}
-                                onChange={e => setCurrent({ ...current, name: e.target.value })}
-                            />
-                        </Form.Group>
-                        <Row className="mb-3">
-                            <Col xs={2}>
-                                <Form.Label>색상</Form.Label>
+                            <InputGroup hasValidation>
                                 <Form.Control
-                                    type="color"
-                                    value={current.color}
-                                    onChange={e => setCurrent({ ...current, color: e.target.value })}
-                                     // 높이 맞춤
+                                    placeholder="카테고리 이름을 입력하세요"
+                                    value={current.name}
+                                    onChange={(e) => {
+                                        setCurrent({ ...current, name: e.target.value });
+                                        setErrors(prev => ({ ...prev, name: "" }));
+                                    }}
+                                    isInvalid={!!errors.name}
                                 />
+                                <Form.Control.Feedback type="invalid">
+                                    {errors.name}
+                                </Form.Control.Feedback>
+                            </InputGroup>
+                        </Form.Group>
+
+                        {/* 색상 + 활성 상태 */}
+                        <Row className="align-items-center mb-3">
+                            <Col xs={3}>
+                                <Form.Label className="fw-semibold">색상</Form.Label>
                             </Col>
-                            <Col xs={10}>
-                                <Form.Label className="">활성</Form.Label>
-                                <div className="d-flex align-items-center">
-                                    <RadioGroup
-                                        label=""
-                                        options={[
-                                            { label: '활성', value: true },
-                                            { label: '비활성', value: false }
-                                        ]}
-                                        value={current.active}
-                                        onChange={e => setCurrent({ ...current, active: e })}
+                            <Col xs={9}>
+                                <div className="d-flex align-items-center" style={{ gap: 12 }}>
+                                    <Form.Control
+                                        type="color"
+                                        value={current.color}
+                                        onChange={e =>
+                                            setCurrent({ ...current, color: e.target.value })
+                                        }
+                                        style={{
+                                            width: 45,
+                                            height: 38,
+                                            padding: 2,
+                                            cursor: "pointer"
+                                        }}
+                                    />
+                                    <span className="text-muted" style={{ fontSize: "12px" }}>
+                                        {current.color.toUpperCase()}
+                                    </span>
+                                </div>
+                            </Col>
+                        </Row>
+
+                        <Row className="align-items-center mb-3">
+                            <Col xs={3}>
+                                <Form.Label className="fw-semibold">활성 상태</Form.Label>
+                            </Col>
+                            <Col xs={9}>
+                                <div className="d-flex" style={{ gap: 18 }}>
+                                    <Form.Check
+                                        inline
+                                        type="radio"
+                                        label="활성"
+                                        name="activeStatus"
+                                        checked={current.active === true}
+                                        onChange={() => setCurrent({ ...current, active: true })}
+                                    />
+                                    <Form.Check
+                                        inline
+                                        type="radio"
+                                        label="비활성"
+                                        name="activeStatus"
+                                        checked={current.active === false}
+                                        onChange={() => setCurrent({ ...current, active: false })}
                                     />
                                 </div>
                             </Col>
                         </Row>
+
                     </Form>
                 </Modal.Body>
+
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowModal(false)}>닫기</Button>
-                    <Button variant="primary" onClick={handleSave}>저장</Button>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                        닫기
+                    </Button>
+                    <Button variant="primary" onClick={handleSave}>
+                        저장
+                    </Button>
                 </Modal.Footer>
             </Modal>
-        </Container>
+
+        </Container >
     );
 }

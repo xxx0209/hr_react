@@ -26,7 +26,11 @@ export default function BoardPage() {
 
   // 게시글 클릭 시 해당 상세 페이지로 이동하는 함수
   const handleSelectPost = (postId) => {
-    navigate(`/board/detail/${postId}`); // 클릭한 게시글의 상세 페이지로 이동
+    if ('공지사항' === selectedBoard) {
+      navigate(`/board/notice/detail/${postId}`);
+    } else {
+      navigate(`/board/free/detail/${postId}`); // 클릭한 게시글의 상세 페이지로 이동
+    }    
   };
 
   // 게시판 선택 함수
@@ -50,11 +54,10 @@ export default function BoardPage() {
           <Col xs={5} className="d-flex justify-content-center">
             <Button
               variant="link"
-              className={`d-flex align-items-center w-100 ${selectedBoard === "공지사항" ? "text-dark" : "text-muted"}`}
+              className={`d-flex align-items-center ${selectedBoard === "공지사항" ? "text-dark" : "text-muted"}`}
               style={{ 
                 justifyContent: "center",
                 textDecoration: selectedBoard === "공지사항" ? "underline" : "none", // 선택된 버튼에만 밑줄 추가
-                padding: "10px 20px",
                 fontWeight: selectedBoard === "공지사항" ? "bold" : "normal",
                 transition: "all 0.3s ease",
               }}
@@ -71,11 +74,10 @@ export default function BoardPage() {
           <Col xs={5} className="d-flex justify-content-center">
             <Button
               variant="link"
-              className={`d-flex align-items-center w-100 ${selectedBoard === "자유게시판" ? "text-dark" : "text-muted"}`}
+              className={`d-flex align-items-center ${selectedBoard === "자유게시판" ? "text-dark" : "text-muted"}`}
               style={{
                 justifyContent: "center",
                 textDecoration: selectedBoard === "자유게시판" ? "underline" : "none", // 선택된 버튼에만 밑줄 추가
-                padding: "10px 20px",
                 fontWeight: selectedBoard === "자유게시판" ? "bold" : "normal",
                 transition: "all 0.3s ease",
               }}
@@ -90,44 +92,98 @@ export default function BoardPage() {
         </Col>
       </Row>
 
-      {/* 게시글 목록 - 리스트 형식 */}
-      <Row className="g-4">
-        {posts.length === 0 ? (
-          <Col className="text-center">
-            <p>게시글이 없습니다.</p>
-          </Col>
-        ) : (
-          <Col md={12}>
-            <ListGroup>
-              {posts.map((post) => (
-                <ListGroup.Item
-                  className="text-start"
-                  key={post.id}
-                  action
-                  onClick={() => handleSelectPost(post.id)} // 게시글 클릭 시 상세 페이지로 이동
-                  style={{ cursor: "pointer" }}
-                >
-                  <Row>
-                    <Col xs={12} className="fw-bold" style={{ fontSize: "14px" }}>
-                        {post.title.length > 20 ? `${post.title.substring(0, 20)} ...` : post.title}
-                        {post.commentCount > 0 && (
-                        <span style={{ color: "##212529BF" }}>
-                          [{post.commentCount}]
-                        </span>
-                      )}</Col>
-                    <Col xs={12} className="text-muted text-end">
-                        {post.memberName}
-                        {" /"} {new Date(post.createDate).toLocaleDateString('ko-KR')}
-                        </Col>
-                        {/* {" /"} 조회 {post.views ?? 0} 
-                        {" /"} 좋아요 {post.likes ?? 0} */}
-                  </Row>
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </Col>
-        )}
-      </Row>
+       {/* 게시글 목록 - 리스트 형식 */}
+    <ListGroup>
+      {/* 첫 번째 게시글 */}
+      {posts[0] ? (
+        <ListGroup.Item
+          className="text-start"
+          action
+          onClick={() => handleSelectPost(posts[0]?.id)} // 첫 번째 게시글 클릭 시 상세 페이지로 이동
+          style={{ cursor: "pointer" }}
+        >
+          <Row>
+            <Col xs={12} className="fw-bold" style={{ fontSize: "14px" }}>
+              {posts[0]?.title.length > 20 ? `${posts[0].title.substring(0, 20)}...` : posts[0].title}
+              {posts[0]?.commentCount > 0 && (
+                <span style={{ color: "##212529BF" }}>
+                  [{posts[0]?.commentCount}]
+                </span>
+              )}
+            </Col>
+            <Col xs={12} className="text-muted text-end">
+              {posts[0]?.memberName} / {new Date(posts[0]?.createDate).toLocaleDateString('ko-KR')}
+            </Col>
+          </Row>
+        </ListGroup.Item>
+      ) : (
+        <ListGroup.Item
+          className="text-muted small text-center"
+          action
+          style={{ height: "56px", display: "flex", alignItems: "center", justifyContent: "center" }}
+        >
+          게시글 없음
+        </ListGroup.Item>
+      )}
+
+      {/* 두 번째 게시글 */}
+      {posts[1] ? (
+        <ListGroup.Item
+          className="text-start"
+          action
+          onClick={() => handleSelectPost(posts[1]?.id)} // 두 번째 게시글 클릭 시 상세 페이지로 이동
+          style={{ cursor: "pointer" }}
+        >
+          <Row>
+            <Col xs={12} className="fw-bold" style={{ fontSize: "14px" }}>
+              {posts[1]?.title.length > 20 ? `${posts[1].title.substring(0, 20)}...` : posts[1].title}
+              {posts[1]?.commentCount > 0 && (
+                <span style={{ color: "##212529BF" }}>
+                  [{posts[1]?.commentCount}]
+                </span>
+              )}
+            </Col>
+            <Col xs={12} className="text-muted text-end">
+              {posts[1]?.memberName} / {new Date(posts[1]?.createDate).toLocaleDateString('ko-KR')}
+            </Col>
+          </Row>
+        </ListGroup.Item>
+      ) : (
+        <ListGroup.Item
+          className="text-center"
+          style={{ height: "56px", display: "flex", alignItems: "center", justifyContent: "center" }}
+        />
+      )}
+
+      {/* 세 번째 게시글 */}
+      {posts[2] ? (
+        <ListGroup.Item
+          className="text-start"
+          action
+          onClick={() => handleSelectPost(posts[2]?.id)} // 세 번째 게시글 클릭 시 상세 페이지로 이동
+          style={{ cursor: "pointer" }}
+        >
+          <Row>
+            <Col xs={12} className="fw-bold" style={{ fontSize: "14px" }}>
+              {posts[2]?.title.length > 20 ? `${posts[2].title.substring(0, 20)}...` : posts[2].title}
+              {posts[2]?.commentCount > 0 && (
+                <span style={{ color: "##212529BF" }}>
+                  [{posts[2]?.commentCount}]
+                </span>
+              )}
+            </Col>
+            <Col xs={12} className="text-muted text-end">
+              {posts[2]?.memberName} / {new Date(posts[2]?.createDate).toLocaleDateString('ko-KR')}
+            </Col>
+          </Row>
+        </ListGroup.Item>
+      ) : (
+        <ListGroup.Item
+          className="text-center"
+          style={{ height: "56px", display: "flex", alignItems: "center", justifyContent: "center" }}
+        />
+      )}
+    </ListGroup>
     </Container>
   );
 }

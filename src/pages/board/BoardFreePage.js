@@ -121,7 +121,7 @@ export default function  NoticeBoard() {
   const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
 
   const goWrite = () => {
-    navigate("/board/write", { state: { category: "자유게시판" } }); // 글쓰기 페이지로 카테고리 넘기기
+    navigate("/board/free/write", { state: { category: "자유게시판" } }); // 글쓰기 페이지로 카테고리 넘기기
   };
 
   async function handleLikesClick(postId) {
@@ -205,7 +205,7 @@ export default function  NoticeBoard() {
             data.map((p, idx) => (
               <tr
                 key={p.id}
-                onClick={() => navigate(`/board/detail/${p.id}`)} // ✅ 행 전체 클릭 시 이동
+                onClick={() => navigate(`/board/free/detail/${p.id}`)} // ✅ 행 전체 클릭 시 이동
               >
                 <td style={{ ...styles.td, ...styles.no }}>
                   {total - (page - 1) * PER_PAGE - idx}
