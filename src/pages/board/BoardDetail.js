@@ -29,6 +29,8 @@ export default function PostDetail() {
 
   const { user, setUser } = useContext(AuthContext);
 
+  
+
   useEffect(() => {
     loadPost(); // 페이지 진입 시 조회수 포함 불러오기
   }, [id]);
@@ -297,31 +299,66 @@ const handleCommentUpdate = async (commentId) => {
                 ❤️ 좋아요 {likes}
               </Button>
                 <div className="d-flex gap-2">
-                  {user?.role === "ROLE_ADMIN" ? (
-                    <>
-                    <Button
-                    variant="outline-primary"
-                    size="sm"
-                    onClick={startEditPost}
-                    >
-                      수정
-                    </Button>
-                    <Button
-                      variant="outline-danger"
-                      size="sm"
-                      onClick={handleDelete}
-                    >
-                      삭제
-                    </Button>
-                    </>
-                    ) : null}
-              <Link
-                to={`/board/${post.category === "공지사항" ? "notice" : "free"}`}
-                className="btn btn-outline-secondary btn-sm"
-              >
-                목록으로
-              </Link>
-            </div>
+                  {(() => {
+                    const isAdmin = user?.role === "ROLE_ADMIN";
+                    const isNotice = post.category === "공지사항";
+                    const isFree = post.category === "자유게시판";
+                    const isPostOwner = user?.name === post.memberName; // 게시글 작성자 확인
+
+                    // 공지사항 → 관리자만 수정, 삭제 가능
+                    if (isNotice && isAdmin) {
+                      return (
+                        <>
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={startEditPost}
+                          >
+                            수정
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={handleDelete}
+                          >
+                            삭제
+                          </Button>
+                        </>
+                      );
+                    }
+
+                    // 자유게시판 → 작성자 본인 또는 ADMIN만 수정/삭제 가능
+                    if (isFree && (isPostOwner || isAdmin)) {
+                      return (
+                        <>
+                          <Button
+                            variant="outline-primary"
+                            size="sm"
+                            onClick={startEditPost}
+                          >
+                            수정
+                          </Button>
+                          <Button
+                            variant="outline-danger"
+                            size="sm"
+                            onClick={handleDelete}
+                          >
+                            삭제
+                          </Button>
+                        </>
+                      );
+                    }
+
+                    return null;
+                  })()}
+
+                  <Link
+                    to={`/board/${post.category === "공지사항" ? "notice" : "free"}`}
+                    className="btn btn-outline-secondary btn-sm"
+                  >
+                    목록으로
+                  </Link>
+                </div>
           </div>
         </Card.Body>
       </Card>
