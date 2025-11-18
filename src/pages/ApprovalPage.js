@@ -450,6 +450,31 @@ export default function ApprovalPage() {
                   {selectedDoc.status}
                 </Badge>
               </p>
+            {/* ⭐ 추가됨 — 승인/반려 사유 표시 */}
+              {(selectedDoc.status === "승인" || selectedDoc.status === "반려") && (
+                <>
+                  <p className="mt-3">
+                    <strong>{selectedDoc.status} 사유:</strong>
+                  </p>
+
+                  <div
+                    className="border rounded p-3 bg-white"
+                    style={{
+                      whiteSpace: "pre-wrap",
+                      lineHeight: "1.6",
+                      fontSize: "0.95rem",
+                      minHeight: "60px",
+                      borderLeft: `4px solid ${
+                        selectedDoc.status === "승인" ? "#28a745" : "#dc3545"
+                      }`
+                    }}
+                  >
+                    {selectedDoc.comment && selectedDoc.comment.trim() !== ""
+                      ? selectedDoc.comment
+                      : "사유 없음"}
+                  </div>
+                </>
+              )}
             </>
           ) : (
             <p>선택된 문서가 없습니다.</p>

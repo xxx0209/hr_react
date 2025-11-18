@@ -351,6 +351,7 @@ const handleCommentUpdate = async (commentId) => {
 
                     return null;
                   })()}
+<<<<<<< HEAD
 
                   <Link
                     to={`/board/${post.category === "공지사항" ? "notice" : "free"}`}
@@ -359,6 +360,15 @@ const handleCommentUpdate = async (commentId) => {
                     목록으로
                   </Link>
                 </div>
+=======
+              <Link
+                to={`/board/${post.category === "공지사항" ? "notice" : "free"}`}
+                className="btn btn-outline-secondary btn-sm"
+              >
+                목록으로
+              </Link>
+            </div>
+>>>>>>> Door-jihwan
           </div>
         </Card.Body>
       </Card>
