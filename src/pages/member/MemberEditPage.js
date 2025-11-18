@@ -23,6 +23,7 @@ export default function MemberEditPage() {
         positionName: "",
         profileImage: null,
         profileImageUrl: null, // 서버 이미지 URL
+        imageError: false,   // ⬅⬅⬅ 추가
     });
 
     const [preview, setPreview] = useState(null); // 선택한 파일 미리보기
@@ -46,6 +47,7 @@ export default function MemberEditPage() {
                     password: "",
                     profileImage: null,
                     profileImageUrl: resMember.data.profileImageUrl || null,
+                    imageError: false,   // ⬅⬅⬅ 추가
                 }));
             } catch (err) {
                 console.error(err);
@@ -75,6 +77,7 @@ export default function MemberEditPage() {
 
     const onSubmit = async (e) => {
         e.preventDefault();
+        if (!window.confirm("수정 하시겠습니까?")) return;
 
         setSuccess("");
         setSubmitting(true);
@@ -146,11 +149,12 @@ export default function MemberEditPage() {
                                             alt="미리보기"
                                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
                                         />
-                                    ) : form.profileImageUrl ? (
+                                    ) : form.profileImageUrl && !form.imageError ? (
                                         <img
                                             src={`${API_BASE_URL}${form.profileImageUrl}`}
                                             alt="프로필"
                                             style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                            onError={() => setForm(prev => ({ ...prev, imageError: true }))}
                                         />
                                     ) : (
                                         <span style={{ fontSize: 12, color: "#6c757d", textAlign: "center" }}>

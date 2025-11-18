@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { Container, Row, Col, Card, Form, Modal, Badge } from "react-bootstrap";
+import { Container, Row, Col, Card, Form, Modal, Badge, Button as ReactButton } from "react-bootstrap";
 import { Calendar, dateFnsLocalizer } from "react-big-calendar";
 import { format, parse, startOfWeek, endOfWeek, getDay, addDays, addMonths } from "date-fns";
 import ko from "date-fns/locale/ko";
@@ -12,9 +12,8 @@ import { ButtonGroup, IconButton, Tooltip, Button } from "@mui/material";
 import { ArrowBackIosNew, ArrowForwardIos, Today } from "@mui/icons-material"
 import { ToggleButton, ToggleButtonGroup } from "@mui/material"
 
-import "react-datepicker/dist/react-datepicker.css";
-import "react-big-calendar/lib/css/react-big-calendar.css";
-import "bootstrap/dist/css/bootstrap.min.css";
+
+
 
 const locales = { ko };
 const localizer = dateFnsLocalizer({
@@ -597,47 +596,108 @@ export default function SchedulePage() {
             </Row>
 
             {/* 이벤트 상세 Modal */}
-            <Modal show={!!selectedEvent} onHide={() => setSelectedEvent(null)} centered size="lg">
+            <Modal
+                show={!!selectedEvent}
+                onHide={() => setSelectedEvent(null)}
+                centered
+                size="lg"
+            >
                 {selectedEvent && (
                     <>
                         <Modal.Header closeButton>
                             <Modal.Title>
-                                일정 상세보기 <Badge bg="secondary">{selectedEvent.category}</Badge>
+                                일정 상세보기{" "}
+                                <Badge bg="secondary">{selectedEvent.category}</Badge>
                             </Modal.Title>
                         </Modal.Header>
-                        <Modal.Body>
-                            <p><strong>제목:</strong> {selectedEvent.title}</p>
-                            {ETC_SCHEDULE_LIST.includes(selectedEvent.scheduleId) && (
-                                <p><strong>근태 :</strong> {new Date(selectedEvent.end).toLocaleString()}</p>
-                            )}
 
-                            {!ETC_SCHEDULE_LIST.includes(selectedEvent.scheduleId) && (
-                                <>
-                                    <p><strong>시작:</strong> {new Date(selectedEvent.start).toLocaleString()}</p>
-                                    <p><strong>종료:</strong> {new Date(selectedEvent.end).toLocaleString()}</p>
-                                    <p><strong>내용:</strong></p>
-                                    <div style={{
-                                        maxHeight: "200px",
-                                        overflowY: "auto",
-                                        padding: "5px",
-                                        border: "1px solid #dee2e6",
-                                        borderRadius: "4px",
-                                        whiteSpace: "pre-wrap"
-                                    }}>
-                                        <p>{selectedEvent.content}</p>
-                                    </div>
-                                </>
-                            )}
+                        <Modal.Body>
+                            <Form>
+
+                                {/* 제목 */}
+                                <Form.Group className="mb-3">
+                                    <Form.Label><strong>제목</strong></Form.Label>
+                                    <Form.Control
+                                        type="text"
+                                        value={selectedEvent.title}
+                                        disabled
+                                    />
+                                </Form.Group>
+
+                                {/* 근태 일정 */}
+                                {ETC_SCHEDULE_LIST.includes(selectedEvent.scheduleId) && (
+                                    <Form.Group className="mb-3">
+                                        <Form.Label><strong>근태</strong></Form.Label>
+                                        <Form.Control
+                                            type="text"
+                                            value={new Date(selectedEvent.end).toLocaleString()}
+                                            disabled
+                                        />
+                                    </Form.Group>
+                                )}
+
+                                {/* 일반 일정 */}
+                                {!ETC_SCHEDULE_LIST.includes(selectedEvent.scheduleId) && (
+                                    <>
+                                        <Form.Group className="mb-3">
+                                            <Form.Label><strong>시작</strong></Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                value={new Date(selectedEvent.start).toLocaleString()}
+                                                disabled
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3">
+                                            <Form.Label><strong>종료</strong></Form.Label>
+                                            <Form.Control
+                                                type="text"
+                                                value={new Date(selectedEvent.end).toLocaleString()}
+                                                disabled
+                                            />
+                                        </Form.Group>
+
+                                        <Form.Group className="mb-3">
+                                            <Form.Label><strong>내용</strong></Form.Label>
+                                            <div
+                                                style={{
+                                                    minHeight: "200px",      // 최소 높이
+                                                    maxHeight: "200px",      // 최대 높이
+                                                    overflowY: "auto",
+                                                    padding: "10px",
+                                                    fontSize: "12px",
+                                                    border: "1px solid #dee2e6",
+                                                    borderRadius: "4px",
+                                                    whiteSpace: "pre-wrap",
+                                                    background: "#fafafa"
+                                                }}
+                                            >
+                                                {selectedEvent.content}
+                                            </div>
+                                        </Form.Group>
+                                    </>
+                                )}
+
+                            </Form>
                         </Modal.Body>
+
                         <Modal.Footer>
                             {selectedEvent?.scheduleId && (
-                                <Button variant="danger" onClick={handleDeleteEvent}>삭제</Button>
+                                <Button variant="danger" onClick={handleDeleteEvent}>
+                                    삭제
+                                </Button>
                             )}
-                            <Button variant="secondary" onClick={() => setSelectedEvent(null)}>닫기</Button>
+                            <Button
+                                variant="secondary"
+                                onClick={() => setSelectedEvent(null)}
+                            >
+                                닫기
+                            </Button>
                         </Modal.Footer>
                     </>
                 )}
             </Modal>
+
 
             {/* 일정 등록 Modal */}
             <Modal show={showSlotModal} onHide={() => setShowSlotModal(false)} centered>
@@ -663,7 +723,7 @@ export default function SchedulePage() {
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>시작 시간</Form.Label>
+                            <Form.Label style={{ marginRight: '10px' }}>시작 시간</Form.Label>
                             <DatePicker
                                 selected={slotStart}
                                 onChange={setSlotStart}
@@ -672,10 +732,16 @@ export default function SchedulePage() {
                                 timeIntervals={15}
                                 dateFormat="yyyy-MM-dd HH:mm"
                                 className="form-control"
+                                dayClassName={date => {
+                                    const day = date.getDay();
+                                    if (day === 0) return "sunday"; // 일요일
+                                    if (day === 6) return "saturday"; // 토요일
+                                    return undefined;
+                                }}
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
-                            <Form.Label>종료 시간</Form.Label>
+                            <Form.Label style={{ marginRight: '10px' }}>종료 시간</Form.Label>
                             <DatePicker
                                 selected={slotEnd}
                                 onChange={setSlotEnd}
@@ -684,6 +750,12 @@ export default function SchedulePage() {
                                 timeIntervals={15}
                                 dateFormat="yyyy-MM-dd HH:mm"
                                 className="form-control"
+                                dayClassName={date => {
+                                    const day = date.getDay();
+                                    if (day === 0) return "sunday"; // 일요일
+                                    if (day === 6) return "saturday"; // 토요일
+                                    return undefined;
+                                }}
                             />
                         </Form.Group>
                         <Form.Group className="mb-3">
@@ -699,8 +771,8 @@ export default function SchedulePage() {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="primary" onClick={handleAddSlotEvent}>등록</Button>
-                    <Button variant="secondary" onClick={() => setShowSlotModal(false)}>닫기</Button>
+                    <ReactButton variant="secondary" onClick={() => setShowSlotModal(false)}>닫기</ReactButton>
+                    <ReactButton variant="primary" onClick={handleAddSlotEvent}>등록</ReactButton>
                 </Modal.Footer>
             </Modal>
         </Container>

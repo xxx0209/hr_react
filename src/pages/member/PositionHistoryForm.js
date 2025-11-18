@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Form, Button, Container, Row, Col, Card, Spinner, Alert } from "react-bootstrap";
+import { Form, Button, Container, Row, Col, Card, Spinner, Alert, InputGroup } from "react-bootstrap";
 import axios from "../../api/api";
 import { useNavigate } from "react-router-dom";
 import SelectCombo from "../../sample/SelectCombo";
@@ -10,7 +10,7 @@ export default function ChangePositionPage() {
     const [form, setForm] = useState({
         memberId: "",
         newPositionId: "",
-        reason: "",
+        changeReason: "",
     });
     const [members, setMembers] = useState([]);
     const [positions, setPositions] = useState([]);
@@ -18,6 +18,10 @@ export default function ChangePositionPage() {
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+
+    const [errors, setErrors] = useState({
+        memberId: '', newPositionId: '', changeReason: ''
+    });
 
     // 회원 및 직급 목록 불러오기
     useEffect(() => {
@@ -45,20 +49,32 @@ export default function ChangePositionPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         setError("");
         setSuccess("");
-        if (!form.memberId || !form.newPositionId || !form.reason) {
-            setError("모든 항목을 입력해주세요.");
-            return;
-        }
+
+        // if (!form.memberId || !form.newPositionId || !form.reason) {
+        //     setError("모든 항목을 입력해주세요.");
+        //     return;
+        // }
 
         setSubmitting(true);
         try {
-            await axios.post("/position/history/change", null, { params: form });
+            if (!window.confirm("변경 하시겠습니까?")) return;
+            await axios.post("/position/history/change", form);
             setSuccess("✅ 직급 변경이 완료되었습니다!");
-            setForm({ memberId: "", newPositionId: "", reason: "" });
+            setForm({ memberId: "", newPositionId: "", changeReason: "" });
         } catch (err) {
-            setError("❌ 직급 변경 중 오류가 발생했습니다.");
+            if (err.response && err.response.data) {
+                // 서버에서 받은 오류 정보를 객체로 저장합니다.
+                setErrors(err.response.data);
+            } else { // 입력 값 이외에 발생하는 다른 오류와 관련됨.
+                const apiMsg =
+                    err.response?.data?.message ||
+                    err.message ||
+                    "❌ 직급 변경 중 오류가 발생했습니다.";
+                setError(apiMsg);
+            }
         } finally {
             setSubmitting(false);
         }
@@ -98,9 +114,13 @@ export default function ChangePositionPage() {
                                     label="회원 선택"
                                     options={members}
                                     value={form.memberId}
-                                    onChange={(v) => handleChange(v, "memberId")}
+                                    onChange={(v) => {
+                                        handleChange(v, "memberId");
+                                        setErrors(prevErrors => ({ ...prevErrors, memberId: "" }));  // 오류 초기화
+                                    }}
                                     searchable
-                                    required
+                                    isInvalid={!!errors.memberId}
+                                    invalidMessage={errors.memberId}
                                 />
                             </Form.Group>
 
@@ -109,23 +129,35 @@ export default function ChangePositionPage() {
                                     label="새 직급 선택"
                                     options={positions}
                                     value={form.newPositionId}
-                                    onChange={(v) => handleChange(v, "newPositionId")}
                                     searchable
-                                    required
+                                    onChange={(v) => {
+                                        handleChange(v, "newPositionId");
+                                        setErrors(prevErrors => ({ ...prevErrors, newPositionId: "" }));  // 오류 초기화
+                                    }}
+                                    isInvalid={!!errors.newPositionId}
+                                    invalidMessage={errors.newPositionId}
                                 />
                             </Form.Group>
 
                             <Form.Group className="mb-4">
                                 <Form.Label>변경 사유</Form.Label>
-                                <Form.Control
-                                    as="textarea"
-                                    name="reason"
-                                    value={form.reason}
-                                    onChange={(v) => handleChange(v.target.value, "reason")}
-                                    rows={3}
-                                    placeholder="변경 사유를 입력하세요."
-                                    required
-                                />
+                                <InputGroup>
+                                    <Form.Control
+                                        as="textarea"
+                                        name="reason"
+                                        value={form.changeReason}
+                                        onChange={(v) => {
+                                            handleChange(v.target.value, "changeReason");
+                                            setErrors(prevErrors => ({ ...prevErrors, changeReason: "" }));  // 오류 초기화
+                                        }}
+                                        rows={3}
+                                        placeholder="변경 사유를 입력하세요."
+                                        isInvalid={!!errors.changeReason}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.changeReason}
+                                    </Form.Control.Feedback>
+                                </InputGroup>
                             </Form.Group>
 
                             <div className="d-flex justify-content-end gap-2">

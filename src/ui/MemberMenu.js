@@ -24,16 +24,24 @@ const member =
                 },
                 {
                     no: 2,
+                    label: "회원 리스트",
+                    to: "/member/search",
+                    icon: <ManageAccountsIcon sx={{ color: '#6e3170ff' }} />,
+                    isAdminMenu: true,
+                    content: "회원목록을 조회할수 있는 메뉴 입니다.\r\n"
+                },
+                {
+                    no: 3,
                     label: "직급체계 관리",
-                    to: "/member/position/list",
+                    to: ["/member/position/list", "/member/position", "/member/position/:id"],
                     icon: <Diversity3Icon sx={{ color: '#6e3170ff' }} />,
                     isAdminMenu: true,
                     content: "회사의 직급체계를 관리합니다.\r\n직급을 추가, 수정, 삭제할 수 있습니다.\r\n"
                 },
                 {
-                    no: 3,
+                    no: 4,
                     label: "진급 관리",
-                    to: "/member/position/history/list",
+                    to: ["/member/position/history/list", "/member/position/history/save"],
                     icon: <EditDocumentIcon sx={{ color: '#6e3170ff' }} />,
                     isAdminMenu: true,
                     content: "직원의 진급 내역을 확인합니다.\r\n직원의 직급을 변경할 수 있습니다.\r\n"

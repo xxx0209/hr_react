@@ -12,8 +12,10 @@ import ApprovalTempPage from "../pages/ApprovalTempPage";
 import ApprovalDetail from "../pages/ApprovalDetail";
 
 // 근태 및 휴가
-import AttendanceTracker from "../pages/AttendanceTracker";
-import LeaveStatus from "../pages/LeaveStatus";
+import AttendanceDashboard from "../pages/attendance/AttendanceDashboard";
+// import AttendanceTracker from "../pages/attendance/AttendanceTracker"; //출퇴근 기록
+import AttendancePage from "../pages/attendance/AttendancePage"; //출퇴근 기능
+import LeaveStatus from "../pages/attendance/LeaveStatus"; //휴가 현황
 import VacationPage from "../pages/VacationPage";
 import VacationHistoryPage from "../pages/VacationHistoryPage";
 
@@ -28,6 +30,7 @@ import SchedulePage from "../pages/schedule/SchedulePage";
 import CategoryPage from '../pages/schedule/CategoryPage';
 import SignupPage from "../pages/member/SignupPage";
 import MemberEditPage from '../pages/member/MemberEditPage';
+import MemberSearchPage from "../pages/member/MemberSearchPage";
 import PositionPage from "../pages/member/PositionPage";
 import PositionListPage from "../pages/member/PositionListPage";
 import PositionDetailPage from "../pages/member/PositionDetailPage";
@@ -49,10 +52,8 @@ import TestPage from "../sample/TestPage";
 import PrivateLayoutRoute from "./PrivateLayoutRoute";
 import AuthRedirectRoute from "./AuthRedirectRoute";
 
-
-// -------------------------------
-// AppRoutes 메인 컴포넌트
-// -------------------------------
+// 이 파일은 라우팅 정보를 담고 있는 파일입니다.
+// 이러한 파일을 네트워크에서는 routing table이라고 합니다.
 function AppRoutes() {
   const navigate = useNavigate();
 
@@ -73,7 +74,6 @@ function AppRoutes() {
       <Route element={<AuthRedirectRoute />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/test" element={<TestPage />} />
       </Route>
 
       <Route path="*" element={<NotFound />} />
@@ -96,12 +96,7 @@ function AppRoutes() {
         <Route path="/schedule/schedule" element={<SchedulePage />} />
         <Route path="/schedule/category" element={<CategoryPage />} />
         <Route path="/member/update" element={<MemberEditPage />} />
-
-        {/* 근태/휴가 */}
-        <Route path="/attendance/attendance" element={<AttendanceTracker />} />
-        <Route path="/attendance/leave" element={<LeaveStatus />} />
-        <Route path="/vacation/list" element={<VacationPage />} />
-        <Route path="/vacation/history" element={<VacationHistoryPage />} />
+        <Route path="/member/search" element={<MemberSearchPage />} />
 
         {/* 급여 관련 */}
         <Route path="/salary/salary" element={<Navigate to="/salary/my-salaries" />} />
@@ -120,10 +115,31 @@ function AppRoutes() {
         <Route path="/test-approval" element={<ApprovalDetail />} />
 
         {/* 게시판 */}
+        {/* <Route path="/board" element={<BoardPage />} /> */}
         <Route path="/board/write" element={<BoardWrite />} />
         <Route path="/board/notice" element={<BoardNoticePage />} />
         <Route path="/board/free" element={<BoardFreePage />} />
         <Route path="/board/detail/:id" element={<BoardDetail />} />
+        {/* <Route path="/board/edit/:id" element={<BoardEdit />} /> */}
+
+        {/* 게시판 */}
+        <Route path="/board/notice/write" element={<BoardWrite />} />
+        <Route path="/board/free/write" element={<BoardWrite />} />
+        <Route path="/board/notice" element={<BoardNoticePage />} />
+        <Route path="/board/free" element={<BoardFreePage />} />
+        <Route path="/board/notice/detail/:id" element={<BoardDetail />} />
+        <Route path="/board/free/detail/:id" element={<BoardDetail />} />
+
+        {/* 근태 관련 */}
+        <Route path="/attendance/dashboard" element={<AttendanceDashboard />} />
+        {/* <Route path="/attendance/tracker" element={<AttendanceTracker />} /> */}
+        <Route path="/attendance/leave" element={<LeaveStatus />} />
+        <Route path="/attendance" element={<AttendancePage />} />
+
+        {/* 근태/휴가 */}
+        <Route path="/vacation/list" element={<VacationPage />} />
+        <Route path="/vacation/history" element={<VacationHistoryPage />} />
+
       </Route>
     </Routes>
   );

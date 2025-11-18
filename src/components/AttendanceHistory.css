@@ -1,0 +1,30 @@
+.attendance-history {
+    margin-top: 30px;
+}
+
+.attendance-history h3 {
+    margin-bottom: 12px;
+    font-size: 18px;
+    color: #333;
+}
+
+.attendance-history table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.attendance-history th,
+.attendance-history td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+}
+
+.attendance-history th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.attendance-history td {
+    font-size: 14px;
+}
